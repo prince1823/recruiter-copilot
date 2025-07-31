@@ -1,6 +1,8 @@
 import { Applicant, JobList } from '../types';
 
-const API_BASE_URL = 'http://localhost:5001/api';
+// const API_BASE_URL = 'http://localhost:5001/api';
+
+const API_BASE_URL = 'https://recruiter-copilot.onrender.com';
 
 export const fetchData = async (): Promise<{ applicants: Applicant[], jobLists: JobList[] }> => {
   const response = await fetch(`${API_BASE_URL}/data`);
