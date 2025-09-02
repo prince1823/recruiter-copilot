@@ -1,0 +1,1199 @@
+{
+  "messageTemplates": {
+    "intro": "Hi {name}, thank you for your interest. I'm a recruiting assistant for [Your Company Name]. We have several openings that match your profile. Are you available for a brief chat this week?",
+    "nudge": "Hello {name}, just wanted to follow up on our previous conversation regarding the job opportunity. Are you still interested in moving forward?"
+  },
+  "jobLists": [
+    {
+      "id": "list1",
+      "listName": "Delivery Partners - Mumbai Zone2",
+      "creationDate": "2025-01-20",
+      "candidateCount": 4,
+      "completedConversations": 3
+    },
+    {
+      "id": "list2",
+      "listName": "Customer Service Representatives - Delhi NCR",
+      "creationDate": "2025-01-18",
+      "candidateCount": 9,
+      "completedConversations": 2
+    },
+    {
+      "id": "list3",
+      "listName": "Tech Support - Bangalore",
+      "creationDate": "2025-01-15",
+      "candidateCount": 4,
+      "completedConversations": 1
+    },
+    {
+      "id": "list4",
+      "listName": "Food Delivery - Chennai Hub2",
+      "creationDate": "2025-01-12",
+      "candidateCount": 5,
+      "completedConversations": 3
+    },
+    {
+      "id": "list5",
+      "listName": "E-commerce Logistics - Kolkata",
+      "creationDate": "2025-01-10",
+      "candidateCount": 6,
+      "completedConversations": 5
+    },
+    {
+      "id": "list6",
+      "listName": "Night Shift Delivery - Hyderabad",
+      "creationDate": "2025-01-08",
+      "candidateCount": 5,
+      "completedConversations": 4
+    },
+    {
+      "id": "d1ed3fdd-b66b-4158-a8cc-187ea85f8700",
+      "listName": "heyy",
+      "creationDate": "2025-07-31",
+      "candidateCount": 0,
+      "completedConversations": 0
+    },
+    {
+      "id": "c127d41e-54da-487f-8935-89945e000591",
+      "listName": "test",
+      "creationDate": "2025-07-31",
+      "candidateCount": 0,
+      "completedConversations": 0
+    },
+    {
+      "id": "d4af8fe7-58f9-4655-9f85-99b7da023eda",
+      "listName": "prince",
+      "creationDate": "2025-07-31",
+      "candidateCount": 4,
+      "completedConversations": 0
+    },
+    {
+      "id": "27feaa68-1752-44a8-9e04-cd8b78813801",
+      "listName": "test3",
+      "creationDate": "2025-07-31",
+      "candidateCount": 4,
+      "completedConversations": 0
+    },
+    {
+      "id": "483919d4-3af8-4bde-8970-14fda536b4f6",
+      "listName": "test4",
+      "creationDate": "2025-07-31",
+      "candidateCount": 5,
+      "completedConversations": 1
+    },
+    {
+      "id": "f4461b50-da64-47c3-b431-e36603645fdd",
+      "listName": "test5",
+      "creationDate": "2025-07-31",
+      "candidateCount": 5,
+      "completedConversations": 1
+    },
+    {
+      "id": "07b84861-d2dc-42aa-b537-60449c977b5f",
+      "listName": "test6",
+      "creationDate": "2025-07-31",
+      "candidateCount": 5,
+      "completedConversations": 1
+    }
+  ],
+  "applicants": [
+    {
+      "id": "1",
+      "name": "Rajesh Kumar",
+      "phone": "+91 9876543210",
+      "lastMessage": "Yes, I am interested in the delivery position",
+      "lastMessageTime": "2 min ago",
+      "location": "Mumbai",
+      "pincode": "400001",
+      "experience": 3,
+      "hasTwoWheeler": true,
+      "status": "disabled",
+      "tags": [],
+      "lists": [],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "2",
+      "name": "Priya Singh",
+      "phone": "+91 9876543211",
+      "lastMessage": "When can I start the interview process?",
+      "lastMessageTime": "5 min ago",
+      "location": "Gurgaon",
+      "pincode": "122001",
+      "experience": "3",
+      "hasTwoWheeler": "no",
+      "status": "disabled",
+      "tags": [
+        "priority"
+      ],
+      "lists": [
+        "483919d4-3af8-4bde-8970-14fda536b4f6",
+        "f4461b50-da64-47c3-b431-e36603645fdd",
+        "07b84861-d2dc-42aa-b537-60449c977b5f"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "3",
+      "name": "Amit Sharma",
+      "phone": "+91 9876543212",
+      "lastMessage": "I have 5 years experience in logistics",
+      "lastMessageTime": "1 hour ago",
+      "location": "Bangalore",
+      "pincode": "560001",
+      "experience": 5,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list3",
+        "list5"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "4",
+      "name": "Sneha Patel",
+      "phone": "+91 9876543213",
+      "lastMessage": "What are the working hours?",
+      "lastMessageTime": "2 hours ago",
+      "location": "Ahmedabad",
+      "pincode": "380001",
+      "experience": 1,
+      "hasTwoWheeler": false,
+      "status": "disabled",
+      "tags": [],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "5",
+      "name": "Vikram Joshi",
+      "phone": "+91 9876543214",
+      "lastMessage": "I can start immediately",
+      "lastMessageTime": "3 hours ago",
+      "location": "Pune",
+      "pincode": "411001",
+      "experience": 4,
+      "hasTwoWheeler": true,
+      "status": "disabled",
+      "tags": [
+        "immediate"
+      ],
+      "lists": [],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "6",
+      "name": "Kavita Reddy",
+      "phone": "+91 9876543215",
+      "lastMessage": "Do you provide training?",
+      "lastMessageTime": "4 hours ago",
+      "location": "Hyderabad",
+      "pincode": "500001",
+      "experience": 0,
+      "hasTwoWheeler": false,
+      "status": "disabled",
+      "tags": [],
+      "lists": [
+        "list6"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "7",
+      "name": "Rahul Gupta",
+      "phone": "+91 9876543216",
+      "lastMessage": "I have my own vehicle",
+      "lastMessageTime": "5 hours ago",
+      "location": "Chennai",
+      "pincode": "600001",
+      "experience": 6,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list4"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "8",
+      "name": "Anjali Nair",
+      "phone": "+91 9876543217",
+      "lastMessage": "What is the salary range?",
+      "lastMessageTime": "6 hours ago",
+      "location": "Kochi",
+      "pincode": "682001",
+      "experience": 2,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list4"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "9",
+      "name": "Deepak Yadav",
+      "phone": "+91 9876543218",
+      "lastMessage": "I am available for night shifts",
+      "lastMessageTime": "7 hours ago",
+      "location": "Lucknow",
+      "pincode": "226001",
+      "experience": 3,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "night-shift"
+      ],
+      "lists": [
+        "list6"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "10",
+      "name": "Meera Agarwal",
+      "phone": "+91 9876543219",
+      "lastMessage": "Can I work part-time?",
+      "lastMessageTime": "8 hours ago",
+      "location": "Jaipur",
+      "pincode": "302001",
+      "experience": 1,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "11",
+      "name": "Suresh Babu",
+      "phone": "+91 9876543220",
+      "lastMessage": "I have experience with food delivery",
+      "lastMessageTime": "9 hours ago",
+      "location": "Coimbatore",
+      "pincode": "641001",
+      "experience": 4,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "food-delivery"
+      ],
+      "lists": [
+        "list4"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "12",
+      "name": "Pooja Mishra",
+      "phone": "+91 9876543221",
+      "lastMessage": "Is there any joining bonus?",
+      "lastMessageTime": "10 hours ago",
+      "location": "Kanpur",
+      "pincode": "208001",
+      "experience": 2,
+      "hasTwoWheeler": false,
+      "status": "disabled",
+      "tags": [],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "13",
+      "name": "Arjun Pillai",
+      "phone": "+91 9876543222",
+      "lastMessage": "I prefer morning shifts",
+      "lastMessageTime": "11 hours ago",
+      "location": "Thiruvananthapuram",
+      "pincode": "695001",
+      "experience": 3,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "morning-shift"
+      ],
+      "lists": [
+        "list4"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "14",
+      "name": "Ritu Kumari",
+      "phone": "+91 9876543223",
+      "lastMessage": "Do you have weekend offs?",
+      "lastMessageTime": "12 hours ago",
+      "location": "Patna",
+      "pincode": "800001",
+      "experience": 1,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "15",
+      "name": "Manoj Singh",
+      "phone": "+91 9876543224",
+      "lastMessage": "I can handle heavy packages",
+      "lastMessageTime": "13 hours ago",
+      "location": "Bhopal",
+      "pincode": "462001",
+      "experience": 5,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "heavy-duty"
+      ],
+      "lists": [
+        "list1",
+        "list5"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "16",
+      "name": "Sunita Devi",
+      "phone": "+91 9876543225",
+      "lastMessage": "What documents do I need?",
+      "lastMessageTime": "14 hours ago",
+      "location": "Indore",
+      "pincode": "452001",
+      "experience": 0,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "17",
+      "name": "Kiran Kumar",
+      "phone": "+91 9876543226",
+      "lastMessage": "I know the city very well",
+      "lastMessageTime": "15 hours ago",
+      "location": "Visakhapatnam",
+      "pincode": "530001",
+      "experience": 7,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "local-knowledge"
+      ],
+      "lists": [
+        "list6"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "18",
+      "name": "Priyanka Jain",
+      "phone": "+91 9876543227",
+      "lastMessage": "Is there medical insurance?",
+      "lastMessageTime": "16 hours ago",
+      "location": "Surat",
+      "pincode": "395001",
+      "experience": 2,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "19",
+      "name": "Rajesh Verma",
+      "phone": "+91 9876543228",
+      "lastMessage": "I can work on festivals too",
+      "lastMessageTime": "17 hours ago",
+      "location": "Agra",
+      "pincode": "282001",
+      "experience": 4,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "festival-work"
+      ],
+      "lists": [
+        "list1"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "20",
+      "name": "Lakshmi Iyer",
+      "phone": "+91 9876543229",
+      "lastMessage": "What about fuel reimbursement?",
+      "lastMessageTime": "18 hours ago",
+      "location": "Madurai",
+      "pincode": "625001",
+      "experience": 3,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list4"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "21",
+      "name": "Abhishek Tiwari",
+      "phone": "+91 9876543230",
+      "lastMessage": "I have a clean driving record",
+      "lastMessageTime": "19 hours ago",
+      "location": "Varanasi",
+      "pincode": "221001",
+      "experience": 6,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "clean-record"
+      ],
+      "lists": [
+        "list1",
+        "list5"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "22",
+      "name": "Shweta Kapoor",
+      "phone": "+91 9876543231",
+      "lastMessage": "Can I choose my delivery area?",
+      "lastMessageTime": "20 hours ago",
+      "location": "Gurgaon",
+      "pincode": "122001",
+      "experience": 1,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "23",
+      "name": "Ravi Prakash",
+      "phone": "+91 9876543232",
+      "lastMessage": "I am very punctual",
+      "lastMessageTime": "21 hours ago",
+      "location": "Faridabad",
+      "pincode": "121001",
+      "experience": 3,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "punctual"
+      ],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "24",
+      "name": "Geeta Sharma",
+      "phone": "+91 9876543233",
+      "lastMessage": "Do you have uniform?",
+      "lastMessageTime": "22 hours ago",
+      "location": "Noida",
+      "pincode": "201001",
+      "experience": 2,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list2",
+        "d4af8fe7-58f9-4655-9f85-99b7da023eda"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "25",
+      "name": "Sanjay Dubey",
+      "phone": "+91 9876543234",
+      "lastMessage": "I can work in all weather conditions",
+      "lastMessageTime": "23 hours ago",
+      "location": "Meerut",
+      "pincode": "250001",
+      "experience": 5,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "all-weather"
+      ],
+      "lists": [
+        "list1"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "26",
+      "name": "Nisha Gupta",
+      "phone": "+91 9876543235",
+      "lastMessage": "What are the incentives?",
+      "lastMessageTime": "1 day ago",
+      "location": "Ghaziabad",
+      "pincode": "201001",
+      "experience": 1,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "27",
+      "name": "Ramesh Chandra",
+      "phone": "+91 9876543236",
+      "lastMessage": "I have GPS knowledge",
+      "lastMessageTime": "1 day ago",
+      "location": "Allahabad",
+      "pincode": "211001",
+      "experience": 4,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "gps-knowledge"
+      ],
+      "lists": [
+        "list5"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "28",
+      "name": "Anita Rao",
+      "phone": "+91 9876543237",
+      "lastMessage": "Can I get advance payment?",
+      "lastMessageTime": "1 day ago",
+      "location": "Mysore",
+      "pincode": "570001",
+      "experience": 2,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list3"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "29",
+      "name": "Vinod Kumar",
+      "phone": "+91 9876543238",
+      "lastMessage": "I speak multiple languages",
+      "lastMessageTime": "1 day ago",
+      "location": "Dehradun",
+      "pincode": "248001",
+      "experience": 6,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "multilingual"
+      ],
+      "lists": [
+        "list3"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "30",
+      "name": "Rekha Devi",
+      "phone": "+91 9876543239",
+      "lastMessage": "Is there any age limit?",
+      "lastMessageTime": "1 day ago",
+      "location": "Chandigarh",
+      "pincode": "160001",
+      "experience": 0,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list2"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "31",
+      "name": "Harish Raj",
+      "phone": "+91 9876543240",
+      "lastMessage": "I have experience with e-commerce",
+      "lastMessageTime": "2 days ago",
+      "location": "Kolkata",
+      "pincode": "700001",
+      "experience": 8,
+      "hasTwoWheeler": true,
+      "status": "active",
+      "tags": [
+        "e-commerce"
+      ],
+      "lists": [
+        "list5"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "32",
+      "name": "Sushma Reddy",
+      "phone": "+91 9876543241",
+      "lastMessage": "What about safety measures?",
+      "lastMessageTime": "2 days ago",
+      "location": "Vijayawada",
+      "pincode": "520001",
+      "experience": 3,
+      "hasTwoWheeler": false,
+      "status": "disabled",
+      "tags": [],
+      "lists": [
+        "list6"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "33",
+      "name": "Naresh Pal",
+      "phone": "+91 9876543242",
+      "lastMessage": "I can handle fragile items",
+      "lastMessageTime": "2 days ago",
+      "location": "Jalandhar",
+      "pincode": "144001",
+      "experience": 4,
+      "hasTwoWheeler": true,
+      "status": "disabled",
+      "tags": [
+        "fragile-handling"
+      ],
+      "lists": [
+        "list5"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "34",
+      "name": "Bharti Singh",
+      "phone": "+91 9876543243",
+      "lastMessage": "Do you have growth opportunities?",
+      "lastMessageTime": "2 days ago",
+      "location": "Ludhiana",
+      "pincode": "141001",
+      "experience": 2,
+      "hasTwoWheeler": false,
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "list3"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "35",
+      "name": "Govind Prasad",
+      "phone": "+91 9876543244",
+      "lastMessage": "I am available 24/7",
+      "lastMessageTime": "3 days ago",
+      "location": "Ranchi",
+      "pincode": "834001",
+      "experience": 5,
+      "hasTwoWheeler": true,
+      "status": "disabled",
+      "tags": [
+        "24x7"
+      ],
+      "lists": [
+        "list6"
+      ],
+      "hasCompletedConversation": true
+    },
+    {
+      "id": "46b2a271-f5b1-4942-9170-0b7464e447c0",
+      "name": "Sunil Verma",
+      "phone": "+91 8887776665",
+      "lastMessage": "",
+      "lastMessageTime": "7/31/2025",
+      "location": "Jaipur",
+      "pincode": "302001",
+      "experience": "5",
+      "hasTwoWheeler": "true",
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "d4af8fe7-58f9-4655-9f85-99b7da023eda",
+        "27feaa68-1752-44a8-9e04-cd8b78813801",
+        "483919d4-3af8-4bde-8970-14fda536b4f6",
+        "f4461b50-da64-47c3-b431-e36603645fdd",
+        "07b84861-d2dc-42aa-b537-60449c977b5f"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "aa207d6e-7703-4a87-9e21-fd530e0450e7",
+      "name": "Aisha Khan",
+      "phone": "+91 8887776664",
+      "lastMessage": "",
+      "lastMessageTime": "7/31/2025",
+      "location": "Noida",
+      "pincode": "201301",
+      "experience": "1",
+      "hasTwoWheeler": "yes",
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "d4af8fe7-58f9-4655-9f85-99b7da023eda",
+        "27feaa68-1752-44a8-9e04-cd8b78813801",
+        "483919d4-3af8-4bde-8970-14fda536b4f6",
+        "f4461b50-da64-47c3-b431-e36603645fdd",
+        "07b84861-d2dc-42aa-b537-60449c977b5f"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "852b6a0a-0fcb-49be-8dea-7a5ac3151203",
+      "name": "Rohan Kumar",
+      "phone": "+91 8887776663",
+      "lastMessage": "",
+      "lastMessageTime": "7/31/2025",
+      "location": "Aligarh",
+      "pincode": "202001",
+      "experience": "2",
+      "hasTwoWheeler": "false",
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "27feaa68-1752-44a8-9e04-cd8b78813801",
+        "483919d4-3af8-4bde-8970-14fda536b4f6",
+        "f4461b50-da64-47c3-b431-e36603645fdd",
+        "07b84861-d2dc-42aa-b537-60449c977b5f"
+      ],
+      "hasCompletedConversation": false
+    },
+    {
+      "id": "a0210fd9-066b-472b-858b-305adda43987",
+      "name": "Kavya Menon",
+      "phone": "+91 8887776662",
+      "lastMessage": "",
+      "lastMessageTime": "7/31/2025",
+      "location": "Kochi",
+      "pincode": "682001",
+      "experience": "8",
+      "hasTwoWheeler": "1",
+      "status": "active",
+      "tags": [],
+      "lists": [
+        "d4af8fe7-58f9-4655-9f85-99b7da023eda",
+        "27feaa68-1752-44a8-9e04-cd8b78813801",
+        "483919d4-3af8-4bde-8970-14fda536b4f6",
+        "f4461b50-da64-47c3-b431-e36603645fdd",
+        "07b84861-d2dc-42aa-b537-60449c977b5f"
+      ],
+      "hasCompletedConversation": false
+    }
+  ],
+  "messageQueue": [
+    {
+      "queueId": "52751cd0-6a35-477a-b28c-e623408f932b",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.920Z"
+    },
+    {
+      "queueId": "537dc4f2-75d9-4588-928c-33674bd44903",
+      "candidateId": "4",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.920Z"
+    },
+    {
+      "queueId": "76daaa56-6808-4bd0-b876-340da1a078a7",
+      "candidateId": "4",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.920Z"
+    },
+    {
+      "queueId": "ab980509-70ec-4ab0-829c-30fe2afd485b",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.920Z"
+    },
+    {
+      "queueId": "6023582d-ba15-4493-b79c-aad636827d0b",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "b6a217a1-0842-4178-b2d8-d01cd7d76dc7",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "7ee830e7-b1a5-4735-b38d-c5fc1d2d8c44",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "32c18841-40e3-4dc9-a79b-fb7f8c7ceb54",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "289f3e90-850b-4775-987f-a631c8ae13ac",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "79351a25-7e92-4665-8058-b407e50a9a98",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "8e591d19-a911-45e0-8b0b-8fd6648ea1bb",
+      "candidateId": "3",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "c7817be7-4d26-47e6-ac09-ad192acce5dd",
+      "candidateId": "4",
+      "action": "nudge",
+      "status": "processed",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "8b7b0a99-fbe3-42ff-85f9-eb8e3c262b9f",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T09:20:42.879Z",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "659bb6b8-09d0-48eb-9190-44b7e3b43c54",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T09:20:42.879Z",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "2563fcfd-55ad-4639-8d6c-81bfb1b34282",
+      "candidateId": "3",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T09:20:42.879Z",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "337b9b72-6508-4e17-83f7-ed4e2c5bc1e5",
+      "candidateId": "4",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T09:20:42.879Z",
+      "processedAt": "2025-07-31T09:21:24.921Z"
+    },
+    {
+      "queueId": "825b5032-76ea-42f1-9f43-04b0363d31b7",
+      "candidateId": "46b2a271-f5b1-4942-9170-0b7464e447c0",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T09:40:32.825Z",
+      "processedAt": "2025-07-31T09:41:27.032Z"
+    },
+    {
+      "queueId": "d1d45bca-119f-4546-8c7a-b78009522ccc",
+      "candidateId": "46b2a271-f5b1-4942-9170-0b7464e447c0",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T09:45:48.427Z",
+      "processedAt": "2025-07-31T09:45:52.484Z"
+    },
+    {
+      "queueId": "a168d774-d87a-4093-a690-bb3597d1540c",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T10:04:07.441Z",
+      "processedAt": "2025-07-31T10:04:21.734Z"
+    },
+    {
+      "queueId": "2e3eac92-667a-4170-9fad-2a577269549c",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T10:06:19.450Z",
+      "processedAt": "2025-07-31T10:06:55.637Z"
+    },
+    {
+      "queueId": "c013fea7-43f0-4bb9-9190-3dfd2be53945",
+      "candidateId": "3",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T10:06:19.450Z",
+      "processedAt": "2025-07-31T10:06:55.637Z"
+    },
+    {
+      "queueId": "aec9a427-12d4-42b3-b7f3-b599c9b14614",
+      "candidateId": "8",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T10:06:57.921Z",
+      "processedAt": "2025-07-31T10:07:10.577Z"
+    },
+    {
+      "queueId": "064fe821-6ef3-4e7c-a336-64f830eb9d68",
+      "candidateId": "7",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T10:06:57.921Z",
+      "processedAt": "2025-07-31T10:07:10.577Z"
+    },
+    {
+      "queueId": "0ca241bb-1d8c-4b6a-ad52-0db595c68584",
+      "candidateId": "19",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T10:55:02.593Z",
+      "processedAt": "2025-07-31T10:55:10.820Z"
+    },
+    {
+      "queueId": "f3c1f585-3554-49fe-8068-25f7ee6dada7",
+      "candidateId": "21",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T10:55:02.593Z",
+      "processedAt": "2025-07-31T10:55:10.820Z"
+    },
+    {
+      "queueId": "f91af6f8-b518-4cb8-8972-7bad6a6bbff4",
+      "candidateId": "24",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T12:25:52.085Z",
+      "processedAt": "2025-07-31T12:26:06.672Z"
+    },
+    {
+      "queueId": "4314a3b1-df84-40b9-b603-5375227b550c",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T12:50:47.297Z",
+      "processedAt": "2025-07-31T12:50:51.770Z"
+    },
+    {
+      "queueId": "26ec2865-fc6c-4a36-ad11-5e4180a8d175",
+      "candidateId": "15",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T12:51:09.939Z",
+      "processedAt": "2025-07-31T12:51:21.774Z"
+    },
+    {
+      "queueId": "b65c9e06-1d83-460f-aca1-f37c4ace43f1",
+      "candidateId": "19",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T12:51:09.940Z",
+      "processedAt": "2025-07-31T12:51:21.776Z"
+    },
+    {
+      "queueId": "bc5078e2-bd6b-4980-aa5f-e6978f249b41",
+      "candidateId": "21",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T12:51:09.940Z",
+      "processedAt": "2025-07-31T12:51:21.776Z"
+    },
+    {
+      "queueId": "7ae1786e-cb7f-4483-a520-81c2117d5d49",
+      "candidateId": "25",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T12:51:09.940Z",
+      "processedAt": "2025-07-31T12:51:21.776Z"
+    },
+    {
+      "queueId": "f5f26d9c-53ca-4fba-b89c-55b94a77b58c",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T13:56:46.616Z",
+      "processedAt": "2025-07-31T13:57:00.110Z"
+    },
+    {
+      "queueId": "9d203ee0-5722-469d-94e7-3817c66cb25e",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T13:57:30.224Z",
+      "processedAt": "2025-07-31T13:57:45.125Z"
+    },
+    {
+      "queueId": "5e7c51a1-b628-40d5-80f8-f0dc9d8fcb99",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:00:47.149Z",
+      "processedAt": "2025-07-31T14:01:00.123Z"
+    },
+    {
+      "queueId": "736d05ac-e453-4a81-a9df-fc3b0b2c42f1",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:01:43.925Z",
+      "processedAt": "2025-07-31T14:01:45.120Z"
+    },
+    {
+      "queueId": "d906060f-20a8-46c1-ac64-1e14ac1cc285",
+      "candidateId": "46b2a271-f5b1-4942-9170-0b7464e447c0",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:01:43.925Z",
+      "processedAt": "2025-07-31T14:01:45.120Z"
+    },
+    {
+      "queueId": "2b706edb-9c4a-450d-8214-5748982e9b29",
+      "candidateId": "aa207d6e-7703-4a87-9e21-fd530e0450e7",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:01:43.925Z",
+      "processedAt": "2025-07-31T14:01:45.120Z"
+    },
+    {
+      "queueId": "d3160cd0-0403-4284-8d7a-1397fadb10ae",
+      "candidateId": "852b6a0a-0fcb-49be-8dea-7a5ac3151203",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:01:43.925Z",
+      "processedAt": "2025-07-31T14:01:45.120Z"
+    },
+    {
+      "queueId": "4dee309b-c786-476d-82a7-ef726e4223eb",
+      "candidateId": "a0210fd9-066b-472b-858b-305adda43987",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:01:43.925Z",
+      "processedAt": "2025-07-31T14:01:45.120Z"
+    },
+    {
+      "queueId": "354f4e13-8a36-4c87-a67e-6d6d1c884bb0",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:05:51.317Z",
+      "processedAt": "2025-07-31T14:06:00.140Z"
+    },
+    {
+      "queueId": "0513eb28-1bb9-4823-bcf7-cc5b116a9c4e",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:06:06.286Z",
+      "processedAt": "2025-07-31T14:06:15.136Z"
+    },
+    {
+      "queueId": "97d57450-9d34-46ed-83db-e87028f9b124",
+      "candidateId": "46b2a271-f5b1-4942-9170-0b7464e447c0",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:06:33.106Z",
+      "processedAt": "2025-07-31T14:06:45.139Z"
+    },
+    {
+      "queueId": "8b302045-8f4b-4b62-8073-96a5eabf28c3",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:06:40.799Z",
+      "processedAt": "2025-07-31T14:06:45.139Z"
+    },
+    {
+      "queueId": "adffbce4-d3ef-4680-a0b1-6a1a874b71c4",
+      "candidateId": "46b2a271-f5b1-4942-9170-0b7464e447c0",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:06:40.799Z",
+      "processedAt": "2025-07-31T14:06:45.139Z"
+    },
+    {
+      "queueId": "bed07832-fcfc-4184-9ba9-8a0b5ca1815d",
+      "candidateId": "aa207d6e-7703-4a87-9e21-fd530e0450e7",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:06:40.799Z",
+      "processedAt": "2025-07-31T14:06:45.139Z"
+    },
+    {
+      "queueId": "a3181804-278c-426c-998c-2275f0dd0de9",
+      "candidateId": "852b6a0a-0fcb-49be-8dea-7a5ac3151203",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:06:40.799Z",
+      "processedAt": "2025-07-31T14:06:45.140Z"
+    },
+    {
+      "queueId": "93986121-a5de-44b7-afd6-4a9e22d918a7",
+      "candidateId": "a0210fd9-066b-472b-858b-305adda43987",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:06:40.799Z",
+      "processedAt": "2025-07-31T14:06:45.140Z"
+    },
+    {
+      "queueId": "603202e7-c69a-45bb-8b2a-c8ceaddcd3fe",
+      "candidateId": "1",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:07:25.927Z",
+      "processedAt": "2025-07-31T14:07:30.148Z"
+    },
+    {
+      "queueId": "8bdea843-1584-4007-a9f9-7a183841534e",
+      "candidateId": "2",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:07:25.927Z",
+      "processedAt": "2025-07-31T14:07:30.148Z"
+    },
+    {
+      "queueId": "56813b85-b535-450d-bddf-e84cc8f9b859",
+      "candidateId": "3",
+      "action": "nudge",
+      "status": "processed",
+      "addedAt": "2025-07-31T14:07:25.927Z",
+      "processedAt": "2025-07-31T14:07:30.148Z"
+    }
+  ]
+}
