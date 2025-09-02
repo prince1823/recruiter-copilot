@@ -3,7 +3,7 @@
 
 export const API_CONFIG = {
   // Base URL for the backend API
-  BASE_URL: '/api' || 'http://91.99.195.150:8000/api/v1',
+  BASE_URL: '/api' || 'https://91.99.195.150:8000/api/v1',
   
   // User ID for API requests
   USER_ID: import.meta.env.VITE_USER_ID || '918923325988',
