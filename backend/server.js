@@ -4,7 +4,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const port = 5001;
+const port = process.env.PORT || 5001;
 
 app.use(express.json({ limit: '10mb' }));
 app.use(cors());
@@ -128,9 +128,19 @@ app.post('/api/queue/cancel-by-list', (req, res) => {
 });
 
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Backend server running on http://localhost:${port}`);
+    console.log('Health check endpoint available at /health');
     
     // ** START THE AUTOMATIC PROCESSOR **
     setInterval(processMessageQueue, 15000); // 15000 milliseconds = 15 seconds
