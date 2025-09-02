@@ -53,20 +53,12 @@ export const getEnvConfig = () => {
 // Helper function to get API URL
 // Helper function to get API URL
 export const getApiUrl = (endpoint: string) => {
-  let baseUrl: string;
-
-  if (import.meta.env.DEV) {
-    // 🟢 Local development: call backend directly
-    baseUrl = 'http://91.99.195.150:8000/api/v1';
-  } else {
-    // 🔵 Production (Vercel): go through rewrite proxy
-    baseUrl = '/api';
-  }
-
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://91.99.195.150:8000/api/v1';
   const url = `${baseUrl}${endpoint}`;
   console.log('[DEBUG] The FINAL URL being fetched is:', url);
   return url;
 };
+
 
 // Helper function to get headers with user ID
 export const getHeaders = () => ({
