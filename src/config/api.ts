@@ -2,8 +2,8 @@
 // This file manages API settings and environment variables
 
 export const API_CONFIG = {
-  // Base URL for the backend API
-  BASE_URL: '/api' || 'https://91.99.195.150:8000/api/v1',
+  // Base URL for the backend API (from env, fallback to backend URL)
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
   
   // User ID for API requests
   USER_ID: import.meta.env.VITE_USER_ID || '918923325988',
@@ -30,11 +30,11 @@ export const ENV_CONFIG = {
     LOG_LEVEL: 'debug',
   },
   production: {
-    API_BASE_URL: 'https://91.99.195.150:8000/api/v1',
+    API_BASE_URL: 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
     LOG_LEVEL: 'error',
   },
   test: {
-    API_BASE_URL: 'https://91.99.195.150:8000/api/v1',
+    API_BASE_URL: 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
     LOG_LEVEL: 'debug',
   },
 };
@@ -51,12 +51,9 @@ export const getEnvConfig = () => {
 };
 
 // Helper function to get API URL
-// Helper function to get API URL
 export const getApiUrl = (endpoint: string) => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  return `${baseUrl}${endpoint}`;
+  return `${API_CONFIG.BASE_URL}${endpoint}`;
 };
-
 
 // Helper function to get headers with user ID
 export const getHeaders = () => ({
