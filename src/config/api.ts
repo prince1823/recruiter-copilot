@@ -30,11 +30,11 @@ export const ENV_CONFIG = {
     LOG_LEVEL: 'debug',
   },
   production: {
-    API_BASE_URL: 'http://91.99.195.150:8000/api/v1',
+    API_BASE_URL: 'https://91.99.195.150:8000/api/v1',
     LOG_LEVEL: 'error',
   },
   test: {
-    API_BASE_URL: 'http://91.99.195.150:8000/api/v1',
+    API_BASE_URL: 'https://91.99.195.150:8000/api/v1',
     LOG_LEVEL: 'debug',
   },
 };
