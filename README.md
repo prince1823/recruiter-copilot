@@ -120,8 +120,12 @@ npm install
 3. Configure environment variables:
 Create a `.env` file in the root directory:
 ```env
-REACT_APP_API_BASE_URL=http://91.99.195.150:8000/api/v1
-REACT_APP_USER_ID=918496952149
+VITE_SUPABASE_URL=https://ukjaiwfumuzqsrqnaueh.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVramFpd2Z1bXV6cXNycW5hdWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3ODk1ODAsImV4cCI6MjA3MjM2NTU4MH0.1WbpkqUrlgS89TbwPwFk4lHjtpCyeGzGbA1xuZyqEvI
+VITE_API_BASE_URL=http://91.99.195.150:8000/api/v1
+VITE_USER_ID=918923325988
+
+
 ```
 
 ### Development
