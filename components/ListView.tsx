@@ -5,7 +5,7 @@ import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
 import { ActionButtons } from './ActionButtons';
 import { BulkActionButtons } from './BulkActionButtons';
-import { X } from 'lucide-react';
+import { X, Download, MessageCircle, ListPlus } from 'lucide-react';
 import { Applicant, JobList } from '../types';
 import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists } from '../src/services/api';
 
@@ -25,7 +25,6 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
         if (!applicant) return;
 
         switch(action) {
-            // ** UPDATED: Logic for toggling status **
             case 'toggleStatus':
                 const newStatus = applicant.status === 'active' ? 'disabled' : 'active';
                 await bulkUpdateCandidateStatus([applicantId], newStatus);
@@ -38,8 +37,15 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
                 break;
             case 'removeFromList':
                 if (window.confirm("Are you sure you want to remove this candidate from ALL lists?")) {
-                    await removeApplicantFromAllLists(applicantId);
+                    const result = await removeApplicantFromAllLists(applicantId);
+                    if (!result.success) {
+                        console.warn('⚠️ Remove from all lists had issues:', result.message);
+                        // Don't fail the entire operation, just log the warning
+                    }
                 } else { return; }
+                break;
+            case 'waWeb':
+                window.open(`https://web.whatsapp.com/send?phone=${applicant.phone.replace(/\D/g, '')}`, '_blank');
                 break;
         }
         onDataUpdate();
@@ -127,6 +133,32 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
               <div className="w-1 h-6 bg-whatsapp-green rounded-full"></div>
               <h2 className="text-gray-900 font-medium">Applicants ({filteredApplicants.length}{selectedListFilters.size > 0 ? ` of ${applicants.length}` : ''})</h2>
             </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                const csvContent = [
+                  "Name,Phone,Location,Experience,Two Wheeler,Status,Conversation,Lists",
+                  ...filteredApplicants.map(applicant => {
+                    const lists = getListNames(applicant.lists).join(',');
+                    return `${applicant.name},${applicant.phone},${applicant.location},${applicant.experience},${applicant.hasTwoWheeler ? 'Yes' : 'No'},${applicant.status},${applicant.hasCompletedConversation ? 'Complete' : 'Ongoing'},${lists}`;
+                  })
+                ].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `applicants_${new Date().toISOString().slice(0, 10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }} 
+              className="h-8 px-3 text-xs bg-whatsapp-green hover:bg-whatsapp-green-dark text-white border-whatsapp-green"
+            >
+              <Download className="h-3 w-3 mr-1" />
+              Download CSV
+            </Button>
           </div>
           <div className="space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
@@ -197,16 +229,18 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
                     <div><p className="text-sm truncate">{applicant.lastMessage}</p><p className="text-xs text-gray-500">{applicant.lastMessageTime}</p></div>
                   </TableCell>
                   <TableCell className="text-right">
-                    {/* ** UPDATED: Passing status prop and using onToggleStatus ** */}
-                    <ActionButtons
-                      status={applicant.status}
-                      onToggleStatus={() => handleAction('toggleStatus', applicant.id)}
-                      onNudge={() => handleAction('nudge', applicant.id)}
-                      onRemoveFromList={() => handleAction('removeFromList', applicant.id)}
-                      onTag={(listId) => handleAction('tag', applicant.id, listId)}
-                      availableLists={availableLists}
-                      showLabels={false}
-                    />
+                    <div className="flex gap-1 justify-end">
+                      {/* WhatsApp Web Button */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleAction('waWeb', applicant.id)}
+                        className="h-8 px-2 text-xs bg-green-500 hover:bg-green-600 text-white border-green-500"
+                        title="Open WhatsApp Web"
+                      >
+                        <MessageCircle className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

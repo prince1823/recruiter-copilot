@@ -1,4 +1,4 @@
-import { Applicant, JobList } from '../types';
+import { LegacyApplicant as Applicant, LegacyJobList as JobList } from '../src/types';
 
 export const mockJobLists: JobList[] = [
   {

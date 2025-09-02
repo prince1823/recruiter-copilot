@@ -6,7 +6,7 @@ import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ActionButtons } from './ActionButtons';
 import { ArrowLeft, Send, Phone, MapPin, Clock, User, Briefcase, Settings } from 'lucide-react';
-import { Applicant, JobList } from '../types';
+import { LegacyApplicant as Applicant, LegacyJobList as JobList } from '../src/types';
 
 interface ChatDetailProps {
   applicant: Applicant;

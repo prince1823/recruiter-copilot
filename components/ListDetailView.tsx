@@ -6,7 +6,7 @@ import { Checkbox } from './ui/checkbox';
 import { ActionButtons } from './ActionButtons';
 import { BulkActionButtons } from './BulkActionButtons';
 import { ArrowLeft } from 'lucide-react';
-import { Applicant, JobList } from '../types';
+import { LegacyApplicant as Applicant, LegacyJobList as JobList } from '../src/types';
 import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction } from '../src/services/api';
 
 interface ListDetailViewProps {

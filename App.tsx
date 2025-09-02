@@ -6,7 +6,7 @@ import { ManageListsView } from './components/ManageListsView';
 import { ListDetailView } from './components/ListDetailView'; // Import the new component
 import { MessageSquare, Table, Settings, Loader2 } from 'lucide-react';
 import { fetchData } from './src/services/api';
-import { Applicant, JobList } from './types';
+import { LegacyApplicant as Applicant, LegacyJobList as JobList } from './src/types';
 
 type ViewType = 'chats' | 'table' | 'manage-lists';
 
@@ -23,15 +23,18 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   const refreshData = useCallback(async () => {
+    console.log(`🔄 App.tsx: refreshData called - refreshing data from API...`);
     try {
       setIsLoading(true);
       setError(null);
       const { applicants, jobLists } = await fetchData();
+      console.log(`📊 App.tsx: Received ${applicants.length} applicants and ${jobLists.length} job lists`);
       setApplicants(applicants);
       setJobLists(jobLists);
+      console.log(`✅ App.tsx: Data updated successfully`);
     } catch (err) {
+      console.error(`❌ App.tsx: Error refreshing data:`, err);
       setError('Failed to load data. Please ensure the backend server is running.');
-      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -110,6 +113,16 @@ export default function App() {
         return null;
     }
   };
+
+  // Expose data for debugging
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).applicants = applicants;
+      (window as any).jobLists = jobLists;
+      (window as any).activeView = activeView;
+      (window as any).refreshData = refreshData;
+    }
+  }, [applicants, jobLists, activeView, refreshData]);
 
   return (
     <div className="h-screen flex flex-col bg-whatsapp-gray-light">

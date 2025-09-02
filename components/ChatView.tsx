@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ActionButtons } from './ActionButtons';
 import { BulkActionButtons } from './BulkActionButtons';
 import { Send, Phone, MapPin, Clock, User, Briefcase, Settings } from 'lucide-react';
-import { Applicant, JobList } from '../types';
+import { LegacyApplicant as Applicant, LegacyJobList as JobList } from '../src/types';
 import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists } from '../src/services/api';
 
 interface ChatViewProps {
@@ -48,7 +48,11 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                 break;
             case 'removeFromList':
                 if (window.confirm("Are you sure you want to remove this candidate from ALL lists?")) {
-                    await removeApplicantFromAllLists(applicantId);
+                    const result = await removeApplicantFromAllLists(applicantId);
+                    if (!result.success) {
+                        console.warn('⚠️ Remove from all lists had issues:', result.message);
+                        // Don't fail the entire operation, just log the warning
+                    }
                 } else { return; }
                 break;
         }
