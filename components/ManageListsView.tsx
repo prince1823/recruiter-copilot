@@ -326,7 +326,7 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                ))}
             </div>
           </div>
 

@@ -1,15 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase, Recruiter, ALLOWED_RECRUITERS } from '../config/supabase';
-
-// Demo mode types
-interface User {
-  id: string;
-  email?: string;
-}
-
-interface Session {
-  user: User;
-}
+import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
@@ -41,8 +32,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Demo mode - no initial session needed
-    setLoading(false);
+    // Get initial session
+    const getInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          await fetchRecruiterData(session.user);
+        }
+      } catch (error) {
+        console.error('Error getting initial session:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getInitialSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          await fetchRecruiterData(session.user);
+        } else {
+          setRecruiter(null);
+        }
+        
+        setLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const fetchRecruiterData = async (user: User) => {
@@ -65,10 +90,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
       } else {
         console.error('User not in allowed recruiters list');
-        // Demo mode - just clear the state
-        setUser(null);
-        setRecruiter(null);
-        setSession(null);
+        await supabase.auth.signOut();
       }
     } catch (error) {
       console.error('Error fetching recruiter data:', error);
@@ -108,13 +130,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         };
       }
 
-      // Demo mode - simulate successful sign in
-      const demoUser = { id: 'demo-user', email: email };
-      await fetchRecruiterData(demoUser);
-      return {
-        success: true,
-        message: 'Signed in successfully!'
-      };
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        return {
+          success: false,
+          message: error.message
+        };
+      }
+
+      if (data.user) {
+        await fetchRecruiterData(data.user);
+        return {
+          success: true,
+          message: 'Signed in successfully!'
+        };
+      }
 
       return {
         success: false,
@@ -131,7 +165,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     try {
-      // Demo mode - just clear the state
+      await supabase.auth.signOut();
       setUser(null);
       setRecruiter(null);
       setSession(null);
