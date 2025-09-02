@@ -53,10 +53,8 @@ export const getEnvConfig = () => {
 // Helper function to get API URL
 // Helper function to get API URL
 export const getApiUrl = (endpoint: string) => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://91.99.195.150:8000/api/v1';
-  const url = `${baseUrl}${endpoint}`;
-  console.log('[DEBUG] The FINAL URL being fetched is:', url);
-  return url;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  return `${baseUrl}${endpoint}`;
 };
 
 
