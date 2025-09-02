@@ -57,7 +57,7 @@ export const getApiUrl = (endpoint: string) => {
 
   if (import.meta.env.DEV) {
     // 🟢 Local development: call backend directly
-    baseUrl = 'http://91.99.195.150:8000/api/v1';
+    baseUrl = 'https://91.99.195.150:8000/api/v1';
   } else {
     // 🔵 Production (Vercel): go through rewrite proxy
     baseUrl = '/api';
