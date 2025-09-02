@@ -3,7 +3,7 @@
 
 export const API_CONFIG = {
   // Base URL for the backend API
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://91.99.195.150:8000/api/v1',
+  BASE_URL: '/api' || 'http://91.99.195.150:8000/api/v1',
   
   // User ID for API requests
   USER_ID: import.meta.env.VITE_USER_ID || '918923325988',
@@ -51,9 +51,19 @@ export const getEnvConfig = () => {
 };
 
 // Helper function to get API URL
+// Helper function to get API URL
 export const getApiUrl = (endpoint: string) => {
-  const config = getEnvConfig();
-  const url = `${config.API_BASE_URL}${endpoint}`;
+  let baseUrl: string;
+
+  if (import.meta.env.DEV) {
+    // 🟢 Local development: call backend directly
+    baseUrl = 'http://91.99.195.150:8000/api/v1';
+  } else {
+    // 🔵 Production (Vercel): go through rewrite proxy
+    baseUrl = '/api';
+  }
+
+  const url = `${baseUrl}${endpoint}`;
   console.log('[DEBUG] The FINAL URL being fetched is:', url);
   return url;
 };
