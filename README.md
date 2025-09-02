@@ -1,7 +1,9 @@
-# Recruiter Copilot Dashboard
+<<<<<<< HEAD
+# Project Name
 
-A modern React-based dashboard for managing recruiter lists and candidate interactions, integrated with a real backend API.
+A full-stack web application designed to streamline the recruitment process. This dashboard provides recruiters with a powerful interface to manage candidate lists, perform bulk actions, and automate communication workflows, all through a clean and intuitive user interface inspired by modern chat applications.
 
+---
 ## 🔗 Live Demo
 
 👉 [recruiter-copilot-tekp.vercel.app](https://recruiter-copilot-tekp.vercel.app/)
@@ -11,25 +13,22 @@ A modern React-based dashboard for managing recruiter lists and candidate intera
 This application is packed with features designed to enhance recruiter productivity:
 
 ### 📋 Comprehensive List Management
-- **Full CRUD**: Create, Read, Update, and Delete candidate lists
-- **Clickable Detail View**: View all candidates in a list via a detailed table
-- **Bulk CSV Upload**: Upload a CSV to create and populate a list. Candidates are deduplicated based on phone numbers
+- **Full CRUD**: Create, Read, Update, and Delete candidate lists.
+- **Clickable Detail View**: View all candidates in a list via a detailed table.
+- **Bulk CSV Upload**: Upload a CSV to create and populate a list. Candidates are deduplicated based on phone numbers.
 
 ### 👤 Advanced Candidate Actions
-- **Multi-Select & Bulk Actions**: Select multiple candidates to perform actions like disable, nudge, or modify lists
-- **Enable/Disable Toggle**: One-click toggle for switching a candidate's active status
-- **Tagging & Removal**: Easily add or remove candidates from one or more lists
+- **Multi-Select & Bulk Actions**: Select multiple candidates to perform actions like disable, nudge, or modify lists.
+- **Enable/Disable Toggle**: One-click toggle for switching a candidate’s active status.
+- **Tagging & Removal**: Easily add or remove candidates from one or more lists.
 
 ### 🔄 Automated Communication Workflow
-- **Message Queue**: Backend queue handles all scheduled and bulk messages
-- **Auto Processing**: Server polls every 15 seconds to send pending messages like nudges
-- **Personalized Templates**: Uses pre-set templates to send individualized messages
-- **Cancel Pending Sends**: Instantly cancel all unsent messages for any candidate list
+- **Message Queue**: Backend queue handles all scheduled and bulk messages.
+- **Auto Processing**: Server polls every 15 seconds to send pending messages like nudges.
+- **Personalized Templates**: Uses pre-set templates to send individualized messages.
+- **Cancel Pending Sends**: Instantly cancel all unsent messages for any candidate list.
 
-### 🎯 Real-time Integration
-- **Live Backend API**: Connected to production backend API
-- **Real-time Data**: Live candidate and list data
-- **Bulk Operations**: Working bulk actions for nudge, disable, and list management
+---
 
 ## 🚀 Tech Stack
 
@@ -39,12 +38,66 @@ This application is packed with features designed to enhance recruiter productiv
 - **Styling:** Tailwind CSS
 - **UI Components:** [shadcn/ui](https://ui.shadcn.com)
 
-### Backend Integration
-- **API Base URL:** http://91.99.195.150:8000/api/v1
-- **Authentication:** X-User-ID header based
-- **Real-time Data:** Live candidate and list management
+### Backend
+- **Framework:** Node.js with Express.js
+- **Database:** File-based `db.json` (for prototyping)
+- **Deployment:** Render
+
+---
 
 ## 📦 Getting Started
+
+### 1. Setup
+
+```bash
+# Navigate into the backend directory
+cd backend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm start
+
+# From the project root, open a new terminal
+
+# Install frontend dependencies
+npm install
+
+# Start the Vite development server
+npx vite
+
+=======
+# Recruiter Copilot Dashboard
+
+A modern React-based dashboard for managing recruiter lists and candidate interactions, integrated with a real backend API.
+
+## Features
+
+- **List Management**: Create, view, and manage recruiter lists
+- **Candidate Management**: View and manage candidate information
+- **Bulk Actions**: Perform bulk operations on candidates (add/remove from lists, send messages, etc.)
+- **Conversation View**: View conversation history with candidates
+- **Real-time Integration**: Connected to live backend API
+
+## Backend Integration
+
+This frontend is now integrated with the real backend API provided by the backend team. The integration includes:
+
+### API Endpoints
+
+- **Recruiter Lists**: Create, retrieve, and manage lists
+- **List Actions**: Add/remove candidates, send messages, nudge candidates
+- **Applicants**: Retrieve candidate information
+- **Conversations**: View conversation history
+- **Documents**: Access candidate documents
+- **Health Check**: API health monitoring
+
+### Data Transformation
+
+The frontend includes a data transformation layer that converts between the backend API format and the legacy frontend format, ensuring backward compatibility.
+
+## Setup Instructions
 
 ### Prerequisites
 
@@ -55,8 +108,8 @@ This application is packed with features designed to enhance recruiter productiv
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/prince1823/recruiter-copilot.git
-cd recruiter-copilot
+git clone <repository-url>
+cd recruiter-copilot-dashboard
 ```
 
 2. Install dependencies:
@@ -67,10 +120,8 @@ npm install
 3. Configure environment variables:
 Create a `.env` file in the root directory:
 ```env
-VITE_API_BASE_URL=http://91.99.195.150:8000/api/v1
-VITE_USER_ID=918923325988
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+REACT_APP_API_BASE_URL=http://91.99.195.150:8000/api/v1
+REACT_APP_USER_ID=918496952149
 ```
 
 ### Development
@@ -89,53 +140,37 @@ Build the application for production:
 npm run build
 ```
 
-## 🔧 Backend Integration
+## API Configuration
 
-This frontend is now integrated with the real backend API provided by the backend team. The integration includes:
+The application uses a configuration system that supports different environments:
 
-### API Endpoints
+### Environment Variables
 
-- **Recruiter Lists**: Create, retrieve, and manage lists
-- **List Actions**: Add/remove candidates, send messages, nudge candidates
-- **Applicants**: Retrieve candidate information
-- **Conversations**: View conversation history
-- **Documents**: Access candidate documents
-- **Health Check**: API health monitoring
+- `REACT_APP_API_BASE_URL`: Base URL for the backend API
+- `REACT_APP_USER_ID`: User ID for API authentication
 
-### Data Transformation
+### Environment-Specific Configurations
 
-The frontend includes a data transformation layer that converts between the backend API format and the legacy frontend format, ensuring backward compatibility.
+- **Development**: Uses localhost for API calls
+- **Production**: Uses the production API endpoint
+- **Test**: Uses localhost for testing
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
 ├── components/          # React components
 ├── config/             # Configuration files
-│   ├── api.ts         # API configuration
-│   └── supabase.ts    # Supabase configuration
+│   └── api.ts         # API configuration
 ├── services/           # API services
 │   ├── api.ts         # Main API service
-│   ├── dataTransformers.ts  # Data transformation utilities
-│   └── deletedItemsManager.ts  # Local storage management
+│   └── dataTransformers.ts  # Data transformation utilities
 ├── types/              # TypeScript type definitions
 │   └── index.ts       # API and component types
-├── contexts/           # React contexts
-│   └── AuthContext.tsx # Authentication context
-└── hooks/              # Custom React hooks
-    └── useRecruiterId.ts # Recruiter ID hook
+└── ...
 ```
 
-## 🚀 Deployment
-
-The application is configured for deployment on Vercel:
-
-1. **Vercel Configuration**: `vercel.json` file included
-2. **Environment Variables**: Set in Vercel dashboard
-3. **Build Command**: `npm run build`
-4. **Output Directory**: `dist`
-
-## 🔍 API Integration Details
+## API Integration Details
 
 ### New API Structure
 
@@ -169,16 +204,35 @@ The application includes data transformers to convert between API formats:
 - `transformJobListToLegacy()`: Converts backend job list format to legacy frontend format
 - `extractDataFromResponse()`: Extracts data from API responses
 
-## 🔐 Authentication
+### Legacy Compatibility
 
-The application includes a complete authentication system:
+The application maintains backward compatibility with the existing frontend components by:
 
-- **Supabase Integration**: User authentication and management
-- **Protected Routes**: Secure access to application features
-- **User Context**: Global authentication state management
-- **Demo Mode**: Available for testing without full Supabase setup
+1. Using data transformers to convert API responses
+2. Maintaining legacy API function signatures
+3. Providing fallback implementations for missing functionality
 
-## 🛠️ Development Notes
+## Missing Functionality
+
+Some features from the original frontend are not yet implemented in the real backend:
+
+- **Update Lists**: The backend doesn't support updating list names
+- **Delete Lists**: The backend doesn't support deleting lists
+- **Remove from All Lists**: No direct endpoint for removing candidates from all lists
+- **Cancel Pending Messages**: No direct endpoint for canceling messages by list
+
+These features will need to be implemented on the backend or worked around in the frontend.
+
+## Error Handling
+
+The application includes comprehensive error handling:
+
+- Network errors are caught and displayed to users
+- API validation errors are handled gracefully
+- Fallback data is provided when API calls fail
+- Console logging for debugging
+
+## Development Notes
 
 ### Adding New API Endpoints
 
@@ -195,7 +249,7 @@ To add new environment variables:
 2. Update the `.env` file
 3. Update this README
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -207,7 +261,7 @@ To add new environment variables:
 
 Enable debug logging by setting the environment to development mode.
 
-## 📝 Contributing
+## Contributing
 
 1. Follow the existing code structure
 2. Add proper TypeScript types for new features
@@ -215,6 +269,7 @@ Enable debug logging by setting the environment to development mode.
 4. Test the integration thoroughly
 5. Update documentation
 
-## 📄 License
+## License
 
 [Add your license information here]
+>>>>>>> 3ed3a30 (Restore lost changes from Cursor local history)

@@ -46,10 +46,15 @@ export function ListDetailView({ listId, allApplicants, allJobLists, onDataUpdat
         case 'removeFromList':
           // In this view, "remove" specifically means from the current list.
           if (window.confirm(`Are you sure you want to remove this candidate from the "${currentList?.listName}" list?`)) {
+            console.log(`🗑️ Removing candidate ${applicantId} from list ${listId}`);
             await manageCandidatesInList(listId, [applicantId], 'remove');
+            console.log(`✅ Candidate ${applicantId} removed from list ${listId}`);
+            // Add a small delay to ensure backend has processed the change
+            await new Promise(resolve => setTimeout(resolve, 500));
           } else { return; }
           break;
       }
+      console.log(`🔄 Calling onDataUpdate after ${action} action`);
       onDataUpdate();
     } catch(err) {
       console.error(`Failed to perform action: ${action}`, err);
@@ -73,10 +78,17 @@ export function ListDetailView({ listId, allApplicants, allJobLists, onDataUpdat
           if (actionListId) await manageCandidatesInList(actionListId, selectedIds, 'add');
           break;
         case 'removeFromList':
-           if (actionListId) await manageCandidatesInList(actionListId, selectedIds, 'remove');
+           if (actionListId) {
+             console.log(`🗑️ Bulk removing candidates ${selectedIds.join(', ')} from list ${actionListId}`);
+             await manageCandidatesInList(actionListId, selectedIds, 'remove');
+             console.log(`✅ Bulk removal completed for candidates ${selectedIds.join(', ')}`);
+             // Add a small delay to ensure backend has processed the change
+             await new Promise(resolve => setTimeout(resolve, 500));
+           }
           break;
       }
       setSelectedApplicants(new Set());
+      console.log(`🔄 Calling onDataUpdate after bulk ${action} action`);
       onDataUpdate();
     } catch (err) {
       console.error(`Failed to perform bulk action: ${action}`, err);

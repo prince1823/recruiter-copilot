@@ -7,7 +7,7 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
   // Add null checks and fallbacks for missing data
   const details = applicant.details || {};
   const gender = details.gender || 'Unknown';
-  const age = details.age || 'Unknown';
+  const age = details.age || 0;
   const homeLocation = details.home_location || 'Unknown';
   const experience = details.experience || 0;
   
@@ -25,7 +25,22 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     tags: applicant.tags || [],
     lists: [], // Will be populated when we fetch lists
     hasCompletedConversation: applicant.status === 'MANDATE_MATCHING' || applicant.status === 'DETAILS_COMPLETED',
+    conversationStatus: applicant.status || 'NOT_INITIATED', // Pass through the actual conversation status
     createdAt: applicant.created_at,
+    // New fields from backend
+    created_at: applicant.created_at || '',
+    updated_at: applicant.updated_at || '',
+    response: applicant.response || '',
+    age: age,
+    gender: gender,
+    education_qualification: details.education_qualification || 'Unknown',
+    home_location: homeLocation,
+    is_currently_employed: details.is_currently_employed || false,
+    industry: details.industry || 'Unknown',
+    work_location: details.work_location,
+    last_drawn_salary: details.last_drawn_salary,
+    willing_to_relocate: details.willing_to_relocate || false,
+    expected_salary: details.expected_salary || 0,
   };
 };
 
@@ -141,7 +156,22 @@ export const createMockApplicant = (overrides: Partial<LegacyApplicant> = {}): L
     tags: ['test'],
     lists: [],
     hasCompletedConversation: false,
+    conversationStatus: 'INITIATED',
     createdAt: new Date().toISOString(),
+    // New fields from backend
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    response: 'Hello, I am interested in the position',
+    age: 25,
+    gender: 'Male',
+    education_qualification: 'Bachelor\'s Degree',
+    home_location: 'Test City',
+    is_currently_employed: true,
+    industry: 'Technology',
+    work_location: 'Test City',
+    last_drawn_salary: 50000,
+    willing_to_relocate: true,
+    expected_salary: 60000,
     ...overrides
   };
 };

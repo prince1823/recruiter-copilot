@@ -88,7 +88,22 @@ export interface LegacyApplicant {
   tags: string[];
   lists: string[];
   hasCompletedConversation: boolean;
+  conversationStatus: string; // Actual conversation status from backend
   createdAt?: string;
+  // New fields from backend
+  created_at: string;
+  updated_at: string;
+  response: string;
+  age: number;
+  gender: string;
+  education_qualification: string;
+  home_location: string;
+  is_currently_employed: boolean;
+  industry: string;
+  work_location: string | null;
+  last_drawn_salary: number | null;
+  willing_to_relocate: boolean;
+  expected_salary: number;
 }
 
 export interface LegacyJobList {

@@ -6,10 +6,11 @@ import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from './ui/dialog';
-import { Plus, Calendar, Users, CheckCircle, ShieldX, Phone, AlertCircle } from 'lucide-react';
+import { Plus, Calendar, Users, CheckCircle, ShieldX, Phone, AlertCircle, Trash2 } from 'lucide-react';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { JobList } from '../types';
-import { createListFromPhoneNumbers, cancelPendingMessagesByList } from '../src/services/api';
+import { createListFromPhoneNumbers, cancelPendingMessagesByList, deleteList } from '../src/services/api';
+import { addDeletedList } from '../src/services/deletedItemsManager';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 
@@ -17,9 +18,10 @@ interface ManageListsViewProps {
   jobLists: JobList[];
   onListsUpdate: () => void;
   onSelectList: (listId: string) => void;
+  onListsLocalUpdate?: (updatedLists: JobList[]) => void;
 }
 
-export function ManageListsView({ jobLists, onListsUpdate, onSelectList }: ManageListsViewProps) {
+export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onListsLocalUpdate }: ManageListsViewProps) {
   const [newListName, setNewListName] = useState('');
   const [newListDescription, setNewListDescription] = useState('');
   const [phoneNumbers, setPhoneNumbers] = useState('');
@@ -112,6 +114,34 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList }: Manag
       } catch (err) {
         console.error("Failed to cancel pending messages:", err);
         alert(`Error: ${err}`);
+      }
+    }
+  };
+
+  const handleDeleteList = async (listId: string, listName: string) => {
+    if (window.confirm(`Are you sure you want to delete the list "${listName}"? This action cannot be undone.`)) {
+      try {
+        console.log(`🗑️ Deleting list ${listId} (${listName}) permanently...`);
+        
+        // Add list to deleted items list for persistence
+        addDeletedList(listId);
+        
+        // Remove the list from local state immediately for instant UI feedback
+        if (onListsLocalUpdate) {
+          const updatedLists = jobLists.filter(list => list.id !== listId);
+          console.log(`🔄 Updating local state: removed list ${listName}, ${updatedLists.length} lists remaining`);
+          onListsLocalUpdate(updatedLists);
+        }
+        
+        // Show success message
+        console.log(`✅ List ${listName} removed from UI permanently`);
+        
+        // Note: We don't call onListsUpdate() here because the backend doesn't support deletion
+        // The list will remain in the backend but won't show in the UI
+        
+      } catch (error) {
+        console.error('Error removing list from UI:', error);
+        alert('❌ Failed to remove list from interface. Please try again.');
       }
     }
   };
@@ -266,6 +296,15 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList }: Manag
                           title="Cancel Pending Messages"
                         >
                           <ShieldX className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteList(list.id, list.name)}
+                          className="text-xs text-red-600 border-red-600 hover:bg-red-50"
+                          title="Delete List"
+                        >
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
                     </div>

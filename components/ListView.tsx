@@ -5,17 +5,19 @@ import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
 import { ActionButtons } from './ActionButtons';
 import { BulkActionButtons } from './BulkActionButtons';
-import { X, Download, MessageCircle, ListPlus } from 'lucide-react';
+import { X, Download, MessageCircle, ListPlus, Trash2 } from 'lucide-react';
 import { Applicant, JobList } from '../types';
-import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists } from '../src/services/api';
+import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists, bulkDeleteCandidates } from '../src/services/api';
+import { addDeletedApplicant } from '../src/services/deletedItemsManager';
 
 interface ListViewProps {
   applicants: Applicant[];
   jobLists: JobList[];
   onDataUpdate: () => void;
+  onApplicantsUpdate?: (updatedApplicants: Applicant[]) => void;
 }
 
-export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) {
+export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdate }: ListViewProps) {
   const [selectedApplicants, setSelectedApplicants] = useState<Set<string>>(new Set());
   const [selectedListFilters, setSelectedListFilters] = useState<Set<string>>(new Set());
 
@@ -93,8 +95,19 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
   };
 
   const filteredApplicants = useMemo(() => {
-    if (selectedListFilters.size === 0) return applicants;
-    return applicants.filter(applicant => applicant.lists.some(listId => selectedListFilters.has(listId)));
+    let filtered = applicants;
+    
+    // Apply list filters if any are selected
+    if (selectedListFilters.size > 0) {
+      filtered = applicants.filter(applicant => applicant.lists.some(listId => selectedListFilters.has(listId)));
+    }
+    
+    // Sort by most recent first (using created_at, fallback to updated_at)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.created_at || a.updated_at || 0);
+      const dateB = new Date(b.created_at || b.updated_at || 0);
+      return dateB.getTime() - dateA.getTime(); // Most recent first
+    });
   }, [applicants, selectedListFilters]);
   
   const handleSelectAll = () => {
@@ -124,6 +137,65 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
     return listIds.map(id => jobLists.find(l => l.id === id)?.listName || id);
   };
 
+  const formatConversationStatus = (status: string) => {
+    const statusMap: { [key: string]: { label: string; color: string; bgColor: string } } = {
+      'NOT_INITIATED': { label: 'Not Started', color: 'text-gray-600', bgColor: 'bg-gray-100' },
+      'INITIATED': { label: 'Started', color: 'text-blue-600', bgColor: 'bg-blue-100' },
+      'DETAILS_IN_PROGRESS': { label: 'Collecting Details', color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
+      'DETAILS_COMPLETED': { label: 'Details Complete', color: 'text-green-600', bgColor: 'bg-green-100' },
+      'MANDATE_MATCHING': { label: 'Finding Jobs', color: 'text-purple-600', bgColor: 'bg-purple-100' },
+      'SHORTLISTED': { label: 'Shortlisted', color: 'text-indigo-600', bgColor: 'bg-indigo-100' },
+      'NO_MATCHES': { label: 'No Matches', color: 'text-red-600', bgColor: 'bg-red-100' },
+      'PLACED': { label: 'Placed', color: 'text-green-700', bgColor: 'bg-green-200' },
+      'RETIRED': { label: 'Retired', color: 'text-gray-700', bgColor: 'bg-gray-200' }
+    };
+    
+    const statusInfo = statusMap[status] || { label: status, color: 'text-gray-600', bgColor: 'bg-gray-100' };
+    return statusInfo;
+  };
+
+  const handleDeleteSelected = async () => {
+    const selectedCount = selectedApplicants.size;
+    
+    if (selectedCount === 0) {
+      alert('Please select candidates to delete.');
+      return;
+    }
+    
+    if (window.confirm(`Are you sure you want to delete ${selectedCount} selected candidate(s)? This action cannot be undone.`)) {
+      try {
+        console.log(`🗑️ Deleting ${selectedCount} selected candidates...`);
+        
+        // Get the selected candidate IDs
+        const selectedIds = Array.from(selectedApplicants);
+        console.log(`🗑️ Selected candidate IDs to delete:`, selectedIds);
+        
+        // Add selected candidates to deleted items list for persistence
+        selectedIds.forEach(applicantId => {
+          addDeletedApplicant(applicantId);
+        });
+        
+        // Clear selection
+        setSelectedApplicants(new Set());
+        
+        // Remove deleted candidates from local state for instant UI update
+        if (onApplicantsUpdate) {
+          const updatedApplicants = applicants.filter(applicant => !selectedIds.includes(applicant.id));
+          console.log(`🔄 Updating local state: removed ${selectedIds.length} candidates, ${updatedApplicants.length} remaining`);
+          onApplicantsUpdate(updatedApplicants);
+        }
+        
+        console.log(`✅ Successfully removed ${selectedIds.length} candidates from UI permanently`);
+        
+      } catch (error) {
+        console.error('Error deleting selected candidates:', error);
+        alert('❌ Failed to delete selected candidates. Please try again.');
+      }
+    }
+  };
+
+
+
   return (
     <div className="flex h-full bg-whatsapp-gray-light">
       <div className="flex-1 flex flex-col">
@@ -138,10 +210,32 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
               size="sm" 
               onClick={() => {
                 const csvContent = [
-                  "Name,Phone,Location,Experience,Two Wheeler,Status,Conversation,Lists",
+                  "Phone,Location,Experience,Status,Conversation,Lists,Created At,Updated At,Response,Age,Gender,Education Qualification,Home Location,Currently Employed,Industry,Work Location,Last Drawn Salary,Willing to Relocate,Expected Salary,Tags",
                   ...filteredApplicants.map(applicant => {
                     const lists = getListNames(applicant.lists).join(',');
-                    return `${applicant.name},${applicant.phone},${applicant.location},${applicant.experience},${applicant.hasTwoWheeler ? 'Yes' : 'No'},${applicant.status},${applicant.hasCompletedConversation ? 'Complete' : 'Ongoing'},${lists}`;
+                    const tags = applicant.tags.join(';');
+                    return [
+                      applicant.phone,
+                      applicant.location,
+                      applicant.experience,
+                      applicant.status,
+                      formatConversationStatus(applicant.conversationStatus).label,
+                      lists,
+                      applicant.created_at,
+                      applicant.updated_at,
+                      `"${applicant.response.replace(/"/g, '""')}"`, // Escape quotes in response
+                      applicant.age,
+                      applicant.gender,
+                      applicant.education_qualification,
+                      applicant.home_location,
+                      applicant.is_currently_employed ? 'Yes' : 'No',
+                      applicant.industry,
+                      applicant.work_location || 'N/A',
+                      applicant.last_drawn_salary || 'N/A',
+                      applicant.willing_to_relocate ? 'Yes' : 'No',
+                      applicant.expected_salary,
+                      tags
+                    ].join(',');
                   })
                 ].join('\n');
                 const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -180,14 +274,32 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
 
         {selectedApplicants.size > 0 && (
           <div className="p-4 border-b border-gray-200">
-            <BulkActionButtons
-              selectedCount={selectedApplicants.size}
-              onBulkDisable={() => handleBulkAction('disable')}
-              onBulkNudge={() => handleBulkAction('nudge')}
-              onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)}
-              onBulkTag={(listId) => handleBulkAction('tag', listId)}
-              availableLists={availableLists}
-            />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">
+                  {selectedApplicants.size} candidate(s) selected
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <BulkActionButtons
+                  selectedCount={selectedApplicants.size}
+                  onBulkDisable={() => handleBulkAction('disable')}
+                  onBulkNudge={() => handleBulkAction('nudge')}
+                  onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)}
+                  onBulkTag={(listId) => handleBulkAction('tag', listId)}
+                  availableLists={availableLists}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDeleteSelected}
+                  className="h-8 px-3 text-xs bg-red-500 hover:bg-red-600 text-white border-red-500"
+                >
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  Delete Selected
+                </Button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -196,11 +308,12 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-12"></TableHead>
-                <TableHead>Name</TableHead>
                 <TableHead>Phone</TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead>Gender</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Experience</TableHead>
-                <TableHead>Two Wheeler</TableHead>
+                <TableHead>Industry</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Conversation</TableHead>
                 <TableHead>Lists</TableHead>
@@ -212,13 +325,26 @@ export function ListView({ applicants, jobLists, onDataUpdate }: ListViewProps) 
               {filteredApplicants.map((applicant) => (
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
                   <TableCell><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-whatsapp-green data-[state=checked]:border-whatsapp-green" /></TableCell>
-                  <TableCell className="font-medium">{applicant.name}</TableCell>
-                  <TableCell>{applicant.phone}</TableCell>
+                  <TableCell className="font-medium">{applicant.phone}</TableCell>
+                  <TableCell>{applicant.age}</TableCell>
+                  <TableCell>{applicant.gender}</TableCell>
                   <TableCell>{applicant.location}</TableCell>
                   <TableCell>{applicant.experience} years</TableCell>
-                  <TableCell><Badge variant={applicant.hasTwoWheeler ? 'default' : 'outline'} className={applicant.hasTwoWheeler ? 'bg-whatsapp-green hover:bg-whatsapp-green-dark' : ''}>{applicant.hasTwoWheeler ? 'Yes' : 'No'}</Badge></TableCell>
+                  <TableCell>{applicant.industry}</TableCell>
                   <TableCell><Badge className={`text-xs ${getStatusBadgeClass(applicant.status)}`}>{applicant.status}</Badge></TableCell>
-                  <TableCell><Badge variant={applicant.hasCompletedConversation ? 'default' : 'outline'} className={applicant.hasCompletedConversation ? 'bg-green-500 hover:bg-green-600' : ''}>{applicant.hasCompletedConversation ? 'Complete' : 'Ongoing'}</Badge></TableCell>
+                  <TableCell>
+                    {(() => {
+                      const statusInfo = formatConversationStatus(applicant.conversationStatus);
+                      return (
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs ${statusInfo.color} ${statusInfo.bgColor} border-current`}
+                        >
+                          {statusInfo.label}
+                        </Badge>
+                      );
+                    })()}
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {getListNames(applicant.lists).slice(0, 2).map((listName, index) => <Badge key={index} variant="outline" className="text-xs border-whatsapp-green text-whatsapp-green">{listName}</Badge>)}

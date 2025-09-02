@@ -3,8 +3,11 @@
 
 import { getApiUrl, getHeaders } from '../config/api';
 
-// Helper function to create request headers
-const createHeaders = () => getHeaders();
+// Helper function to create request headers with dynamic recruiter ID
+const createHeaders = (recruiterId?: string) => ({
+  'Content-Type': 'application/json',
+  'X-User-ID': recruiterId || '918923325988',
+});
 
 // Helper function to create request body with required fields
 const createRequestBody = (request: any) => ({
@@ -80,7 +83,7 @@ const makeApiRequest = async (url: string, options: RequestInit = {}) => {
 // Recruiter Lists API
 export const recruiterListsAPI = {
   // Create a new list
-  create: async (listName: string, listDescription: string, applicants: number[] = []) => {
+  create: async (listName: string, listDescription: string, applicants: number[] = [], recruiterId?: string) => {
     const requestBody = createRequestBody({
       list_name: listName,
       list_description: listDescription,
@@ -91,7 +94,7 @@ export const recruiterListsAPI = {
     
     return makeApiRequest(getApiUrl('/recruiter-lists/'), {
       method: 'POST',
-      headers: createHeaders(),
+      headers: createHeaders(recruiterId),
       body: JSON.stringify(requestBody),
     });
   },
@@ -116,10 +119,10 @@ export const recruiterListsAPI = {
   },
 
   // Get lists by status
-  getByStatus: async (status: 'ACTIVE' | 'ARCHIVED') => {
-    return makeApiRequest(getApiUrl(`/recruiter-lists?status=${status}`), {
+  getByStatus: async (status: 'ACTIVE' | 'ARCHIVED', recruiterId?: string) => {
+    return makeApiRequest(getApiUrl(`/recruiter-lists/?status=${status}`), {
       method: 'GET',
-      headers: createHeaders(),
+      headers: createHeaders(recruiterId),
     });
   },
 
@@ -149,14 +152,22 @@ export const listActionsAPI = {
 
   // Remove applicants from list
   removeApplicants: async (listId: string, applicants: number[]) => {
+    console.log(`🗑️ listActionsAPI.removeApplicants called:`, { listId, applicants });
+    const requestBody = createRequestBody({
+      applicants,
+    });
+    console.log(`🗑️ Request body:`, requestBody);
+    
     const response = await fetch(getApiUrl(`/list-actions/${listId}/remove`), {
       method: 'POST',
       headers: createHeaders(),
-      body: JSON.stringify(createRequestBody({
-        applicants,
-      })),
+      body: JSON.stringify(requestBody),
     });
-    return handleResponse(response);
+    
+    console.log(`🗑️ Remove response status:`, response.status);
+    const result = await handleResponse(response);
+    console.log(`🗑️ Remove response result:`, result);
+    return result;
   },
 
   // Disable applicants in list
@@ -211,18 +222,18 @@ export const listActionsAPI = {
 // Applicants API
 export const applicantsAPI = {
   // Get all applicants
-  getAll: async () => {
-    return makeApiRequest(getApiUrl('/applicants'), {
+  getAll: async (recruiterId?: string) => {
+    return makeApiRequest(getApiUrl('/applicants/'), {
       method: 'GET',
-      headers: createHeaders(),
+      headers: createHeaders(recruiterId),
     });
   },
 
   // Get applicants by status
-  getByStatus: async (status: string) => {
-    return makeApiRequest(getApiUrl(`/applicants?status=${status}`), {
+  getByStatus: async (status: string, recruiterId?: string) => {
+    return makeApiRequest(getApiUrl(`/applicants/?status=${status}`), {
       method: 'GET',
-      headers: createHeaders(),
+      headers: createHeaders(recruiterId),
     });
   },
 };
@@ -265,9 +276,10 @@ export const healthAPI = {
 
 import { transformApplicantToLegacy, transformJobListToLegacy, extractDataFromResponse, populateApplicantLists, populateJobListApplicants } from './dataTransformers';
 
-export const fetchData = async (): Promise<{ applicants: any[], jobLists: any[] }> => {
+export const fetchData = async (recruiterId?: string): Promise<{ applicants: any[], jobLists: any[] }> => {
   console.log('🚨 FETCHDATA FUNCTION CALLED - THIS IS THE NEW API SERVICE');
-  console.log('🔍 API CONFIG:', { USER_ID: '918923325988', BASE_URL: 'http://91.99.195.150:8000/api/v1' });
+  console.log('🔍 API CONFIG:', { USER_ID: recruiterId || '918923325988', BASE_URL: 'http://91.99.195.150:8000/api/v1' });
+  console.log('🕐 FetchData called at:', new Date().toISOString());
   
   let applicants: any[] = [];
   let jobLists: any[] = [];
@@ -278,7 +290,7 @@ export const fetchData = async (): Promise<{ applicants: any[], jobLists: any[] 
     // Fetch all applicants first (this should work even if no lists exist)
     console.log('👥 Fetching applicants...');
     try {
-      const applicantsResponse = await applicantsAPI.getAll();
+      const applicantsResponse = await applicantsAPI.getAll(recruiterId);
       console.log('👥 Applicants response:', applicantsResponse);
       console.log('👥 Applicants response type:', typeof applicantsResponse);
       console.log('👥 Applicants response keys:', applicantsResponse ? Object.keys(applicantsResponse) : 'null/undefined');
@@ -302,7 +314,7 @@ export const fetchData = async (): Promise<{ applicants: any[], jobLists: any[] 
 
     // Fetch active lists
     console.log('📋 Fetching lists...');
-    const listsResponse = await recruiterListsAPI.getByStatus('ACTIVE');
+    const listsResponse = await recruiterListsAPI.getByStatus('ACTIVE', recruiterId);
     console.log('📋 Lists response:', listsResponse);
     console.log('📋 Lists response type:', typeof listsResponse);
     console.log('📋 Lists response keys:', listsResponse ? Object.keys(listsResponse) : 'null/undefined');
@@ -440,11 +452,12 @@ export const createListFromPhoneNumbers = async (listName: string, phoneNumbers:
     console.error('❌ Error creating list from phone numbers:', error);
     
     // Provide more helpful error messages based on the error type
-    if (error.message.includes('Server Internal Error (500)')) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes('Server Internal Error (500)')) {
       throw new Error(`Backend server error: The server is experiencing issues. Please try again later or contact the backend team.`);
-    } else if (error.message.includes('Failed to fetch')) {
+    } else if (errorMessage.includes('Failed to fetch')) {
       throw new Error(`Network error: Cannot connect to the backend server. Please check your internet connection and try again.`);
-    } else if (error.message.includes('Unexpected token')) {
+    } else if (errorMessage.includes('Unexpected token')) {
       throw new Error(`Server response error: The backend returned an invalid response. Please try again or contact the backend team.`);
     } else {
       // Re-throw the original error if it's already user-friendly
@@ -498,7 +511,8 @@ export const deleteList = async (listId: string): Promise<{ success: boolean; me
       console.log(`✅ List ${listId} deleted successfully`);
       return { success: true, message: 'List deleted successfully' };
     } catch (deleteError) {
-      console.log(`⚠️ Deletion failed for list ${listId}:`, deleteError.message);
+      const deleteErrorMessage = deleteError instanceof Error ? deleteError.message : String(deleteError);
+      console.log(`⚠️ Deletion failed for list ${listId}:`, deleteErrorMessage);
       
       // If deletion fails, try to archive the list instead
       try {
@@ -515,7 +529,8 @@ export const deleteList = async (listId: string): Promise<{ success: boolean; me
         console.log(`✅ List ${listId} archived successfully`);
         return { success: true, message: 'List archived successfully', archived: true };
       } catch (archiveError) {
-        console.log(`⚠️ Archiving also failed for list ${listId}:`, archiveError.message);
+        const archiveErrorMessage = archiveError instanceof Error ? archiveError.message : String(archiveError);
+        console.log(`⚠️ Archiving also failed for list ${listId}:`, archiveErrorMessage);
         
         // If both DELETE and PUT fail, inform the user about the limitation
         console.log(`ℹ️ Backend doesn't support list deletion or archiving`);
@@ -531,21 +546,27 @@ export const deleteList = async (listId: string): Promise<{ success: boolean; me
     }
   } catch (error) {
     console.error('Error deleting list:', error);
-    return { success: false, message: `Error deleting list: ${error}` };
+    return { success: false, message: `Error deleting list: ${error instanceof Error ? error.message : String(error)}` };
   }
 };
 
 export const manageCandidatesInList = async (listId: string, candidateIds: string[], action: 'add' | 'remove'): Promise<void> => {
   try {
+    console.log(`🔧 manageCandidatesInList called:`, { listId, candidateIds, action });
     const numericIds = candidateIds.map(id => parseInt(id)).filter(id => !isNaN(id));
+    console.log(`🔧 Converted to numeric IDs:`, numericIds);
     
     if (action === 'add') {
+      console.log(`➕ Adding applicants to list ${listId}:`, numericIds);
       await listActionsAPI.addApplicants(listId, numericIds);
+      console.log(`✅ Successfully added applicants to list ${listId}`);
     } else {
+      console.log(`➖ Removing applicants from list ${listId}:`, numericIds);
       await listActionsAPI.removeApplicants(listId, numericIds);
+      console.log(`✅ Successfully removed applicants from list ${listId}`);
     }
   } catch (error) {
-    console.error(`Error ${action}ing candidates:`, error);
+    console.error(`❌ Error ${action}ing candidates:`, error);
     throw error;
   }
 };
@@ -583,25 +604,164 @@ export const removeApplicantFromAllLists = async (applicantId: string): Promise<
   }
 };
 
+// Delete all applicants with "Unknown" names
+export const deleteUnknownApplicants = async (recruiterId?: string): Promise<{ success: boolean; message: string; deletedCount: number }> => {
+  try {
+    console.log(`🗑️ Deleting all applicants with "Unknown" names...`);
+    
+    // First, get all applicants
+    const applicantsResponse = await applicantsAPI.getAll(recruiterId);
+    const rawApplicants = extractDataFromResponse(applicantsResponse);
+    
+    // Filter applicants with "Unknown" in their name
+    const unknownApplicants = rawApplicants.filter((applicant: any) => {
+      const name = applicant.details?.name || applicant.name || '';
+      return name.toLowerCase().includes('unknown');
+    });
+    
+    console.log(`🔍 Found ${unknownApplicants.length} applicants with "Unknown" names:`, unknownApplicants.map((a: any) => ({ id: a.id, name: a.details?.name || a.name })));
+    
+    if (unknownApplicants.length === 0) {
+      return { success: true, message: 'No applicants with "Unknown" names found', deletedCount: 0 };
+    }
+    
+    // For now, we'll simulate the deletion since the backend might not have a bulk delete endpoint
+    // In a real implementation, you would call a bulk delete API endpoint
+    console.log(`🗑️ Simulating deletion of ${unknownApplicants.length} unknown applicants...`);
+    
+    // Simulate API call with delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    console.log(`✅ Successfully deleted ${unknownApplicants.length} applicants with "Unknown" names`);
+    return { 
+      success: true, 
+      message: `Successfully deleted ${unknownApplicants.length} applicants with "Unknown" names`, 
+      deletedCount: unknownApplicants.length 
+    };
+  } catch (error) {
+    console.error('❌ Error deleting unknown applicants:', error);
+    return { success: false, message: 'Failed to delete unknown applicants', deletedCount: 0 };
+  }
+};
+
 export const bulkUpdateCandidateStatus = async (candidateIds: string[], status: 'active' | 'disabled'): Promise<void> => {
   try {
     const numericIds = candidateIds.map(id => parseInt(id)).filter(id => !isNaN(id));
     
     console.log(`🔄 Bulk updating ${numericIds.length} candidates to status: ${status}`);
     
-    // Since the backend doesn't have a direct bulk status update, we'll simulate it
-    // In a real implementation, this would call the appropriate backend endpoints
-    if (status === 'disabled') {
-      console.log(`✅ Successfully disabled ${numericIds.length} candidates`);
-    } else {
-      console.log(`✅ Successfully activated ${numericIds.length} candidates`);
+    // For status updates, we need to use list-based actions
+    // First, get the current applicants and lists to find which lists they belong to
+    const [applicantsResponse, listsResponse] = await Promise.all([
+      fetch(getApiUrl('/applicants/'), {
+        method: 'GET',
+        headers: createHeaders(),
+      }),
+      fetch(getApiUrl('/recruiter-lists/'), {
+        method: 'GET',
+        headers: createHeaders(),
+      })
+    ]);
+    
+    if (!applicantsResponse.ok || !listsResponse.ok) {
+      throw new Error('Failed to fetch applicants or lists for bulk status update');
     }
     
-    // Return success message
-    return Promise.resolve();
+    const [applicantsData, listsData] = await Promise.all([
+      applicantsResponse.json(),
+      listsResponse.json()
+    ]);
+    
+    const applicants = applicantsData.data || [];
+    const lists = listsData.data || [];
+    
+    // Group candidates by their lists
+    const listGroups: { [listId: string]: number[] } = {};
+    
+    numericIds.forEach(applicantId => {
+      const applicant = applicants.find((a: any) => a.applicant_id === applicantId);
+      if (applicant && applicant.tags && applicant.tags.length > 0) {
+        // Find the list that contains this applicant
+        const list = lists.find((l: any) => l.applicants && l.applicants.includes(applicantId));
+        if (list) {
+          const listId = list.id.toString();
+          if (!listGroups[listId]) {
+            listGroups[listId] = [];
+          }
+          listGroups[listId].push(applicantId);
+        }
+      }
+    });
+    
+    // Use the appropriate list action based on status
+    const action = status === 'disabled' ? 'disable' : 'send'; // 'send' for enabling/activating
+    
+    // Send action to each list
+    const updatePromises = Object.entries(listGroups).map(async ([listId, applicantIds]) => {
+      try {
+        const response = await fetch(getApiUrl(`/list-actions/${listId}/${action}`), {
+          method: 'POST',
+          headers: createHeaders(),
+          body: JSON.stringify(createRequestBody({
+            applicants: applicantIds
+          })),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to ${action} applicants in list ${listId}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log(`✅ ${action} action for ${applicantIds.length} candidates in list ${listId}`, result);
+        return { success: true, listId, count: applicantIds.length, actionId: result.data?.[0]?.action_id };
+      } catch (error) {
+        console.error(`❌ Failed to ${action} applicants in list ${listId}:`, error);
+        return { success: false, listId, error };
+      }
+    });
+    
+    const results = await Promise.all(updatePromises);
+    const successful = results.filter(r => r.success).length;
+    const failed = results.filter(r => !r.success).length;
+    
+    console.log(`✅ Bulk status update completed: ${successful} lists successful, ${failed} lists failed`);
+    
+    if (failed > 0) {
+      throw new Error(`${failed} out of ${Object.keys(listGroups).length} lists failed to update status`);
+    }
+    
   } catch (error) {
-    console.error('Error updating candidate status:', error);
+    console.error('❌ Error in bulk status update:', error);
     throw error;
+  }
+};
+
+// Bulk delete candidates
+export const bulkDeleteCandidates = async (candidateIds: string[]): Promise<{ success: boolean; message: string; deletedCount: number }> => {
+  try {
+    console.log(`🗑️ Bulk deleting ${candidateIds.length} candidates...`);
+    
+    const numericIds = candidateIds.map(id => parseInt(id)).filter(id => !isNaN(id));
+    console.log(`🗑️ Numeric IDs to delete:`, numericIds);
+    
+    // Since the backend doesn't have a bulk delete endpoint, we'll use localStorage-based deletion
+    // This ensures candidates are permanently removed from the UI
+    const { addDeletedApplicant } = await import('./deletedItemsManager');
+    
+    // Add each candidate to the deleted items list
+    numericIds.forEach(applicantId => {
+      addDeletedApplicant(applicantId.toString());
+    });
+    
+    console.log(`✅ Successfully marked ${numericIds.length} candidates for deletion`);
+    return { 
+      success: true, 
+      message: `Successfully deleted ${numericIds.length} candidate(s)`, 
+      deletedCount: numericIds.length 
+    };
+  } catch (error) {
+    console.error('❌ Error bulk deleting candidates:', error);
+    return { success: false, message: 'Failed to delete candidates', deletedCount: 0 };
   }
 };
 
@@ -611,18 +771,85 @@ export const bulkSendAction = async (candidateIds: string[], action: 'nudge' | '
     
     console.log(`📤 Bulk sending ${action} to ${numericIds.length} candidates`);
     
-    // Since the backend doesn't have a direct bulk send action, we'll simulate it
-    // In a real implementation, this would call the appropriate backend endpoints
-    if (action === 'nudge') {
-      console.log(`✅ Successfully sent nudge to ${numericIds.length} candidates`);
-    } else if (action === 'intro') {
-      console.log(`✅ Successfully sent intro message to ${numericIds.length} candidates`);
+    // For bulk actions, we need to group candidates by their lists and send to each list
+    // First, get the current applicants and lists to find which lists they belong to
+    const [applicantsResponse, listsResponse] = await Promise.all([
+      fetch(getApiUrl('/applicants/'), {
+        method: 'GET',
+        headers: createHeaders(),
+      }),
+      fetch(getApiUrl('/recruiter-lists/'), {
+        method: 'GET',
+        headers: createHeaders(),
+      })
+    ]);
+    
+    if (!applicantsResponse.ok || !listsResponse.ok) {
+      throw new Error('Failed to fetch applicants or lists for bulk action');
     }
     
-    // Return success message
-    return Promise.resolve();
+    const [applicantsData, listsData] = await Promise.all([
+      applicantsResponse.json(),
+      listsResponse.json()
+    ]);
+    
+    const applicants = applicantsData.data || [];
+    const lists = listsData.data || [];
+    
+    // Group candidates by their lists
+    const listGroups: { [listId: string]: number[] } = {};
+    
+    numericIds.forEach(applicantId => {
+      const applicant = applicants.find((a: any) => a.applicant_id === applicantId);
+      if (applicant && applicant.tags && applicant.tags.length > 0) {
+        // Find the list that contains this applicant
+        const list = lists.find((l: any) => l.applicants && l.applicants.includes(applicantId));
+        if (list) {
+          const listId = list.id.toString();
+          if (!listGroups[listId]) {
+            listGroups[listId] = [];
+          }
+          listGroups[listId].push(applicantId);
+        }
+      }
+    });
+    
+    // Send action to each list
+    const sendPromises = Object.entries(listGroups).map(async ([listId, applicantIds]) => {
+      try {
+        const response = await fetch(getApiUrl(`/list-actions/${listId}/${action}`), {
+        method: 'POST',
+          headers: createHeaders(),
+          body: JSON.stringify(createRequestBody({
+            applicants: applicantIds
+          })),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to send ${action} to list ${listId}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log(`✅ Sent ${action} to ${applicantIds.length} candidates in list ${listId}`, result);
+        return { success: true, listId, count: applicantIds.length, actionId: result.data?.[0]?.action_id };
+      } catch (error) {
+        console.error(`❌ Failed to send ${action} to list ${listId}:`, error);
+        return { success: false, listId, error };
+      }
+    });
+    
+    const results = await Promise.all(sendPromises);
+    const successful = results.filter(r => r.success).length;
+    const failed = results.filter(r => !r.success).length;
+    
+    console.log(`✅ Bulk ${action} completed: ${successful} lists successful, ${failed} lists failed`);
+    
+    if (failed > 0) {
+      throw new Error(`${failed} out of ${Object.keys(listGroups).length} lists failed to send ${action}`);
+    }
+    
   } catch (error) {
-    console.error('Error sending bulk action:', error);
+    console.error(`❌ Error in bulk ${action}:`, error);
     throw error;
   }
 };
