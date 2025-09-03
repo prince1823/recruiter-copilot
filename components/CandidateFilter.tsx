@@ -7,7 +7,16 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Badge } from './ui/badge';
 import { X } from 'lucide-react';
 import { CandidateFilters } from '../types';
-import { locationOptions } from '../data/mockData';
+// Location options for candidate filtering  
+const locationOptions = [
+  'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Pune', 'Hyderabad', 'Ahmedabad', 
+  'Surat', 'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Bhopal', 'Visakhapatnam',
+  'Patna', 'Vadodara', 'Ghaziabad', 'Ludhiana', 'Agra', 'Nashik', 'Faridabad', 'Meerut',
+  'Rajkot', 'Kalyan-Dombivali', 'Vasai-Virar', 'Varanasi', 'Srinagar', 'Dhanbad', 'Jodhpur',
+  'Amritsar', 'Raipur', 'Allahabad', 'Coimbatore', 'Jabalpur', 'Gwalior', 'Vijayawada',
+  'Madurai', 'Gurgaon', 'Noida', 'Kochi', 'Thiruvananthapuram', 'Chandigarh', 'Mysore',
+  'Dehradun', 'Ranchi', 'Jalandhar'
+];
 
 interface CandidateFilterProps {
   filters: CandidateFilters;

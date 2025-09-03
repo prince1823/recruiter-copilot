@@ -5,7 +5,28 @@ import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { X } from 'lucide-react';
 import { ListFilters } from '../types';
-import { locationOptions, jobMandateOptions, ageRangeOptions, sectorOptions } from '../data/mockData';
+// Filter options for list filtering
+const locationOptions = [
+  'Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Pune', 'Hyderabad', 'Ahmedabad', 
+  'Surat', 'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Bhopal', 'Visakhapatnam',
+  'Patna', 'Vadodara', 'Ghaziabad', 'Ludhiana', 'Agra', 'Nashik', 'Faridabad', 'Meerut',
+  'Rajkot', 'Kalyan-Dombivali', 'Vasai-Virar', 'Varanasi', 'Srinagar', 'Dhanbad', 'Jodhpur',
+  'Amritsar', 'Raipur', 'Allahabad', 'Coimbatore', 'Jabalpur', 'Gwalior', 'Vijayawada',
+  'Madurai', 'Gurgaon', 'Noida', 'Kochi', 'Thiruvananthapuram', 'Chandigarh', 'Mysore',
+  'Dehradun', 'Ranchi', 'Jalandhar'
+];
+
+const jobMandateOptions = [
+  'Delivery Executive', 'Customer Support', 'Technical Support', 'Sales Representative',
+  'Field Executive', 'Logistics Coordinator', 'Customer Service', 'Operations Executive'
+];
+
+const ageRangeOptions = ['18-25', '20-30', '21-35', '22-40', '25-45', '30-50', '35-55'];
+
+const sectorOptions = [
+  'Logistics', 'Service', 'Technology', 'Retail', 'Healthcare', 'Food & Beverage', 
+  'E-commerce', 'Financial Services', 'Education', 'Manufacturing'
+];
 
 interface ListFilterProps {
   filters: ListFilters;
