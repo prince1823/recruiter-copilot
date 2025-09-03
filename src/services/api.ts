@@ -482,7 +482,7 @@ export const deleteList = async (listId: string): Promise<{ success: boolean; me
       try {
 
         const archiveResponse = await makeApiRequest(getApiUrl(`/recruiter-lists/${listId}`), {
-          method: 'PUT',
+    method: 'PUT',
           headers: createHeaders(),
           body: JSON.stringify(createRequestBody({
             status: 'ARCHIVED'

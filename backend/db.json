@@ -1,9 +1,0 @@
-{
-  "applicants": [],
-  "jobLists": [],
-  "messageQueue": [],
-  "messageTemplates": {
-    "intro": "Hello {name}, I'm reaching out regarding job opportunities. Are you currently looking for work?",
-    "nudge": "Hi {name}, just following up on our previous conversation about job opportunities. Please let me know if you're still interested."
-  }
-}
