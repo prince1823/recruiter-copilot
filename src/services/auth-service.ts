@@ -17,6 +17,22 @@ interface LoginResponse {
 
 export const authService = {
   async login(username: string, password: string): Promise<LoginResponse> {
+    // Check if auth should be skipped (development/testing only)
+    if (import.meta.env.VITE_SKIP_AUTH === 'true') {
+      const mockUserId = import.meta.env.VITE_MOCK_USER_ID || 'test-user-123';
+      setStoredUserId(mockUserId);
+      setStoredUsername(username);
+      setLoginTime();
+      
+      console.warn('⚠️ AUTH SKIPPED: Using mock user ID:', mockUserId);
+      
+      return {
+        success: true,
+        userId: mockUserId,
+        message: 'Login successful (auth skipped for testing)',
+      };
+    }
+    
     try {
       const passwordHash = await hashPassword(password);
       
