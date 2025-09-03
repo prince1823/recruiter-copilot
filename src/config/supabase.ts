@@ -24,7 +24,7 @@ export const ALLOWED_RECRUITERS = [
     email: 'pratibha.s@qmail.quesscorp.com',
     name: 'Pratibha S',
     contact_no: '+91 78925 11187',
-    recruiter_id: '918923325988'
+    recruiter_id: '917892511187'
   },
   {
     email: 'soniya.m@quesscorp.com',
@@ -45,3 +45,4 @@ export const ALLOWED_RECRUITERS = [
     recruiter_id: '918923325991'
   }
 ];
+

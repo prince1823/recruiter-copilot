@@ -3,10 +3,10 @@
 
 export const API_CONFIG = {
   // Base URL for the backend API
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://91.99.195.150:8000/api/v1',
+  BASE_URL: (import.meta as any).env?.VITE_API_BASE_URL || 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
   
   // User ID for API requests
-  USER_ID: import.meta.env.VITE_USER_ID || '918923325988',
+  USER_ID: (import.meta as any).env?.VITE_USER_ID || '917892511187',
   
   // Request timeout in milliseconds
   TIMEOUT: 30000,
@@ -26,22 +26,22 @@ export const API_CONFIG = {
 // Environment-specific configurations
 export const ENV_CONFIG = {
   development: {
-    API_BASE_URL: 'http://91.99.195.150:8000/api/v1',
+    API_BASE_URL: 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
     LOG_LEVEL: 'debug',
   },
   production: {
-    API_BASE_URL: 'http://91.99.195.150:8000/api/v1',
+    API_BASE_URL: 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
     LOG_LEVEL: 'error',
   },
   test: {
-    API_BASE_URL: 'http://91.99.195.150:8000/api/v1',
+    API_BASE_URL: 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
     LOG_LEVEL: 'debug',
   },
 };
 
 // Get current environment
 export const getCurrentEnv = () => {
-  return import.meta.env.MODE || 'development';
+  return (import.meta as any).env?.MODE || 'development';
 };
 
 // Get environment-specific configuration

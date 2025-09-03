@@ -158,7 +158,7 @@ export function SignIn() {
                   <p className="text-xs text-blue-700">Email: pratibha.s@qmail.quesscorp.com</p>
                   <p className="text-xs text-blue-700">Password: demo123</p>
                   <p className="text-xs text-blue-600 mt-1 font-medium">
-                    Will use Recruiter ID: 918923325988
+                    Will use Recruiter ID: 917892511187
                   </p>
                 </div>
               </div>
