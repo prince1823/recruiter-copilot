@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: recruiter-copilot-frontend:latest
+    container_name: recruiter-copilot-frontend
+    ports:
+      - "${FRONTEND_PORT:-80}:80"  # Use port 80 in production
+    environment:
+      # API Configuration - Point to your production backend
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      VITE_API_TIMEOUT: ${VITE_API_TIMEOUT:-30000}
+      VITE_API_RETRY_ATTEMPTS: ${VITE_API_RETRY_ATTEMPTS:-3}
+      VITE_API_RETRY_DELAY: ${VITE_API_RETRY_DELAY:-1000}
+      
+      # Feature Flags
+      VITE_ENABLE_CSV_EXPORT: ${VITE_ENABLE_CSV_EXPORT:-true}
+      VITE_ENABLE_BULK_ACTIONS: ${VITE_ENABLE_BULK_ACTIONS:-true}
+    
+    restart: always
+    
+    # Health check for production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Resource limits (adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M

@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: recruiter-copilot-frontend
+    ports:
+      - "3000:80"  # Map host port 3000 to container port 80
+    environment:
+      # API Configuration
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
+      VITE_API_TIMEOUT: ${VITE_API_TIMEOUT:-30000}
+      VITE_API_RETRY_ATTEMPTS: ${VITE_API_RETRY_ATTEMPTS:-3}
+      VITE_API_RETRY_DELAY: ${VITE_API_RETRY_DELAY:-1000}
+      
+      # Feature Flags
+      VITE_ENABLE_CSV_EXPORT: ${VITE_ENABLE_CSV_EXPORT:-true}
+      VITE_ENABLE_BULK_ACTIONS: ${VITE_ENABLE_BULK_ACTIONS:-true}
+    
+    restart: unless-stopped
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Optional: Add network if you have a backend service
+    # networks:
+    #   - recruiter-network
+
+# Optional: Define network if you have backend services
+# networks:
+#   recruiter-network:
+#     driver: bridge
