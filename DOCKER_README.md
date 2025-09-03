@@ -45,11 +45,23 @@ docker-compose logs -f
 docker-compose down
 ```
 
-#### Production Mode
+#### Production Mode (Using Pre-built Image)
 ```bash
-# Set production environment variables
-export VITE_API_BASE_URL=https://your-api-domain.com/api/v1
-export FRONTEND_PORT=80
+# Copy production environment template
+cp .env.production .env
+# Edit .env with your specific values
+
+# Pull the latest image from GitHub Container Registry
+docker pull ghcr.io/tanuj-b/recruiter-copilot:production
+
+# Start with production config
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+#### Production Mode (Building Locally)
+```bash
+# Build the production image
+docker build -t ghcr.io/tanuj-b/recruiter-copilot:production .
 
 # Start with production config
 docker-compose -f docker-compose.prod.yml up -d
@@ -70,16 +82,33 @@ docker run -d \
 
 ## Environment Variables
 
-All environment variables can be specified in docker-compose.yml or at runtime:
+All environment variables are defined in docker-compose files and injected at runtime. This means you can change configuration without rebuilding the image.
+
+### Configuration Methods
+
+1. **Using .env file** (Recommended for production):
+```bash
+cp .env.production .env
+# Edit .env with your values
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+2. **Using docker-compose.yml directly**: Edit the environment section in the compose file
+
+3. **Using environment variables**: Export before running docker-compose
+
+### Available Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `VITE_API_BASE_URL` | `http://localhost:8000/api/v1` | Backend API URL |
+| `VITE_API_BASE_URL` | Dev: `http://localhost:8000/api/v1`<br>Prod: `https://recruiter-copilot-apis.quesscorp.com/api/v1` | Backend API URL |
 | `VITE_API_TIMEOUT` | `30000` | API request timeout (ms) |
 | `VITE_API_RETRY_ATTEMPTS` | `3` | Number of retry attempts |
 | `VITE_API_RETRY_DELAY` | `1000` | Delay between retries (ms) |
 | `VITE_ENABLE_CSV_EXPORT` | `true` | Enable CSV export feature |
 | `VITE_ENABLE_BULK_ACTIONS` | `true` | Enable bulk actions feature |
+| `VITE_SKIP_AUTH` | `false` | Skip authentication (dev only) |
+| `VITE_MOCK_USER_ID` | `test-user-123` | Mock user ID when auth skipped |
 
 ## Ports
 
