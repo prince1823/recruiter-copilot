@@ -7,12 +7,14 @@ set -e
 # Create a config file with environment variables
 cat <<EOF > /usr/share/nginx/html/env-config.js
 window._env_ = {
-  VITE_API_BASE_URL: "${VITE_API_BASE_URL:-http://localhost:8000/api/v1}",
+  VITE_API_BASE_URL: "${VITE_API_BASE_URL:-https://recruiter-copilot-apis.quesscorp.com/api/v1}",
   VITE_API_TIMEOUT: "${VITE_API_TIMEOUT:-30000}",
   VITE_API_RETRY_ATTEMPTS: "${VITE_API_RETRY_ATTEMPTS:-3}",
   VITE_API_RETRY_DELAY: "${VITE_API_RETRY_DELAY:-1000}",
   VITE_ENABLE_CSV_EXPORT: "${VITE_ENABLE_CSV_EXPORT:-true}",
-  VITE_ENABLE_BULK_ACTIONS: "${VITE_ENABLE_BULK_ACTIONS:-true}"
+  VITE_ENABLE_BULK_ACTIONS: "${VITE_ENABLE_BULK_ACTIONS:-true}",
+  VITE_SKIP_AUTH: "${VITE_SKIP_AUTH:-false}",
+  VITE_MOCK_USER_ID: "${VITE_MOCK_USER_ID:-test-user-123}"
 };
 EOF
 

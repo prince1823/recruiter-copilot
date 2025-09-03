@@ -18,6 +18,10 @@ services:
       # Feature Flags
       VITE_ENABLE_CSV_EXPORT: ${VITE_ENABLE_CSV_EXPORT:-true}
       VITE_ENABLE_BULK_ACTIONS: ${VITE_ENABLE_BULK_ACTIONS:-true}
+      
+      # Authentication Configuration
+      VITE_SKIP_AUTH: ${VITE_SKIP_AUTH:-false}
+      VITE_MOCK_USER_ID: ${VITE_MOCK_USER_ID:-test-user-123}
     
     restart: unless-stopped
     
