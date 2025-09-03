@@ -40,40 +40,58 @@ export const authService = {
       const requestId = generateRequestId();
       const timestamp = generateTimestamp();
       
-      const response = await fetch(`${API_CONFIG.BASE_URL}/user-logins/validate`, {
+      const url = `${API_CONFIG.BASE_URL}/user-logins/validate`;
+      const requestBody = {
+        mid: requestId,
+        ts: timestamp,
+        request: {
+          username: username,
+          password: passwordHash,
+        },
+      };
+      
+      console.log('🔐 Attempting login to:', url);
+      console.log('📤 Request body:', { ...requestBody, request: { ...requestBody.request, password: '[REDACTED]' } });
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
           'X-User-ID': username,
         },
-        body: JSON.stringify({
-          mid: requestId,
-          ts: timestamp,
-          request: {
-            username: username,
-            password: passwordHash,
-          },
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      const data = await response.json();
-      
-      if (response.ok && data.success) {
+      if (response.ok) {
+        // Successfully authenticated (2xx status code)
         setStoredUserId(username);
         setStoredUsername(username);
         setLoginTime();
         
+        console.log('✅ Login successful for user:', username);
+        
         return {
           success: true,
           userId: username,
-          message: data.message || 'Login successful',
+          message: 'Login successful',
         };
+      }
+      
+      // Authentication failed - try to parse error message
+      let errorMessage = 'Invalid credentials';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorData.detail || errorData.error || errorMessage;
+        console.error('❌ Login failed:', errorMessage);
+      } catch {
+        // If response body isn't JSON, use default error message
+        console.error('❌ Login failed with status:', response.status);
       }
       
       return {
         success: false,
-        message: data.message || 'Invalid credentials',
+        message: errorMessage,
       };
     } catch (error) {
       console.error('Login error:', error);
