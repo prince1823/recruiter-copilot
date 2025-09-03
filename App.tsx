@@ -52,7 +52,7 @@ export default function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [recruiter?.recruiter_id]);
+  }, [user?.id]);
 
   const updateApplicants = useCallback((updatedApplicants: Applicant[]) => {
     console.log(`🔄 App.tsx: updateApplicants called with ${updatedApplicants.length} applicants`);
