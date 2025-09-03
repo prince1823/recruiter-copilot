@@ -6,7 +6,7 @@ export const API_CONFIG = {
   BASE_URL: (import.meta as any).env?.VITE_API_BASE_URL || 'https://recruiter-copilot-apis.quesscorp.com/api/v1',
   
   // User ID for API requests
-  USER_ID: (import.meta as any).env?.VITE_USER_ID || '917892511187',
+  USER_ID: (import.meta as any).env?.VITE_USER_ID || '919398404151',
   
   // Request timeout in milliseconds
   TIMEOUT: 30000,

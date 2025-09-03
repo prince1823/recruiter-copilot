@@ -29,20 +29,20 @@ export const ALLOWED_RECRUITERS = [
   {
     email: 'soniya.m@quesscorp.com',
     name: 'Soniya M',
-    contact_no: '+91 78297 86993',
-    recruiter_id: '918923325989'
+    contact_no: '+91 7829786993',
+    recruiter_id: '917829786993'
   },
   {
     email: 'rakesh.kb@quesscorp.com',
     name: 'Rakesh',
-    contact_no: '+91 87627 50612',
-    recruiter_id: '918923325990'
+    contact_no: '+91 8762750612',
+    recruiter_id: '918762750612'
   },
   {
     email: 'shivnarayan.mewada@qmail.quesscorp.com',
     name: 'Shivnarayan Mewada',
-    contact_no: '+91 93984 04151',
-    recruiter_id: '918923325991'
+    contact_no: '+91 9398404151',
+    recruiter_id: '919398404151'
   }
 ];
 

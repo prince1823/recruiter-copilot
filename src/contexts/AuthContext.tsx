@@ -42,10 +42,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Demo mode: Auto-login with the first recruiter for Docker deployment
+    // Demo mode: Auto-login with Shivnarayan for testing
     const demoUser: User = {
       id: 'demo-user',
-      email: ALLOWED_RECRUITERS[0].email
+      email: ALLOWED_RECRUITERS[3].email // Shivnarayan is at index 3
     };
 
     const demoSession: Session = {
@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     setUser(demoUser);
     setSession(demoSession);
-    setRecruiter(ALLOWED_RECRUITERS[0]);
+    setRecruiter(ALLOWED_RECRUITERS[3]); // Use Shivnarayan
     setLoading(false);
   }, []);
 
