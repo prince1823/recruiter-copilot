@@ -4,10 +4,10 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+// Note: Card components available but not used in current implementation
 import { ActionButtons } from './ActionButtons';
 import { BulkActionButtons } from './BulkActionButtons';
-import { Send, Phone, MapPin, Clock, User, Briefcase, Settings } from 'lucide-react';
+import { Send, Phone, User } from 'lucide-react';
 import { LegacyApplicant as Applicant, LegacyJobList as JobList } from '../src/types';
 import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists } from '../src/services/api';
 

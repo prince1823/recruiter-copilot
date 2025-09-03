@@ -75,11 +75,11 @@ export default function App() {
   }, [refreshData]);
 
   const handleViewChange = (type: ViewType) => {
-    setActiveView({ type: type, listId: null });
+    setActiveView({ type, listId: null });
   };
 
   const handleSelectList = (listId: string) => {
-    setActiveView({ type: 'manage-lists', listId: listId });
+    setActiveView({ type: 'manage-lists', listId });
   };
 
   const handleGoBack = () => {

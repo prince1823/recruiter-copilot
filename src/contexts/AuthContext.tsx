@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const demoUser: User = {
       id: 'demo-user',
-      email: email
+      email
     };
 
     const demoSession: Session = {

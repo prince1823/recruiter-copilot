@@ -3,11 +3,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
-import { ActionButtons } from './ActionButtons';
 import { BulkActionButtons } from './BulkActionButtons';
-import { X, Download, MessageCircle, ListPlus, Trash2 } from 'lucide-react';
+import { X, Download, MessageCircle, Trash2 } from 'lucide-react';
 import { Applicant, JobList } from '../types';
-import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists, bulkDeleteCandidates } from '../src/services/api';
+import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists } from '../src/services/api';
 import { addDeletedApplicant } from '../src/services/deletedItemsManager';
 
 interface ListViewProps {

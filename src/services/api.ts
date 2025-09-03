@@ -394,7 +394,7 @@ export const createListFromPhoneNumbers = async (listName: string, phoneNumbers:
           return parseInt(cleanPhone);
         } else if (cleanPhone.length === 10) {
           // If it's 10 digits, assume it's Indian number and add 91
-          return parseInt('91' + cleanPhone);
+          return parseInt(`91${  cleanPhone}`);
         } else {
           console.warn(`⚠️ Invalid phone number format: ${phone} (length: ${cleanPhone.length})`);
           return null;
@@ -448,9 +448,9 @@ export const updateList = async (listId: string, listName: string, description?:
     return {
       success: true,
       message: `List updated successfully to '${listName}'${description ? ` with description: ${description}` : ''}`,
-      listId: listId,
-      listName: listName,
-      description: description,
+      listId,
+      listName,
+      description,
       data: response
     };
   } catch (error) {
@@ -458,7 +458,7 @@ export const updateList = async (listId: string, listName: string, description?:
     return {
       success: false,
       message: `Error updating list: ${error}`,
-      listId: listId
+      listId
     };
   }
 };

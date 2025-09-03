@@ -69,8 +69,8 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
     }
   };
 
-  const handleAction = (action: string, applicantId: string, listId?: string) => {
-
+  const handleAction = (_action: string, _applicantId: string, _listId?: string) => {
+    // TODO: Implement action handling
   };
 
   const availableLists = jobLists.map(list => ({ id: list.id, name: list.listName }));

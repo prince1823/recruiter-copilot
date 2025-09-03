@@ -19,7 +19,7 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     lastMessageTime: applicant.updated_at ? new Date(applicant.updated_at).toLocaleDateString() : 'Unknown',
     location: homeLocation,
     pincode: '', // Not available in new format
-    experience: experience,
+    experience,
     hasTwoWheeler: false, // Not available in new format
     status: applicant.status === 'MANDATE_MATCHING' || applicant.status === 'DETAILS_COMPLETED' || applicant.status === 'INITIATED' ? 'active' : 'disabled',
     tags: applicant.tags || [],
@@ -31,8 +31,8 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     created_at: applicant.created_at || '',
     updated_at: applicant.updated_at || '',
     response: applicant.response || '',
-    age: age,
-    gender: gender,
+    age,
+    gender,
     education_qualification: details.education_qualification || 'Unknown',
     home_location: homeLocation,
     is_currently_employed: details.is_currently_employed || false,
