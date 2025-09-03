@@ -6,7 +6,7 @@ import { getApiUrl, getHeaders } from '../config/api';
 // Helper function to create request headers with dynamic recruiter ID
 const createHeaders = (recruiterId?: string) => ({
   'Content-Type': 'application/json',
-  'X-User-ID': recruiterId || '918923325988',
+  'X-User-ID': recruiterId || '919398404151',
 });
 
 // Helper function to create request body with required fields
@@ -277,9 +277,9 @@ export const healthAPI = {
 import { transformApplicantToLegacy, transformJobListToLegacy, extractDataFromResponse, populateApplicantLists, populateJobListApplicants } from './dataTransformers';
 
 export const fetchData = async (recruiterId?: string): Promise<{ applicants: any[], jobLists: any[] }> => {
-  console.log('🚨 FETCHDATA FUNCTION CALLED - THIS IS THE NEW API SERVICE');
-  console.log('🔍 API CONFIG:', { USER_ID: recruiterId || '918923325988', BASE_URL: 'http://91.99.195.150:8000/api/v1' });
-  console.log('🕐 FetchData called at:', new Date().toISOString());
+  // console.log('🚨 FETCHDATA FUNCTION CALLED - THIS IS THE NEW API SERVICE');
+  // console.log('🔍 API CONFIG:', { USER_ID: recruiterId || '918923325988', BASE_URL: 'http://91.99.195.150:8000/api/v1' });
+  // console.log('🕐 FetchData called at:', new Date().toISOString());
   
   let applicants: any[] = [];
   let jobLists: any[] = [];
