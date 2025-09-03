@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Recruiter, ALLOWED_RECRUITERS } from '../config/supabase';
+import { API_CONFIG } from '../config/api';
 
 // Mock types for Docker deployment
 interface User {
@@ -42,24 +43,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Demo mode: Auto-login with the first recruiter for Docker deployment
-    const demoUser: User = {
-      id: 'demo-user',
-      email: ALLOWED_RECRUITERS[0].email
-    };
+    // Only auto-login if demo mode is enabled
+    if (API_CONFIG.FEATURES.DEMO_MODE) {
+      console.warn('🚨 Demo mode is enabled - auto-login active');
+      const demoUser: User = {
+        id: 'demo-user',
+        email: ALLOWED_RECRUITERS[0]?.email || 'demo@example.com'
+      };
 
-    const demoSession: Session = {
-      user: demoUser,
-      access_token: 'demo-token'
-    };
+      const demoSession: Session = {
+        user: demoUser,
+        access_token: 'demo-token'
+      };
 
-    setUser(demoUser);
-    setSession(demoSession);
-    setRecruiter(ALLOWED_RECRUITERS[0]);
+      setUser(demoUser);
+      setSession(demoSession);
+      setRecruiter(ALLOWED_RECRUITERS[0] || null);
+    } else {
+      console.log('Demo mode disabled - manual authentication required');
+    }
     setLoading(false);
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (!API_CONFIG.FEATURES.DEMO_MODE) {
+      return { success: false, message: 'Authentication is disabled. Contact administrator.' };
+    }
+
     // Demo mode: Allow any password for allowed recruiters
     const recruiterData = ALLOWED_RECRUITERS.find(r => r.email === email);
     if (!recruiterData) {

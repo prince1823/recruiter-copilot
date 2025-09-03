@@ -155,10 +155,10 @@ export function SignIn() {
                 </p>
                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                   <p className="text-xs text-blue-800 font-medium mb-1">Example Credentials:</p>
-                  <p className="text-xs text-blue-700">Email: pratibha.s@qmail.quesscorp.com</p>
-                  <p className="text-xs text-blue-700">Password: demo123</p>
+                  <p className="text-xs text-blue-700">Email: demo@example.com</p>
+                  <p className="text-xs text-blue-700">Password: any password</p>
                   <p className="text-xs text-blue-600 mt-1 font-medium">
-                    Will use Recruiter ID: 918923325988
+                    Demo mode accepts any credentials for testing
                   </p>
                 </div>
               </div>

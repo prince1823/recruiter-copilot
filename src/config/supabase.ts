@@ -18,30 +18,29 @@ export interface Recruiter {
   created_at: string;
 }
 
-// Define the allowed recruiters
-export const ALLOWED_RECRUITERS = [
-  {
-    email: 'pratibha.s@qmail.quesscorp.com',
-    name: 'Pratibha S',
-    contact_no: '+91 78925 11187',
-    recruiter_id: '918923325988'
-  },
-  {
-    email: 'soniya.m@quesscorp.com',
-    name: 'Soniya M',
-    contact_no: '+91 78297 86993',
-    recruiter_id: '918923325989'
-  },
-  {
-    email: 'rakesh.kb@quesscorp.com',
-    name: 'Rakesh',
-    contact_no: '+91 87627 50612',
-    recruiter_id: '918923325990'
-  },
-  {
-    email: 'shivnarayan.mewada@qmail.quesscorp.com',
-    name: 'Shivnarayan Mewada',
-    contact_no: '+91 93984 04151',
-    recruiter_id: '918923325991'
+// Get allowed recruiters from environment variable (for demo mode only)
+const getRecruitersFromEnv = (): Recruiter[] => {
+  try {
+    const recruitersEnv = import.meta.env.VITE_DEMO_RECRUITERS;
+    if (recruitersEnv) {
+      return JSON.parse(recruitersEnv);
+    }
+  } catch (error) {
+    console.warn('Failed to parse VITE_DEMO_RECRUITERS from environment');
   }
-];
+  
+  // Fallback to demo data (should NOT be used in production)
+  console.warn('🚨 Using hardcoded demo recruiters. Configure VITE_DEMO_RECRUITERS in production!');
+  return [
+    {
+      id: 'demo-1',
+      email: 'demo@example.com',
+      name: 'Demo User',
+      contact_no: '+1 555-0100',
+      recruiter_id: 'demo-user-id',
+      created_at: new Date().toISOString()
+    }
+  ];
+};
+
+export const ALLOWED_RECRUITERS = getRecruitersFromEnv();
