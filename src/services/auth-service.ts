@@ -6,7 +6,9 @@ import {
   setLoginTime, 
   clearSession,
   isAuthenticated as checkAuth,
-  getStoredUserId 
+  getStoredUserId,
+  generateRequestId,
+  generateTimestamp
 } from '../lib/auth-utils';
 
 interface LoginResponse {
@@ -35,35 +37,43 @@ export const authService = {
     
     try {
       const passwordHash = await hashPassword(password);
+      const requestId = generateRequestId();
+      const timestamp = generateTimestamp();
       
-      const response = await fetch(`${API_CONFIG.BASE_URL}/login`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}/user-logins/validate`, {
         method: 'POST',
         headers: {
+          'accept': 'application/json',
           'Content-Type': 'application/json',
+          'X-User-ID': username,
         },
         body: JSON.stringify({
-          username,
-          passwordHash,
+          mid: requestId,
+          ts: timestamp,
+          request: {
+            username: username,
+            password: passwordHash,
+          },
         }),
       });
 
       const data = await response.json();
       
-      if (data.success && data.userId) {
-        setStoredUserId(data.userId);
+      if (response.ok && data.success) {
+        setStoredUserId(username);
         setStoredUsername(username);
         setLoginTime();
         
         return {
           success: true,
-          userId: data.userId,
+          userId: username,
           message: data.message || 'Login successful',
         };
       }
       
       return {
         success: false,
-        message: data.message || 'Login failed',
+        message: data.message || 'Invalid credentials',
       };
     } catch (error) {
       console.error('Login error:', error);

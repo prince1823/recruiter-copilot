@@ -36,3 +36,11 @@ export function clearSession(): void {
 export function isAuthenticated(): boolean {
   return !!getStoredUserId();
 }
+
+export function generateRequestId(): string {
+  return crypto.randomUUID();
+}
+
+export function generateTimestamp(): string {
+  return new Date().toISOString();
+}
