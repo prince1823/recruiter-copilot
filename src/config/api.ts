@@ -54,7 +54,7 @@ export const getEnvConfig = () => {
 export const getApiUrl = (endpoint: string) => {
   const config = getEnvConfig();
   const url = `${config.API_BASE_URL}${endpoint}`;
-  console.log('[DEBUG] The FINAL URL being fetched is:', url);
+
   return url;
 };
 

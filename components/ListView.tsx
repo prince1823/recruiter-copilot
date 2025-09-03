@@ -41,7 +41,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 if (window.confirm("Are you sure you want to remove this candidate from ALL lists?")) {
                     const result = await removeApplicantFromAllLists(applicantId);
                     if (!result.success) {
-                        console.warn('⚠️ Remove from all lists had issues:', result.message);
+
                         // Don't fail the entire operation, just log the warning
                     }
                 } else { return; }
@@ -164,12 +164,10 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
     
     if (window.confirm(`Are you sure you want to delete ${selectedCount} selected candidate(s)? This action cannot be undone.`)) {
       try {
-        console.log(`🗑️ Deleting ${selectedCount} selected candidates...`);
-        
+
         // Get the selected candidate IDs
         const selectedIds = Array.from(selectedApplicants);
-        console.log(`🗑️ Selected candidate IDs to delete:`, selectedIds);
-        
+
         // Add selected candidates to deleted items list for persistence
         selectedIds.forEach(applicantId => {
           addDeletedApplicant(applicantId);
@@ -181,20 +179,16 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
         // Remove deleted candidates from local state for instant UI update
         if (onApplicantsUpdate) {
           const updatedApplicants = applicants.filter(applicant => !selectedIds.includes(applicant.id));
-          console.log(`🔄 Updating local state: removed ${selectedIds.length} candidates, ${updatedApplicants.length} remaining`);
+
           onApplicantsUpdate(updatedApplicants);
         }
-        
-        console.log(`✅ Successfully removed ${selectedIds.length} candidates from UI permanently`);
-        
+
       } catch (error) {
         console.error('Error deleting selected candidates:', error);
         alert('❌ Failed to delete selected candidates. Please try again.');
       }
     }
   };
-
-
 
   return (
     <div className="flex h-full bg-whatsapp-gray-light">

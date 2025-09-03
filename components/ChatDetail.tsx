@@ -64,13 +64,13 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      console.log('Sending message:', newMessage);
+
       setNewMessage('');
     }
   };
 
   const handleAction = (action: string, applicantId: string, listId?: string) => {
-    console.log(`${action} action for applicant ${applicantId}`, listId ? `to list ${listId}` : '');
+
   };
 
   const availableLists = jobLists.map(list => ({ id: list.id, name: list.listName }));

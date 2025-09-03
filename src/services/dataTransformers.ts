@@ -120,23 +120,21 @@ export const transformAPIResponseToLegacy = (apiResponse: any) => {
 
 // Helper function to extract data from API response
 export const extractDataFromResponse = <T>(response: any): T[] => {
-  console.log('🔍 extractDataFromResponse called with:', response);
-  console.log('🔍 response type:', typeof response);
+
   console.log('🔍 response keys:', response ? Object.keys(response) : 'null/undefined');
   
   if (response?.data) {
-    console.log('🔍 Found response.data:', response.data);
+
     const result = Array.isArray(response.data) ? response.data : [response.data];
-    console.log('🔍 Returning data array:', result);
+
     return result;
   }
   
   if (Array.isArray(response)) {
-    console.log('🔍 Response is already an array:', response);
+
     return response;
   }
-  
-  console.log('🔍 No data found, returning empty array');
+
   return [];
 };
 

@@ -35,8 +35,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
     setIsUploading(false);
   };
 
-
-
   const validatePhoneNumbers = (phoneNumbers: string): { valid: string[], invalid: string[] } => {
     const numbers = phoneNumbers.split(',').map(num => num.trim()).filter(num => num.length > 0);
     const valid: string[] = [];
@@ -55,10 +53,7 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
   };
   
   const handleCreateList = async () => {
-      console.log(`🎯 Creating list: ${newListName.trim()}`);
-      console.log(`📱 Phone numbers:`, phoneNumbers);
 
-      
       if (!newListName.trim()) {
           alert("Please enter a list name.");
           return;
@@ -71,7 +66,7 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
 
       setIsUploading(true);
       try {
-        console.log(`📤 Creating list with phone numbers`);
+
         const { valid, invalid } = validatePhoneNumbers(phoneNumbers);
         
         if (invalid.length > 0) {
@@ -84,11 +79,11 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
         }
         
         const response = await createListFromPhoneNumbers(newListName.trim(), valid.join(','));
-        console.log(`✅ List created with phone numbers:`, response);
+
         alert(`${response.message}\nAdded: ${response.addedNumbers}/${response.totalNumbers} numbers`);
         
         // Refresh the data to show the new list with applicants
-        console.log(`🔄 Refreshing data after list creation...`);
+
         onListsUpdate();
         
         setIsCreateDialogOpen(false);
@@ -100,10 +95,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
         setIsUploading(false);
       }
   };
-
-
-
-
 
   const handleCancelPendingMessages = async (listId: string) => {
     if (window.confirm("Are you sure you want to cancel all pending messages for this list?")) {
@@ -121,21 +112,19 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
   const handleDeleteList = async (listId: string, listName: string) => {
     if (window.confirm(`Are you sure you want to delete the list "${listName}"? This action cannot be undone.`)) {
       try {
-        console.log(`🗑️ Deleting list ${listId} (${listName}) permanently...`);
-        
+
         // Add list to deleted items list for persistence
         addDeletedList(listId);
         
         // Remove the list from local state immediately for instant UI feedback
         if (onListsLocalUpdate) {
           const updatedLists = jobLists.filter(list => list.id !== listId);
-          console.log(`🔄 Updating local state: removed list ${listName}, ${updatedLists.length} lists remaining`);
+
           onListsLocalUpdate(updatedLists);
         }
         
         // Show success message
-        console.log(`✅ List ${listName} removed from UI permanently`);
-        
+
         // Note: We don't call onListsUpdate() here because the backend doesn't support deletion
         // The list will remain in the backend but won't show in the UI
         
@@ -195,7 +184,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
                   
                   <div className="space-y-4">
 
-
                     {/* List Name */}
                     <div>
                       <Label htmlFor="listName" className="text-sm font-medium">List Name *</Label>
@@ -242,9 +230,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
                         Format: 12-digit numbers with country code (e.g., 918496952122)
                       </div>
                     </div>
-
-
-
 
                   </div>
 
@@ -329,7 +314,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
                 ))}
             </div>
           </div>
-
 
         </div>
       </div>

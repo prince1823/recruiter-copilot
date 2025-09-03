@@ -59,7 +59,7 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                 if (window.confirm("Are you sure you want to remove this candidate from ALL lists?")) {
                     const result = await removeApplicantFromAllLists(applicantId);
                     if (!result.success) {
-                        console.warn('⚠️ Remove from all lists had issues:', result.message);
+
                         // Don't fail the entire operation, just log the warning
                     }
                 } else { return; }

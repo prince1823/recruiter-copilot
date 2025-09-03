@@ -1,21 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  css: {
-    postcss: './postcss.config.js', // explicitly point to postcss config
-  },
   build: {
     rollupOptions: {
-      // ensure nothing critical like supabase gets excluded
-      external: [],
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tooltip']
+        }
+      }
     },
+    minify: 'terser',
+    sourcemap: false
   },
   resolve: {
     alias: {
-      '@': '/src', // optional: lets you import with @/ instead of relative paths
-    },
-  },
+      '@': '/src'
+    }
+  }
 })

@@ -10,7 +10,7 @@ export const addDeletedApplicant = (applicantId: string): void => {
     if (!deletedApplicants.includes(applicantId)) {
       deletedApplicants.push(applicantId);
       localStorage.setItem(DELETED_APPLICANTS_KEY, JSON.stringify(deletedApplicants));
-      console.log(`🗑️ Added applicant ${applicantId} to deleted list`);
+
     }
   } catch (error) {
     console.error('Error adding deleted applicant:', error);
@@ -32,7 +32,7 @@ export const removeDeletedApplicant = (applicantId: string): void => {
     const deletedApplicants = getDeletedApplicants();
     const updated = deletedApplicants.filter(id => id !== applicantId);
     localStorage.setItem(DELETED_APPLICANTS_KEY, JSON.stringify(updated));
-    console.log(`🔄 Removed applicant ${applicantId} from deleted list`);
+
   } catch (error) {
     console.error('Error removing deleted applicant:', error);
   }
@@ -41,7 +41,7 @@ export const removeDeletedApplicant = (applicantId: string): void => {
 export const clearDeletedApplicants = (): void => {
   try {
     localStorage.removeItem(DELETED_APPLICANTS_KEY);
-    console.log('🗑️ Cleared all deleted applicants');
+
   } catch (error) {
     console.error('Error clearing deleted applicants:', error);
   }
@@ -54,7 +54,7 @@ export const addDeletedList = (listId: string): void => {
     if (!deletedLists.includes(listId)) {
       deletedLists.push(listId);
       localStorage.setItem(DELETED_LISTS_KEY, JSON.stringify(deletedLists));
-      console.log(`🗑️ Added list ${listId} to deleted list`);
+
     }
   } catch (error) {
     console.error('Error adding deleted list:', error);
@@ -76,7 +76,7 @@ export const removeDeletedList = (listId: string): void => {
     const deletedLists = getDeletedLists();
     const updated = deletedLists.filter(id => id !== listId);
     localStorage.setItem(DELETED_LISTS_KEY, JSON.stringify(updated));
-    console.log(`🔄 Removed list ${listId} from deleted list`);
+
   } catch (error) {
     console.error('Error removing deleted list:', error);
   }
@@ -85,7 +85,7 @@ export const removeDeletedList = (listId: string): void => {
 export const clearDeletedLists = (): void => {
   try {
     localStorage.removeItem(DELETED_LISTS_KEY);
-    console.log('🗑️ Cleared all deleted lists');
+
   } catch (error) {
     console.error('Error clearing deleted lists:', error);
   }
@@ -116,5 +116,5 @@ export const getDeletedItemsSummary = () => {
 export const clearAllDeletedItems = (): void => {
   clearDeletedApplicants();
   clearDeletedLists();
-  console.log('🗑️ Cleared all deleted items');
+
 };
