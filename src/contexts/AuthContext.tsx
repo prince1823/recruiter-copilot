@@ -1,24 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Recruiter, ALLOWED_RECRUITERS } from '../config/supabase';
-import { API_CONFIG } from '../config/api';
+import { authService } from '../services/auth-service';
+import { getStoredUserId, getStoredUsername } from '../lib/auth-utils';
 
-// Mock types for Docker deployment
 interface User {
   id: string;
-  email: string;
-}
-
-interface Session {
-  user: User;
-  access_token: string;
+  username: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  recruiter: Recruiter | null;
-  session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
+  signIn: (username: string, password: string) => Promise<{ success: boolean; message: string }>;
   signOut: () => Promise<void>;
 }
 
@@ -38,71 +30,51 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [recruiter, setRecruiter] = useState<Recruiter | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only auto-login if demo mode is enabled
-    if (API_CONFIG.FEATURES.DEMO_MODE) {
-      console.warn('🚨 Demo mode is enabled - auto-login active');
-      const demoUser: User = {
-        id: 'demo-user',
-        email: ALLOWED_RECRUITERS[0]?.email || 'demo@example.com'
-      };
-
-      const demoSession: Session = {
-        user: demoUser,
-        access_token: 'demo-token'
-      };
-
-      setUser(demoUser);
-      setSession(demoSession);
-      setRecruiter(ALLOWED_RECRUITERS[0] || null);
-    } else {
-      console.log('Demo mode disabled - manual authentication required');
+    const userId = getStoredUserId();
+    const username = getStoredUsername();
+    
+    if (userId && username) {
+      setUser({
+        id: userId,
+        username,
+      });
     }
+    
     setLoading(false);
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    if (!API_CONFIG.FEATURES.DEMO_MODE) {
-      return { success: false, message: 'Authentication is disabled. Contact administrator.' };
+  const signIn = async (username: string, password: string) => {
+    try {
+      const response = await authService.login(username, password);
+      
+      if (response.success && response.userId) {
+        setUser({
+          id: response.userId,
+          username,
+        });
+        return { success: true, message: response.message };
+      }
+      
+      return { success: false, message: response.message };
+    } catch (error) {
+      console.error('Sign in error:', error);
+      return { 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Failed to sign in' 
+      };
     }
-
-    // Demo mode: Allow any password for allowed recruiters
-    const recruiterData = ALLOWED_RECRUITERS.find(r => r.email === email);
-    if (!recruiterData) {
-      return { success: false, message: 'Email not found in allowed recruiters list' };
-    }
-
-    const demoUser: User = {
-      id: 'demo-user',
-      email
-    };
-
-    const demoSession: Session = {
-      user: demoUser,
-      access_token: 'demo-token'
-    };
-
-    setUser(demoUser);
-    setSession(demoSession);
-    setRecruiter(recruiterData);
-    
-    return { success: true, message: 'Signed in successfully (Demo Mode)' };
   };
 
   const signOut = async () => {
+    authService.logout();
     setUser(null);
-    setSession(null);
-    setRecruiter(null);
   };
 
   const value = {
     user,
-    recruiter,
-    session,
     loading,
     signIn,
     signOut,

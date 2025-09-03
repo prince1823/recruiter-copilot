@@ -22,11 +22,6 @@ export const API_CONFIG = {
     return 'http://localhost:8000/api/v1';
   })(),
   
-  // Default User ID - should be overridden by authentication
-  DEFAULT_USER_ID: import.meta.env.VITE_DEFAULT_USER_ID || (() => {
-    console.warn('🚨 VITE_DEFAULT_USER_ID not set! Using development fallback.');
-    return 'dev-user-id';
-  })(),
   
   // Request timeout in milliseconds
   TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
@@ -46,7 +41,6 @@ export const API_CONFIG = {
   FEATURES: {
     ENABLE_CSV_EXPORT: import.meta.env.VITE_ENABLE_CSV_EXPORT !== 'false',
     ENABLE_BULK_ACTIONS: import.meta.env.VITE_ENABLE_BULK_ACTIONS !== 'false',
-    DEMO_MODE: import.meta.env.VITE_DEMO_MODE === 'true',
   }
 };
 
@@ -85,8 +79,7 @@ export const getApiUrl = (endpoint: string) => {
   return url;
 };
 
-// Helper function to get headers with user ID
+// Helper function to get headers
 export const getHeaders = () => ({
   ...API_CONFIG.HEADERS,
-  'X-User-ID': API_CONFIG.DEFAULT_USER_ID,
 });

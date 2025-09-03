@@ -20,7 +20,7 @@ interface AppView {
 }
 
 export default function App() {
-  const { recruiter } = useAuth();
+  const { user } = useAuth();
   const [activeView, setActiveView] = useState<AppView>({ type: 'chats', listId: null });
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobLists, setJobLists] = useState<JobList[]>([]);
@@ -33,7 +33,7 @@ export default function App() {
     try {
       setIsLoading(true);
       setError(null);
-      const { applicants, jobLists } = await fetchData(recruiter?.recruiter_id);
+      const { applicants, jobLists } = await fetchData(user?.id);
       console.log(`📊 App.tsx: Received ${applicants.length} applicants and ${jobLists.length} job lists`);
       console.log(`📊 App.tsx: Applicant IDs:`, applicants.map(a => a.id));
       console.log(`📊 App.tsx: Job list IDs:`, jobLists.map(l => l.id));

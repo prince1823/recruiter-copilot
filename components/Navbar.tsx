@@ -5,7 +5,7 @@ import { LogOut, User, Building2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 export function Navbar() {
-  const { recruiter, signOut } = useAuth();
+  const { user, signOut } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
@@ -27,13 +27,13 @@ export function Navbar() {
 
         {/* User Menu */}
         <div className="flex items-center space-x-4">
-          {/* Recruiter Info */}
+          {/* User Info */}
           <div className="text-right">
             <p className="text-sm font-medium text-gray-900">
-              {recruiter?.name || 'Recruiter'}
+              {user?.username || 'User'}
             </p>
             <p className="text-xs text-gray-500">
-              {recruiter?.email || 'email@example.com'}
+              ID: {user?.id || 'N/A'}
             </p>
           </div>
 
@@ -47,13 +47,10 @@ export function Navbar() {
             <DropdownMenuContent align="end" className="w-48">
               <div className="px-3 py-2 border-b border-gray-100">
                 <p className="text-sm font-medium text-gray-900">
-                  {recruiter?.name || 'Recruiter'}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {recruiter?.email || 'email@example.com'}
+                  {user?.username || 'User'}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  ID: {recruiter?.recruiter_id || 'N/A'}
+                  ID: {user?.id || 'N/A'}
                 </p>
               </div>
               <DropdownMenuItem onClick={handleSignOut} className="text-red-600">

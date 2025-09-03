@@ -5,11 +5,11 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
-import { Mail, Lock, Eye, EyeOff, Building2, Users } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, Building2, Users } from 'lucide-react';
 
 export function SignIn() {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +21,7 @@ export function SignIn() {
     setMessage(null);
 
     try {
-      const result = await signIn(email, password);
+      const result = await signIn(username, password);
       
       if (result.success) {
         setMessage({ type: 'success', text: result.message });
@@ -69,19 +69,19 @@ export function SignIn() {
           
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email Field */}
+              {/* Username Field */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Email Address
+                <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                  Username
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="pl-10 h-12 border-gray-300 focus:border-whatsapp-green focus:ring-whatsapp-green"
                     required
                   />
@@ -144,25 +144,6 @@ export function SignIn() {
               </Button>
             </form>
 
-            {/* Info Section */}
-            <div className="pt-4 border-t border-gray-200">
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-2">
-                  <strong>🔓 Demo Mode Enabled</strong>
-                </p>
-                <p className="text-xs text-gray-500 mb-3">
-                  You can sign in with any email and password for testing.
-                </p>
-                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                  <p className="text-xs text-blue-800 font-medium mb-1">Example Credentials:</p>
-                  <p className="text-xs text-blue-700">Email: demo@example.com</p>
-                  <p className="text-xs text-blue-700">Password: any password</p>
-                  <p className="text-xs text-blue-600 mt-1 font-medium">
-                    Demo mode accepts any credentials for testing
-                  </p>
-                </div>
-              </div>
-            </div>
           </CardContent>
         </Card>
 

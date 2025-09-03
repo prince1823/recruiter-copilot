@@ -2,13 +2,14 @@ import React from 'react';
 import { useAuth } from '../src/contexts/AuthContext';
 import { SignIn } from './SignIn';
 import { Loader2 } from 'lucide-react';
+import { isAuthenticated } from '../src/lib/auth-utils';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, recruiter, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -21,7 +22,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  if (!user || !recruiter) {
+  if (!user || !isAuthenticated()) {
     return <SignIn />;
   }
 

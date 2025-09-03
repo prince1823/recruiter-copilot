@@ -2,11 +2,12 @@
 // Based on Postman API specification
 
 import { getApiUrl, getHeaders, API_CONFIG } from '../config/api';
+import { getStoredUserId } from '../lib/auth-utils';
 
 // Helper function to create request headers with dynamic recruiter ID
 const createHeaders = (recruiterId?: string) => ({
   'Content-Type': 'application/json',
-  'X-User-ID': recruiterId || API_CONFIG.DEFAULT_USER_ID,
+  'X-User-ID': recruiterId || getStoredUserId() || '',
 });
 
 // Helper function to create request body with required fields
