@@ -1,10 +1,11 @@
 services:
   frontend:
-    image: recruiter-copilot-frontend:latest
+    image: ghcr.io/tanuj-b/recruiter-copilot:production
     container_name: recruiter-copilot-frontend
     ports:
       - "80:80"  # Production uses port 80
     environment:
+    
       # API Configuration - ALL REQUIRED for production
       # These MUST be set explicitly - no defaults allowed
       VITE_API_BASE_URL: https://api.example.com/api/v1  # CHANGE THIS to your production API
