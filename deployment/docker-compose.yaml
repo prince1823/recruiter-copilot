@@ -1,0 +1,151 @@
+version: "3.3"
+name: quess-whatsapp-bot
+
+volumes:
+  quess_whatsapp_kafka: 
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/mnt/docker-volumes/project-helix/kafka'
+  quess_whatsapp_zookeeper:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/mnt/docker-volumes/project-helix/zookeeper'
+  quess_whatsapp_config:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/mnt/docker-volumes/project-helix/app'
+  quess_whatsapp_db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/mnt/docker-volumes/project-helix/db'
+  quess_whatsapp_redis:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/mnt/docker-volumes/project-helix/redis'
+services:
+  whatsapp-bot-go:
+    container_name: whatsapp-bot-go
+    image: sanketikahub/project-helix-go:0.3.0
+    entrypoint: ["go", "run", "main.go", "handler.go"]
+    depends_on:
+      - kafka
+      - whatsapp-postgres
+    volumes:
+      - quess_whatsapp_config:/app/config/app
+  whatsapp-bot-py:
+    container_name: whatsapp-bot-py
+    image: sanketikahub/project-helix-api:0.3.4
+    entrypoint: ["./start-services.sh"]
+    depends_on:
+      - kafka
+      - whatsapp-bot-go
+      - whatsapp-postgres
+      - whatsapp-redis
+    env_file: .env
+    ports:
+      - "8081:8000"
+    volumes:
+      - quess_whatsapp_config:/app/config/app
+  kafka:
+    container_name: whatsapp-kafka
+    image: bitnami/kafka:3.8.0
+    restart: always
+    depends_on:
+      - zookeeper
+    volumes: 
+      - quess_whatsapp_kafka:/bitnami/kafka/data
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://whatsapp-kafka:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CREATE_TOPICS="prod.quess.raw:1:1,prod.quess.ingest:1:1,prod.quess.output:1:1,prod.quess.failed:1:1,prod.quess.admin:1:1,"
+  zookeeper:
+    container_name: whatsapp-zookeeper
+    image: bitnami/zookeeper:latest
+    volumes: 
+      - quess_whatsapp_zookeeper:/bitnami/zookeeper/data
+    environment:
+      - ZOO_MY_ID=1
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    restart: always
+  whatsapp-postgres:
+    container_name: whatsapp-postgres
+    image: postgres:14.18-alpine
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - quess_whatsapp_db:/var/lib/postgresql/data
+    env_file: .env
+  whatsapp-redis:
+    container_name: whatsapp-redis
+    image: redis:7.2-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - quess_whatsapp_redis:/data
+    command: >
+      sh -c "redis-server --notify-keyspace-events Ex --maxmemory 2gb --save 60 1"
+  # Add nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: whatsapp-nginx
+    ports:
+      - "80:80"  # This will now be the main entry point
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - whatsapp-bot-py
+    restart: always
+  
+  frontend:
+    image: ghcr.io/tanuj-b/recruiter-copilot:production
+    container_name: recruiter-copilot-frontend
+    environment:
+      # API Configuration - ALL REQUIRED for production
+      # These MUST be set explicitly - no defaults allowed
+      # Using the public URL that nginx will proxy
+      VITE_API_BASE_URL: "https://recruiter-copilot.sthaan.ai/api/v1"
+      VITE_API_TIMEOUT: "30000"
+      VITE_API_RETRY_ATTEMPTS: "3"
+      VITE_API_RETRY_DELAY: "1000"
+      
+      # Feature Flags - REQUIRED
+      VITE_ENABLE_CSV_EXPORT: "true"
+      VITE_ENABLE_BULK_ACTIONS: "true"
+      
+      # Production should NOT use these test flags
+      # VITE_SKIP_AUTH: "false"  # DO NOT SET IN PRODUCTION
+      # VITE_MOCK_USER_ID: ""    # DO NOT SET IN PRODUCTION
+    
+    restart: always
+    
+    # Health check for production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
