@@ -77,18 +77,18 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-whatsapp-green text-white hover:bg-whatsapp-green-dark';
+      case 'active': return 'bg-primary-blue text-white hover:bg-primary-blue-dark';
       case 'disabled': return 'bg-red-500 text-white hover:bg-red-600';
       default: return '';
     }
   };
 
   return (
-    <div className="flex h-full bg-whatsapp-gray-light">
+    <div className="flex h-full bg-secondary-gray-light">
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Chat Header */}
-        <div className="p-4 border-b border-gray-200 bg-whatsapp-green text-white flex items-center justify-between">
+        <div className="p-4 border-b border-gray-200 bg-primary-blue text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -99,7 +99,7 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-white text-whatsapp-green">
+              <AvatarFallback className="bg-white text-primary-blue">
                 {applicant.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
               </AvatarFallback>
             </Avatar>
@@ -138,7 +138,7 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
               <div
                 className={`max-w-[70%] p-3 rounded-lg ${
                   msg.sender === 'user'
-                    ? 'bg-whatsapp-green text-white'
+                    ? 'bg-primary-blue text-white'
                     : 'bg-white border border-gray-200 shadow-sm'
                 }`}
               >
@@ -163,7 +163,7 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               className="flex-1"
             />
-            <Button onClick={handleSendMessage} className="bg-whatsapp-green hover:bg-whatsapp-green-dark">
+            <Button onClick={handleSendMessage} className="bg-primary-blue hover:bg-primary-blue-dark">
               <Send className="h-4 w-4" />
             </Button>
           </div>
@@ -172,7 +172,7 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
 
       {/* Candidate Info Sidebar */}
       <div className="w-80 border-l border-gray-200 bg-white p-4 space-y-4">
-        <Card className="border-l-4 border-l-whatsapp-green">
+        <Card className="border-l-4 border-l-primary-blue">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-4 w-4" />
@@ -182,7 +182,7 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
           <CardContent className="space-y-3">
             <div className="text-center">
               <Avatar className="h-16 w-16 mx-auto mb-2">
-                <AvatarFallback className="text-lg bg-whatsapp-green text-white">
+                <AvatarFallback className="text-lg bg-primary-blue text-white">
                   {applicant.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </AvatarFallback>
               </Avatar>

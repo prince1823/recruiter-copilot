@@ -114,7 +114,7 @@ export function ListDetailView({ listId, allApplicants, allJobLists, onDataUpdat
   const isAllSelected = selectedApplicants.size === applicantsInList.length && applicantsInList.length > 0;
   const availableLists = allJobLists.map(list => ({ id: list.id, name: list.listName }));
 
-  const getStatusBadgeClass = (status: string) => status === 'active' ? 'bg-whatsapp-green text-white' : 'bg-red-500 text-white';
+  const getStatusBadgeClass = (status: string) => status === 'active' ? 'bg-primary-blue text-white' : 'bg-red-500 text-white';
 
   if (!currentList) {
     return (

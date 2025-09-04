@@ -56,7 +56,7 @@ export function ActionButtons({
                 variant="outline" 
                 size={size} 
                 onClick={onToggleStatus}
-                className={`${buttonClass} border-green-200 text-green-600 hover:bg-green-50 hover:border-green-300 hover:text-green-700`}
+                className={`${buttonClass} border-primary-blue text-primary-blue hover:bg-primary-blue-light hover:border-primary-blue hover:text-primary-blue-dark`}
               >
                 <UserCheck className="h-3 w-3" />
                 {showLabels && <span className="text-xs">Enable</span>}

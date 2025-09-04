@@ -159,17 +159,17 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
 
   return (
     <TooltipProvider>
-      <div className="flex h-full bg-whatsapp-gray-light">
+      <div className="flex h-full bg-secondary-gray-light">
         <div className="flex-1 flex flex-col">
           <div className="p-4 border-b border-gray-200 bg-white">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-6 bg-whatsapp-green rounded-full"></div>
+                <div className="w-1 h-6 bg-primary-blue rounded-full"></div>
                 <h2 className="text-gray-900 font-medium">Manage Lists ({jobLists.filter(list => list.status !== 'ARCHIVED' && list.status !== 'archived').length})</h2>
               </div>
               <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-whatsapp-green hover:bg-whatsapp-green-dark text-white">
+                  <Button className="bg-primary-blue hover:bg-primary-blue-dark text-white">
                     <Plus className="h-4 w-4 mr-2" />
                     Create New List
                   </Button>
@@ -240,7 +240,7 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
                     <Button 
                       onClick={handleCreateList} 
                       disabled={isUploading || !newListName.trim()}
-                      className="bg-whatsapp-green hover:bg-whatsapp-green-dark"
+                      className="bg-primary-blue hover:bg-primary-blue-dark"
                     >
                       {isUploading ? 'Creating...' : 'Create List'}
                     </Button>

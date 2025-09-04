@@ -36,16 +36,21 @@ export function SignIn() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-whatsapp-green to-green-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 to-blue-400 flex items-center justify-center p-4">
+
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-white p-3 rounded-full mr-3">
-              <Building2 className="h-8 w-8 text-whatsapp-green" />
+            <div className="bg-white p-4 rounded-full mr-3">
+            <Building2 className="h-8 w-8 text-blue-400" />
+<Users className="h-8 w-8 text-blue-500" />
+
             </div>
             <div className="bg-white p-3 rounded-full">
-              <Users className="h-8 w-8 text-whatsapp-green" />
+            <Building2 className="h-8 w-8 text-blue-200" />
+<Users className="h-8 w-8 text-blue-500" />
+
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">
@@ -82,7 +87,7 @@ export function SignIn() {
                     placeholder="Enter your username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="pl-10 h-12 border-gray-300 focus:border-whatsapp-green focus:ring-whatsapp-green"
+                    className="pl-10 h-12 border-gray-300 focus:border-primary-blue focus:ring-primary-blue"
                     required
                   />
                 </div>
@@ -101,7 +106,7 @@ export function SignIn() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 h-12 border-gray-300 focus:border-whatsapp-green focus:ring-whatsapp-green"
+                    className="pl-10 pr-10 h-12 border-gray-300 focus:border-primary-blue focus:ring-primary-blue"
                     required
                   />
                   <button
@@ -131,7 +136,8 @@ export function SignIn() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 bg-whatsapp-green hover:bg-whatsapp-green-dark text-white font-medium text-lg transition-colors"
+                className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-medium text-lg transition-colors"
+
               >
                 {isLoading ? (
                   <div className="flex items-center">

@@ -26,7 +26,7 @@ export function BulkActionButtons({
   
   return (
     <TooltipProvider>
-      <div className="flex items-center gap-3 p-3 bg-whatsapp-green-light border border-whatsapp-green rounded-lg">
+      <div className="flex items-center gap-3 p-3 bg-primary-blue-light border border-primary-blue rounded-lg">
         <span className="text-sm font-medium text-gray-700">
           {selectedCount} selected
         </span>

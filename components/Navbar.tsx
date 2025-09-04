@@ -16,7 +16,7 @@ export function Navbar() {
       <div className="flex items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center space-x-3">
-          <div className="bg-whatsapp-green p-2 rounded-lg">
+          <div className="bg-primary-blue p-2 rounded-lg">
             <Building2 className="h-6 w-6 text-white" />
           </div>
           <div>
