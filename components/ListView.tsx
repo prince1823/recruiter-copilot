@@ -296,8 +296,8 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto bg-white">
-          <Table>
+        <div className="flex-1 overflow-auto bg-white">
+          <Table className="min-w-full">
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-12"></TableHead>
