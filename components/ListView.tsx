@@ -203,30 +203,30 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               size="sm" 
               onClick={() => {
                 const csvContent = [
-                  "Phone,Location,Experience,Status,Conversation,Lists,Created At,Updated At,Response,Age,Gender,Education Qualification,Home Location,Currently Employed,Industry,Work Location,Last Drawn Salary,Willing to Relocate,Expected Salary,Tags",
+                  "Phone No,Location,Age,Gender,Expected Salary,Education Qualification,Willing to Relocate,Home Location,Work Location,Industry,Conversation,Experience,Status,Lists,Created At,Updated At,Response,Currently Employed,Last Drawn Salary,Tags",
                   ...filteredApplicants.map(applicant => {
                     const lists = getListNames(applicant.lists).join(',');
                     const tags = applicant.tags.join(';');
                     return [
                       applicant.phone,
                       applicant.location,
+                      applicant.age,
+                      applicant.gender,
+                      applicant.expected_salary,
+                      applicant.education_qualification,
+                      applicant.willing_to_relocate ? 'Yes' : 'No',
+                      applicant.home_location,
+                      applicant.work_location || 'N/A',
+                      applicant.industry,
+                      formatConversationStatus(applicant.conversationStatus).label,
                       applicant.experience,
                       applicant.status,
-                      formatConversationStatus(applicant.conversationStatus).label,
                       lists,
                       applicant.created_at,
                       applicant.updated_at,
                       `"${applicant.response.replace(/"/g, '""')}"`, // Escape quotes in response
-                      applicant.age,
-                      applicant.gender,
-                      applicant.education_qualification,
-                      applicant.home_location,
                       applicant.is_currently_employed ? 'Yes' : 'No',
-                      applicant.industry,
-                      applicant.work_location || 'N/A',
                       applicant.last_drawn_salary || 'N/A',
-                      applicant.willing_to_relocate ? 'Yes' : 'No',
-                      applicant.expected_salary,
                       tags
                     ].join(',');
                   })
@@ -301,53 +301,66 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-12"></TableHead>
-                <TableHead>Phone</TableHead>
+                <TableHead>Phone No</TableHead>
+                <TableHead>Location</TableHead>
                 <TableHead>Age</TableHead>
                 <TableHead>Gender</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Experience</TableHead>
+                <TableHead>Expected Salary</TableHead>
+                <TableHead>Education Qualification</TableHead>
+                <TableHead>Willing to Relocate</TableHead>
+                <TableHead>Home Location</TableHead>
+                <TableHead>Work Location</TableHead>
                 <TableHead>Industry</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Conversation</TableHead>
-                <TableHead>Lists</TableHead>
-                <TableHead>Last Message</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredApplicants.map((applicant) => (
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
-                  <TableCell><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
-                  <TableCell className="font-medium">{applicant.phone}</TableCell>
-                  <TableCell>{applicant.age}</TableCell>
-                  <TableCell>{applicant.gender}</TableCell>
-                  <TableCell>{applicant.location}</TableCell>
-                  <TableCell>{applicant.experience} years</TableCell>
-                  <TableCell>{applicant.industry}</TableCell>
-                  <TableCell><Badge className={`text-xs ${getStatusBadgeClass(applicant.status)}`}>{applicant.status}</Badge></TableCell>
-                  <TableCell>
-                    {(() => {
-                      const statusInfo = formatConversationStatus(applicant.conversationStatus);
-                      return (
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${statusInfo.color} ${statusInfo.bgColor} border-current`}
-                        >
-                          {statusInfo.label}
-                        </Badge>
-                      );
-                    })()}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {getListNames(applicant.lists).slice(0, 2).map((listName, index) => <Badge key={index} variant="outline" className="text-xs border-primary-blue text-primary-blue">{listName}</Badge>)}
-                      {applicant.lists.length > 2 && <Badge variant="outline" className="text-xs">+{applicant.lists.length - 2}</Badge>}
+                  <TableCell className="w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
+                  <TableCell className="font-medium w-32">{applicant.phone}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.location}
                     </div>
                   </TableCell>
-                  <TableCell className="max-w-xs">
-                    <div><p className="text-sm truncate">{applicant.lastMessage}</p><p className="text-xs text-gray-500">{applicant.lastMessageTime}</p></div>
+                  <TableCell className="w-16">{applicant.age}</TableCell>
+                  <TableCell className="w-20">{applicant.gender}</TableCell>
+                  <TableCell className="w-24">{applicant.expected_salary || 'N/A'}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.education_qualification || 'N/A'}
+                    </div>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="w-20">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.home_location || 'N/A'}
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.work_location || 'N/A'}
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-20">{applicant.industry}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {(() => {
+                        const statusInfo = formatConversationStatus(applicant.conversationStatus);
+                        return (
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${statusInfo.color} ${statusInfo.bgColor} border-current`}
+                          >
+                            {statusInfo.label}
+                          </Badge>
+                        );
+                      })()}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right w-20">
                     <div className="flex gap-1 justify-end">
                       {/* WhatsApp Web Button */}
                       <Button
