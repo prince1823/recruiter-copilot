@@ -31,6 +31,8 @@ echo "✅ All required environment variables are set"
 # Create a config file with environment variables
 # These will override any build-time variables
 cat <<EOF > /usr/share/nginx/html/env-config.js
+// Environment variables injected at Docker runtime
+console.log('🔧 Loading environment variables from Docker runtime...');
 window._env_ = {
   VITE_API_BASE_URL: "${VITE_API_BASE_URL}",
   VITE_API_TIMEOUT: "${VITE_API_TIMEOUT}",
@@ -39,6 +41,8 @@ window._env_ = {
   VITE_ENABLE_CSV_EXPORT: "${VITE_ENABLE_CSV_EXPORT}",
   VITE_ENABLE_BULK_ACTIONS: "${VITE_ENABLE_BULK_ACTIONS}"
 };
+
+console.log('✅ Environment variables loaded:', window._env_);
 
 // Optional development/testing variables (only set if provided)
 EOF
@@ -56,12 +60,11 @@ echo "" >> /usr/share/nginx/html/env-config.js
 
 echo "Environment configuration written to env-config.js"
 
-# Inject the script tag into index.html if not already present
-if ! grep -q "env-config.js" /usr/share/nginx/html/index.html; then
-  echo "Injecting env-config.js into index.html..."
-  sed -i 's|</head>|<script src="/env-config.js"></script></head>|' /usr/share/nginx/html/index.html
+# Check if env-config.js script tag exists in index.html
+if grep -q "env-config.js" /usr/share/nginx/html/index.html; then
+  echo "✅ env-config.js script tag found in index.html"
 else
-  echo "env-config.js already injected in index.html"
+  echo "⚠️ env-config.js script tag not found in index.html - this may cause environment variable issues"
 fi
 
 # Execute the CMD

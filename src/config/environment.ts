@@ -41,11 +41,13 @@ class EnvironmentError extends Error {
 function getEnvVar(key: keyof RuntimeEnv): string {
   // Try Docker runtime injection first
   if (typeof window !== 'undefined' && window._env_ && window._env_[key]) {
+    console.log(`✅ Environment variable '${key}' loaded from Docker runtime: ${window._env_[key]}`);
     return window._env_[key];
   }
   
   // Fall back to Vite build-time variables
   if (import.meta.env[key]) {
+    console.log(`✅ Environment variable '${key}' loaded from Vite build: ${import.meta.env[key]}`);
     return import.meta.env[key] as string;
   }
   
@@ -54,7 +56,8 @@ function getEnvVar(key: keyof RuntimeEnv): string {
                    `Please set this variable in either:\n` +
                    `1. Your .env file (for local development)\n` +
                    `2. Your docker-compose.yml file (for Docker deployment)\n` +
-                   `The application cannot start without this configuration.`;
+                   `The application cannot start without this configuration.\n` +
+                   `Debug info: window._env_ = ${typeof window !== 'undefined' ? JSON.stringify(window._env_) : 'N/A (server-side)'}, import.meta.env.${key} = ${import.meta.env[key]}`;
   
   console.error(`🚨 ${errorMsg}`);
   throw new EnvironmentError(errorMsg);
@@ -169,6 +172,14 @@ export const ENV = {
 // Validate environment on module load
 // This will prevent the application from starting if required vars are missing
 validateEnvironment();
+
+// Add runtime debugging
+if (typeof window !== 'undefined') {
+  console.log('🔍 Environment Debug Info:');
+  console.log('- window._env_:', window._env_);
+  console.log('- ENV.API_BASE_URL:', ENV.API_BASE_URL);
+  console.log('- Current origin:', window.location.origin);
+}
 
 // Export the validation function for use in tests or other contexts
 export { validateEnvironment, getEnvVar, getOptionalEnvVar, EnvironmentError };
