@@ -1,4 +1,5 @@
 import { API_CONFIG } from '../config/api';
+import { ENV } from '../config/environment';
 import { 
   hashPassword, 
   setStoredUserId, 
@@ -20,8 +21,13 @@ interface LoginResponse {
 export const authService = {
   async login(username: string, password: string): Promise<LoginResponse> {
     // Check if auth should be skipped (development/testing only)
-    if (import.meta.env.VITE_SKIP_AUTH === 'true') {
-      const mockUserId = import.meta.env.VITE_MOCK_USER_ID || 'test-user-123';
+    if (ENV.SKIP_AUTH) {
+      // MOCK_USER_ID must be set if SKIP_AUTH is true
+      if (!ENV.MOCK_USER_ID) {
+        throw new Error('VITE_SKIP_AUTH is true but VITE_MOCK_USER_ID is not set! Both must be configured together.');
+      }
+      
+      const mockUserId = ENV.MOCK_USER_ID;
       setStoredUserId(mockUserId);
       setStoredUsername(username);
       setLoginTime();

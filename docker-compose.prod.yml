@@ -1,21 +1,24 @@
-version: '3.8'
-
 services:
   frontend:
     image: recruiter-copilot-frontend:latest
     container_name: recruiter-copilot-frontend
     ports:
-      - "${FRONTEND_PORT:-80}:80"  # Use port 80 in production
+      - "80:80"  # Production uses port 80
     environment:
-      # API Configuration - Point to your production backend
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-      VITE_API_TIMEOUT: ${VITE_API_TIMEOUT:-30000}
-      VITE_API_RETRY_ATTEMPTS: ${VITE_API_RETRY_ATTEMPTS:-3}
-      VITE_API_RETRY_DELAY: ${VITE_API_RETRY_DELAY:-1000}
+      # API Configuration - ALL REQUIRED for production
+      # These MUST be set explicitly - no defaults allowed
+      VITE_API_BASE_URL: https://api.example.com/api/v1  # CHANGE THIS to your production API
+      VITE_API_TIMEOUT: 30000
+      VITE_API_RETRY_ATTEMPTS: 3
+      VITE_API_RETRY_DELAY: 1000
       
-      # Feature Flags
-      VITE_ENABLE_CSV_EXPORT: ${VITE_ENABLE_CSV_EXPORT:-true}
-      VITE_ENABLE_BULK_ACTIONS: ${VITE_ENABLE_BULK_ACTIONS:-true}
+      # Feature Flags - REQUIRED
+      VITE_ENABLE_CSV_EXPORT: "true"
+      VITE_ENABLE_BULK_ACTIONS: "true"
+      
+      # Production should NOT use these test flags
+      # VITE_SKIP_AUTH: "false"  # DO NOT SET IN PRODUCTION
+      # VITE_MOCK_USER_ID: ""    # DO NOT SET IN PRODUCTION
     
     restart: always
     
