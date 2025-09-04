@@ -48,15 +48,15 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   
-  /* WhatsApp-inspired colors */
-  --whatsapp-green: #25D366;
-  --whatsapp-green-dark: #1DA851;
-  --whatsapp-green-light: #DCF8C6;
-  --whatsapp-gray: #8696A0;
-  --whatsapp-gray-light: #F0F2F5;
-  --whatsapp-blue: #34B7F1;
-  --whatsapp-chat-bg: #F7F8FA;
-  --whatsapp-hover: #F5F6F6;
+  /* Blue theme colors */
+  --primary-blue: #3B82F6;
+  --primary-blue-dark: #2563EB;
+  --primary-blue-light: #DBEAFE;
+  --secondary-gray: #8696A0;
+  --secondary-gray-light: #F0F2F5;
+  --accent-blue: #60A5FA;
+  --chat-bg: #F7F8FA;
+  --hover-bg: #F5F6F6;
   
   /* Action button colors */
   --action-disable: #E53E3E;
@@ -105,15 +105,15 @@
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
   
-  /* WhatsApp-inspired colors for dark mode */
-  --whatsapp-green: #25D366;
-  --whatsapp-green-dark: #1DA851;
-  --whatsapp-green-light: #2A5A4B;
-  --whatsapp-gray: #8696A0;
-  --whatsapp-gray-light: #2A2F32;
-  --whatsapp-blue: #34B7F1;
-  --whatsapp-chat-bg: #1E2428;
-  --whatsapp-hover: #2A2F32;
+  /* Blue theme colors for dark mode */
+  --primary-blue: #3B82F6;
+  --primary-blue-dark: #1D4ED8;
+  --primary-blue-light: #1E3A8A;
+  --secondary-gray: #8696A0;
+  --secondary-gray-light: #2A2F32;
+  --accent-blue: #60A5FA;
+  --chat-bg: #1E2428;
+  --hover-bg: #2A2F32;
   
   /* Action button colors for dark mode */
   --action-disable: #E53E3E;
@@ -166,15 +166,15 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   
-  /* WhatsApp-inspired color utilities */
-  --color-whatsapp-green: var(--whatsapp-green);
-  --color-whatsapp-green-dark: var(--whatsapp-green-dark);
-  --color-whatsapp-green-light: var(--whatsapp-green-light);
-  --color-whatsapp-gray: var(--whatsapp-gray);
-  --color-whatsapp-gray-light: var(--whatsapp-gray-light);
-  --color-whatsapp-blue: var(--whatsapp-blue);
-  --color-whatsapp-chat-bg: var(--whatsapp-chat-bg);
-  --color-whatsapp-hover: var(--whatsapp-hover);
+  /* Blue theme color utilities */
+  --color-primary-blue: var(--primary-blue);
+  --color-primary-blue-dark: var(--primary-blue-dark);
+  --color-primary-blue-light: var(--primary-blue-light);
+  --color-secondary-gray: var(--secondary-gray);
+  --color-secondary-gray-light: var(--secondary-gray-light);
+  --color-accent-blue: var(--accent-blue);
+  --color-chat-bg: var(--chat-bg);
+  --color-hover-bg: var(--hover-bg);
   
   /* Action button color utilities */
   --color-action-disable: var(--action-disable);
@@ -256,29 +256,29 @@ html {
   font-size: var(--font-size);
 }
 
-/* Custom utility classes for WhatsApp-like styling */
+/* Custom utility classes for blue theme styling */
 @layer utilities {
-  .bg-whatsapp-green {
-    background-color: var(--whatsapp-green);
+  .bg-primary-blue {
+    background-color: var(--primary-blue);
   }
   
-  .bg-whatsapp-green-light {
-    background-color: var(--whatsapp-green-light);
+  .bg-primary-blue-light {
+    background-color: var(--primary-blue-light);
   }
   
-  .bg-whatsapp-chat {
-    background-color: var(--whatsapp-chat-bg);
+  .bg-chat {
+    background-color: var(--chat-bg);
   }
   
-  .hover\:bg-whatsapp-hover:hover {
-    background-color: var(--whatsapp-hover);
+  .hover\:bg-hover:hover {
+    background-color: var(--hover-bg);
   }
   
-  .text-whatsapp-green {
-    color: var(--whatsapp-green);
+  .text-primary-blue {
+    color: var(--primary-blue);
   }
   
-  .border-whatsapp-green {
-    border-color: var(--whatsapp-green);
+  .border-primary-blue {
+    border-color: var(--primary-blue);
   }
 }

@@ -129,7 +129,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
   const isAllSelected = selectedApplicants.size === filteredApplicants.length && filteredApplicants.length > 0;
   
   const getStatusBadgeClass = (status: string) => {
-    return status === 'active' ? 'bg-whatsapp-green text-white hover:bg-whatsapp-green-dark' : 'bg-red-500 text-white hover:bg-red-600';
+    return status === 'active' ? 'bg-primary-blue text-white hover:bg-primary-blue-dark' : 'bg-red-500 text-white hover:bg-red-600';
   };
 
   const getListNames = (listIds: string[]) => {
@@ -190,12 +190,12 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
   };
 
   return (
-    <div className="flex h-full bg-whatsapp-gray-light">
+    <div className="flex h-full bg-secondary-gray-light">
       <div className="flex-1 flex flex-col">
         <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-whatsapp-green rounded-full"></div>
+              <div className="w-1 h-6 bg-primary-blue rounded-full"></div>
               <h2 className="text-gray-900 font-medium">Applicants ({filteredApplicants.length}{selectedListFilters.size > 0 ? ` of ${applicants.length}` : ''})</h2>
             </div>
             <Button 
@@ -203,30 +203,30 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               size="sm" 
               onClick={() => {
                 const csvContent = [
-                  "Phone,Location,Experience,Status,Conversation,Lists,Created At,Updated At,Response,Age,Gender,Education Qualification,Home Location,Currently Employed,Industry,Work Location,Last Drawn Salary,Willing to Relocate,Expected Salary,Tags",
+                  "Phone No,Location,Age,Gender,Expected Salary,Education Qualification,Willing to Relocate,Home Location,Work Location,Industry,Conversation,Experience,Status,Lists,Created At,Updated At,Response,Currently Employed,Last Drawn Salary,Tags",
                   ...filteredApplicants.map(applicant => {
                     const lists = getListNames(applicant.lists).join(',');
                     const tags = applicant.tags.join(';');
                     return [
                       applicant.phone,
                       applicant.location,
+                      applicant.age,
+                      applicant.gender,
+                      applicant.expected_salary,
+                      applicant.education_qualification,
+                      applicant.willing_to_relocate ? 'Yes' : 'No',
+                      applicant.home_location,
+                      applicant.work_location || 'N/A',
+                      applicant.industry,
+                      formatConversationStatus(applicant.conversationStatus).label,
                       applicant.experience,
                       applicant.status,
-                      formatConversationStatus(applicant.conversationStatus).label,
                       lists,
                       applicant.created_at,
                       applicant.updated_at,
                       `"${applicant.response.replace(/"/g, '""')}"`, // Escape quotes in response
-                      applicant.age,
-                      applicant.gender,
-                      applicant.education_qualification,
-                      applicant.home_location,
                       applicant.is_currently_employed ? 'Yes' : 'No',
-                      applicant.industry,
-                      applicant.work_location || 'N/A',
                       applicant.last_drawn_salary || 'N/A',
-                      applicant.willing_to_relocate ? 'Yes' : 'No',
-                      applicant.expected_salary,
                       tags
                     ].join(',');
                   })
@@ -241,7 +241,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
               }} 
-              className="h-8 px-3 text-xs bg-whatsapp-green hover:bg-whatsapp-green-dark text-white border-whatsapp-green"
+              className="h-8 px-3 text-xs bg-primary-blue hover:bg-primary-blue-dark text-white border-primary-blue"
             >
               <Download className="h-3 w-3 mr-1" />
               Download CSV
@@ -251,7 +251,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-medium text-gray-700">Filter by Lists:</span>
               {jobLists.map((list) => (
-                <Button key={list.id} variant={selectedListFilters.has(list.id) ? 'default' : 'outline'} size="sm" onClick={() => handleListFilterToggle(list.id)} className={`h-7 text-xs ${selectedListFilters.has(list.id) ? 'bg-whatsapp-green hover:bg-whatsapp-green-dark text-white' : 'border-gray-300 hover:bg-gray-50'}`}>
+                <Button key={list.id} variant={selectedListFilters.has(list.id) ? 'default' : 'outline'} size="sm" onClick={() => handleListFilterToggle(list.id)} className={`h-7 text-xs ${selectedListFilters.has(list.id) ? 'bg-primary-blue hover:bg-primary-blue-dark text-white' : 'border-gray-300 hover:bg-gray-50'}`}>
                   {list.listName}
                   <Badge variant="secondary" className="ml-1 text-xs bg-white/20">{applicants.filter(a => a.lists.includes(list.id)).length}</Badge>
                 </Button>
@@ -259,8 +259,8 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               {selectedListFilters.size > 0 && <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-7 text-xs text-gray-500 hover:text-gray-700"><X className="h-3 w-3 mr-1" />Clear all</Button>}
             </div>
             <div className="flex items-center gap-2">
-              <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} className="data-[state=checked]:bg-whatsapp-green data-[state=checked]:border-whatsapp-green" />
-              <Button variant="ghost" size="sm" onClick={handleSelectAll} className="text-sm text-gray-600 hover:text-whatsapp-green p-0 h-auto">{isAllSelected ? 'Deselect All' : 'Select All'}</Button>
+              <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" />
+              <Button variant="ghost" size="sm" onClick={handleSelectAll} className="text-sm text-gray-600 hover:text-primary-blue p-0 h-auto">{isAllSelected ? 'Deselect All' : 'Select All'}</Button>
             </div>
           </div>
         </div>
@@ -296,65 +296,78 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto bg-white">
-          <Table>
+        <div className="flex-1 overflow-auto bg-white">
+          <Table className="min-w-full">
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-12"></TableHead>
-                <TableHead>Phone</TableHead>
+                <TableHead>Phone No</TableHead>
+                <TableHead>Location</TableHead>
                 <TableHead>Age</TableHead>
                 <TableHead>Gender</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Experience</TableHead>
+                <TableHead>Expected Salary</TableHead>
+                <TableHead>Education Qualification</TableHead>
+                <TableHead>Willing to Relocate</TableHead>
+                <TableHead>Home Location</TableHead>
+                <TableHead>Work Location</TableHead>
                 <TableHead>Industry</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Conversation</TableHead>
-                <TableHead>Lists</TableHead>
-                <TableHead>Last Message</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredApplicants.map((applicant) => (
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
-                  <TableCell><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-whatsapp-green data-[state=checked]:border-whatsapp-green" /></TableCell>
-                  <TableCell className="font-medium">{applicant.phone}</TableCell>
-                  <TableCell>{applicant.age}</TableCell>
-                  <TableCell>{applicant.gender}</TableCell>
-                  <TableCell>{applicant.location}</TableCell>
-                  <TableCell>{applicant.experience} years</TableCell>
-                  <TableCell>{applicant.industry}</TableCell>
-                  <TableCell><Badge className={`text-xs ${getStatusBadgeClass(applicant.status)}`}>{applicant.status}</Badge></TableCell>
-                  <TableCell>
-                    {(() => {
-                      const statusInfo = formatConversationStatus(applicant.conversationStatus);
-                      return (
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${statusInfo.color} ${statusInfo.bgColor} border-current`}
-                        >
-                          {statusInfo.label}
-                        </Badge>
-                      );
-                    })()}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {getListNames(applicant.lists).slice(0, 2).map((listName, index) => <Badge key={index} variant="outline" className="text-xs border-whatsapp-green text-whatsapp-green">{listName}</Badge>)}
-                      {applicant.lists.length > 2 && <Badge variant="outline" className="text-xs">+{applicant.lists.length - 2}</Badge>}
+                  <TableCell className="w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
+                  <TableCell className="font-medium w-32">{applicant.phone}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.location}
                     </div>
                   </TableCell>
-                  <TableCell className="max-w-xs">
-                    <div><p className="text-sm truncate">{applicant.lastMessage}</p><p className="text-xs text-gray-500">{applicant.lastMessageTime}</p></div>
+                  <TableCell className="w-16">{applicant.age}</TableCell>
+                  <TableCell className="w-20">{applicant.gender}</TableCell>
+                  <TableCell className="w-24">{applicant.expected_salary || 'N/A'}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.education_qualification || 'N/A'}
+                    </div>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="w-20">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.home_location || 'N/A'}
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {applicant.work_location || 'N/A'}
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-20">{applicant.industry}</TableCell>
+                  <TableCell className="w-24">
+                    <div className="text-xs leading-tight break-all">
+                      {(() => {
+                        const statusInfo = formatConversationStatus(applicant.conversationStatus);
+                        return (
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${statusInfo.color} ${statusInfo.bgColor} border-current`}
+                          >
+                            {statusInfo.label}
+                          </Badge>
+                        );
+                      })()}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right w-20">
                     <div className="flex gap-1 justify-end">
                       {/* WhatsApp Web Button */}
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleAction('waWeb', applicant.id)}
-                        className="h-8 px-2 text-xs bg-green-500 hover:bg-green-600 text-white border-green-500"
+                        className="h-8 px-2 text-xs bg-primary-blue hover:bg-primary-blue-dark text-white border-primary-blue"
                         title="Open WhatsApp Web"
                       >
                         <MessageCircle className="h-3 w-3" />

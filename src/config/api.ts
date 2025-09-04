@@ -1,35 +1,18 @@
 // API Configuration
-// This file manages API settings and environment variables
-
-// Validate required environment variables
-const validateEnvVars = () => {
-  const requiredVars = ['VITE_API_BASE_URL'];
-  const missing = requiredVars.filter(varName => !import.meta.env[varName]);
-  
-  if (missing.length > 0) {
-    console.warn(`⚠️ Missing environment variables: ${missing.join(', ')}`);
-    console.warn('Using fallback values for development. Check .env.example for proper configuration.');
-  }
-};
-
-// Call validation on module load
-validateEnvVars();
+// This file manages API settings using centralized environment variables
+import { ENV } from './environment';
 
 export const API_CONFIG = {
-  // Base URL for the backend API - MUST be configured via environment variable in production
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || (() => {
-    console.warn('🚨 VITE_API_BASE_URL not set! Using development fallback.');
-    return 'http://localhost:8000/api/v1';
-  })(),
-  
+  // Base URL for the backend API - MUST be configured via environment variable
+  BASE_URL: ENV.API_BASE_URL,
   
   // Request timeout in milliseconds
-  TIMEOUT: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
+  TIMEOUT: ENV.API_TIMEOUT,
   
   // Retry configuration
   RETRY: {
-    MAX_ATTEMPTS: parseInt(import.meta.env.VITE_API_RETRY_ATTEMPTS || '3'),
-    DELAY: parseInt(import.meta.env.VITE_API_RETRY_DELAY || '1000'),
+    MAX_ATTEMPTS: ENV.API_RETRY_ATTEMPTS,
+    DELAY: ENV.API_RETRY_DELAY,
   },
   
   // Headers configuration
@@ -39,23 +22,23 @@ export const API_CONFIG = {
 
   // Feature flags
   FEATURES: {
-    ENABLE_CSV_EXPORT: import.meta.env.VITE_ENABLE_CSV_EXPORT !== 'false',
-    ENABLE_BULK_ACTIONS: import.meta.env.VITE_ENABLE_BULK_ACTIONS !== 'false',
+    ENABLE_CSV_EXPORT: ENV.ENABLE_CSV_EXPORT,
+    ENABLE_BULK_ACTIONS: ENV.ENABLE_BULK_ACTIONS,
   }
 };
 
-// Environment-specific configurations - now uses environment variables
+// Environment-specific configurations
 export const ENV_CONFIG = {
   development: {
-    API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1',
+    API_BASE_URL: ENV.API_BASE_URL,
     LOG_LEVEL: 'debug',
   },
   production: {
-    API_BASE_URL: import.meta.env.VITE_API_BASE_URL, // Must be set in production
+    API_BASE_URL: ENV.API_BASE_URL,
     LOG_LEVEL: 'error',
   },
   test: {
-    API_BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1',
+    API_BASE_URL: ENV.API_BASE_URL,
     LOG_LEVEL: 'debug',
   },
 };
