@@ -8,7 +8,7 @@ export interface Applicant {
   details: {
     age: number;
     gender: string;
-    education_qualification: string;
+    education_level: string;
     home_location: string;
     is_currently_employed: boolean;
     experience: number;

@@ -33,7 +33,7 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     response: applicant.response || '',
     age,
     gender,
-    education_qualification: details.education_qualification || 'Unknown',
+    education_qualification: details.education_level || 'Unknown',
     home_location: homeLocation,
     is_currently_employed: details.is_currently_employed || false,
     industry: details.industry || 'Unknown',
