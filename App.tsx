@@ -161,7 +161,7 @@ export default function App() {
         <Navbar />
         
         {/* Main Header with Tabs */}
-        <header className="border-b bg-whatsapp-green shadow-sm">
+        <header className="border-b bg-primary-blue shadow-sm">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-4">
               <div className="flex bg-white/20 rounded-lg p-1">
@@ -169,7 +169,7 @@ export default function App() {
                   variant={activeView.type === 'chats' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => handleViewChange('chats')}
-                  className={`flex items-center gap-2 ${activeView.type === 'chats' ? 'bg-white text-whatsapp-green hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
+                  className={`flex items-center gap-2 ${activeView.type === 'chats' ? 'bg-white text-primary-blue hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
                 >
                   <MessageSquare className="h-4 w-4" />
                   Chats
@@ -178,7 +178,7 @@ export default function App() {
                   variant={activeView.type === 'table' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => handleViewChange('table')}
-                  className={`flex items-center gap-2 ${activeView.type === 'table' ? 'bg-white text-whatsapp-green hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
+                  className={`flex items-center gap-2 ${activeView.type === 'table' ? 'bg-white text-primary-blue hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
                 >
                   <Table className="h-4 w-4" />
                   Table
@@ -187,7 +187,7 @@ export default function App() {
                   variant={activeView.type === 'manage-lists' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => handleViewChange('manage-lists')}
-                  className={`flex items-center gap-2 ${activeView.type === 'manage-lists' ? 'bg-white text-whatsapp-green hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
+                  className={`flex items-center gap-2 ${activeView.type === 'manage-lists' ? 'bg-white text-primary-blue hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
                 >
                   <Settings className="h-4 w-4" />
                   Manage Lists
