@@ -14,7 +14,7 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
   return {
     id: applicant.applicant_id?.toString() || 'unknown',
     name: `${gender} - ${age} years`, // Generate a name-like identifier
-    phone: applicant.applicant_id?.toString() || 'unknown', // Use applicant_id as phone for now
+    phone: applicant.applicant_id ? `+${applicant.applicant_id.toString()}` : 'unknown', // Format as phone number
     lastMessage: applicant.response || '',
     lastMessageTime: applicant.updated_at ? new Date(applicant.updated_at).toLocaleDateString() : 'Unknown',
     location: homeLocation,

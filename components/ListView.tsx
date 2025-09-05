@@ -203,30 +203,28 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               size="sm" 
               onClick={() => {
                 const csvContent = [
-                  "Phone No,Location,Age,Gender,Expected Salary,Education Qualification,Willing to Relocate,Home Location,Work Location,Industry,Conversation,Experience,Status,Lists,Created At,Updated At,Response,Currently Employed,Last Drawn Salary,Tags",
+                  "Phone No,Age,Gender,Education,Experience,Industry,Currently Employed,Home Location,Work Location,Expected Salary,Last Drawn Salary,Willing to Relocate,Conversation Status,Lists,Created At,Updated At,Response,Tags",
                   ...filteredApplicants.map(applicant => {
                     const lists = getListNames(applicant.lists).join(',');
                     const tags = applicant.tags.join(';');
                     return [
                       applicant.phone,
-                      applicant.location,
-                      applicant.age,
-                      applicant.gender,
-                      applicant.expected_salary,
-                      applicant.education_qualification,
-                      applicant.willing_to_relocate ? 'Yes' : 'No',
-                      applicant.home_location,
+                      applicant.age || 'N/A',
+                      applicant.gender || 'N/A',
+                      applicant.education_qualification || 'N/A',
+                      applicant.experience || 0,
+                      applicant.industry || 'N/A',
+                      applicant.is_currently_employed ? 'Yes' : 'No',
+                      applicant.home_location || 'N/A',
                       applicant.work_location || 'N/A',
-                      applicant.industry,
+                      applicant.expected_salary || 'N/A',
+                      applicant.last_drawn_salary || 'N/A',
+                      applicant.willing_to_relocate ? 'Yes' : 'No',
                       formatConversationStatus(applicant.conversationStatus).label,
-                      applicant.experience,
-                      applicant.status,
                       lists,
                       applicant.created_at,
                       applicant.updated_at,
                       `"${applicant.response.replace(/"/g, '""')}"`, // Escape quotes in response
-                      applicant.is_currently_employed ? 'Yes' : 'No',
-                      applicant.last_drawn_salary || 'N/A',
                       tags
                     ].join(',');
                   })
@@ -302,15 +300,17 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-12"></TableHead>
                 <TableHead>Phone No</TableHead>
-                <TableHead>Location</TableHead>
                 <TableHead>Age</TableHead>
                 <TableHead>Gender</TableHead>
-                <TableHead>Expected Salary</TableHead>
-                <TableHead>Education Qualification</TableHead>
-                <TableHead>Willing to Relocate</TableHead>
+                <TableHead>Education</TableHead>
+                <TableHead>Experience</TableHead>
+                <TableHead>Industry</TableHead>
+                <TableHead>Currently Employed</TableHead>
                 <TableHead>Home Location</TableHead>
                 <TableHead>Work Location</TableHead>
-                <TableHead>Industry</TableHead>
+                <TableHead>Expected Salary</TableHead>
+                <TableHead>Last Salary</TableHead>
+                <TableHead>Relocate</TableHead>
                 <TableHead>Conversation</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -320,20 +320,12 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
                   <TableCell className="w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
                   <TableCell className="font-medium w-32">{applicant.phone}</TableCell>
-                  <TableCell className="w-24">
-                    <div className="text-xs leading-tight break-all">
-                      {applicant.location}
-                    </div>
-                  </TableCell>
-                  <TableCell className="w-16">{applicant.age}</TableCell>
-                  <TableCell className="w-20">{applicant.gender}</TableCell>
-                  <TableCell className="w-24">{applicant.expected_salary || 'N/A'}</TableCell>
-                  <TableCell className="w-24">
-                    <div className="text-xs leading-tight break-all">
-                      {applicant.education_qualification || 'N/A'}
-                    </div>
-                  </TableCell>
-                  <TableCell className="w-20">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
+                  <TableCell className="w-16">{applicant.age || 'N/A'}</TableCell>
+                  <TableCell className="w-20">{applicant.gender || 'N/A'}</TableCell>
+                  <TableCell className="w-20">{applicant.education_qualification || 'N/A'}</TableCell>
+                  <TableCell className="w-20">{applicant.experience || 0} yrs</TableCell>
+                  <TableCell className="w-20">{applicant.industry || 'N/A'}</TableCell>
+                  <TableCell className="w-20">{applicant.is_currently_employed ? 'Yes' : 'No'}</TableCell>
                   <TableCell className="w-24">
                     <div className="text-xs leading-tight break-all">
                       {applicant.home_location || 'N/A'}
@@ -344,7 +336,9 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                       {applicant.work_location || 'N/A'}
                     </div>
                   </TableCell>
-                  <TableCell className="w-20">{applicant.industry}</TableCell>
+                  <TableCell className="w-24">₹{applicant.expected_salary || 'N/A'}</TableCell>
+                  <TableCell className="w-24">₹{applicant.last_drawn_salary || 'N/A'}</TableCell>
+                  <TableCell className="w-16">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
                   <TableCell className="w-24">
                     <div className="text-xs leading-tight break-all">
                       {(() => {
