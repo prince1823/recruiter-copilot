@@ -21,7 +21,8 @@ interface AppView {
 
 export default function App() {
   const { recruiter } = useAuth();
-  const [activeView, setActiveView] = useState<AppView>({ type: 'chats', listId: null });
+  const [activeView, setActiveView] = useState<AppView>({ type: 'table', listId: null });
+
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [jobLists, setJobLists] = useState<JobList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -165,7 +166,7 @@ export default function App() {
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-4">
               <div className="flex bg-white/20 rounded-lg p-1">
-                <Button
+                {/* <Button
                   variant={activeView.type === 'chats' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => handleViewChange('chats')}
@@ -173,7 +174,7 @@ export default function App() {
                 >
                   <MessageSquare className="h-4 w-4" />
                   Chats
-                </Button>
+                </Button> */}
                 <Button
                   variant={activeView.type === 'table' ? 'default' : 'ghost'}
                   size="sm"
