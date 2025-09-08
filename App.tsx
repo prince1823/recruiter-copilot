@@ -28,26 +28,18 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   const refreshData = useCallback(async () => {
-    console.log(`🔄 App.tsx: refreshData called - refreshing data from API...`);
-    console.log(`🕐 RefreshData called at:`, new Date().toISOString());
     try {
       setIsLoading(true);
       setError(null);
       const { applicants, jobLists } = await fetchData(user?.id);
-      console.log(`📊 App.tsx: Received ${applicants.length} applicants and ${jobLists.length} job lists`);
-      console.log(`📊 App.tsx: Applicant IDs:`, applicants.map(a => a.id));
-      console.log(`📊 App.tsx: Job list IDs:`, jobLists.map(l => l.id));
       
       // Filter out deleted items before setting state
       const filteredApplicants = filterDeletedApplicants(applicants);
       const filteredJobLists = filterDeletedLists(jobLists);
-      console.log(`📊 App.tsx: After filtering deleted items - ${filteredApplicants.length} applicants, ${filteredJobLists.length} lists`);
       
       setApplicants(filteredApplicants);
       setJobLists(filteredJobLists);
-      console.log(`✅ App.tsx: Data updated successfully`);
     } catch (err) {
-      console.error(`❌ App.tsx: Error refreshing data:`, err);
       setError('Failed to load data. Please ensure the backend server is running.');
     } finally {
       setIsLoading(false);
@@ -55,18 +47,14 @@ export default function App() {
   }, [user?.id]);
 
   const updateApplicants = useCallback((updatedApplicants: Applicant[]) => {
-    console.log(`🔄 App.tsx: updateApplicants called with ${updatedApplicants.length} applicants`);
     // Filter out deleted applicants before setting state
     const filteredApplicants = filterDeletedApplicants(updatedApplicants);
-    console.log(`🔄 App.tsx: Filtered out deleted applicants, showing ${filteredApplicants.length} applicants`);
     setApplicants(filteredApplicants);
   }, []);
 
   const updateJobLists = useCallback((updatedJobLists: JobList[]) => {
-    console.log(`🔄 App.tsx: updateJobLists called with ${updatedJobLists.length} job lists`);
     // Filter out deleted lists before setting state
     const filteredLists = filterDeletedLists(updatedJobLists);
-    console.log(`🔄 App.tsx: Filtered out deleted lists, showing ${filteredLists.length} lists`);
     setJobLists(filteredLists);
   }, []);
 
@@ -144,21 +132,15 @@ export default function App() {
     }
   };
 
-  // Expose data for debugging
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (window as any).applicants = applicants;
-      (window as any).jobLists = jobLists;
-      (window as any).activeView = activeView;
-      (window as any).refreshData = refreshData;
-    }
-  }, [applicants, jobLists, activeView, refreshData]);
 
   return (
     <ProtectedRoute>
       <div className="h-screen flex flex-col bg-secondary-gray-light">
         {/* Top Navigation Bar */}
-        <Navbar />
+        <Navbar 
+          activeChatCount={applicants.filter(a => a.status === 'active').length} 
+          disabledChatCount={applicants.filter(a => a.status === 'disabled').length} 
+        />
         
         {/* Main Header with Tabs */}
         <header className="border-b bg-primary-blue shadow-sm">

@@ -89,7 +89,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
         setIsCreateDialogOpen(false);
         resetCreateDialog();
       } catch (err) {
-        console.error("❌ Failed to create list:", err);
         alert(`Error: ${err}`);
       } finally {
         setIsUploading(false);
@@ -103,7 +102,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
         alert("Pending messages cancelled successfully.");
         onListsUpdate();
       } catch (err) {
-        console.error("Failed to cancel pending messages:", err);
         alert(`Error: ${err}`);
       }
     }
@@ -129,7 +127,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
         // The list will remain in the backend but won't show in the UI
         
       } catch (error) {
-        console.error('Error removing list from UI:', error);
         alert('❌ Failed to remove list from interface. Please try again.');
       }
     }

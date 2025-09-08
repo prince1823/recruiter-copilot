@@ -126,3 +126,7 @@ public
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Development proxy servers (keep locally, don't commit)
+proxy-server.cjs
+proxy-server.js

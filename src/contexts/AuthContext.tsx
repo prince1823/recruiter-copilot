@@ -60,7 +60,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       return { success: false, message: response.message };
     } catch (error) {
-      console.error('Sign in error:', error);
       return { 
         success: false, 
         message: error instanceof Error ? error.message : 'Failed to sign in' 

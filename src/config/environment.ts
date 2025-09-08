@@ -41,13 +41,11 @@ class EnvironmentError extends Error {
 function getEnvVar(key: keyof RuntimeEnv): string {
   // Try Docker runtime injection first
   if (typeof window !== 'undefined' && window._env_ && window._env_[key]) {
-    console.log(`✅ Environment variable '${key}' loaded from Docker runtime: ${window._env_[key]}`);
     return window._env_[key];
   }
   
   // Fall back to Vite build-time variables
   if (import.meta.env[key]) {
-    console.log(`✅ Environment variable '${key}' loaded from Vite build: ${import.meta.env[key]}`);
     return import.meta.env[key] as string;
   }
   
@@ -59,7 +57,6 @@ function getEnvVar(key: keyof RuntimeEnv): string {
                    `The application cannot start without this configuration.\n` +
                    `Debug info: window._env_ = ${typeof window !== 'undefined' ? JSON.stringify(window._env_) : 'N/A (server-side)'}, import.meta.env.${key} = ${import.meta.env[key]}`;
   
-  console.error(`🚨 ${errorMsg}`);
   throw new EnvironmentError(errorMsg);
 }
 
@@ -111,8 +108,6 @@ function validateEnvironment(): void {
                      `These variables MUST be set for the application to function.\n` +
                      `Please configure them in your .env file or docker-compose.yml`;
     
-    console.error(`🚨 ${errorMsg}`);
-    
     // Display error in the UI if possible
     if (typeof document !== 'undefined') {
       const root = document.getElementById('root');
@@ -133,7 +128,6 @@ function validateEnvironment(): void {
     throw new EnvironmentError(errorMsg);
   }
   
-  console.log('✅ All required environment variables are configured');
 }
 
 /**
@@ -173,13 +167,6 @@ export const ENV = {
 // This will prevent the application from starting if required vars are missing
 validateEnvironment();
 
-// Add runtime debugging
-if (typeof window !== 'undefined') {
-  console.log('🔍 Environment Debug Info:');
-  console.log('- window._env_:', window._env_);
-  console.log('- ENV.API_BASE_URL:', ENV.API_BASE_URL);
-  console.log('- Current origin:', window.location.origin);
-}
 
 // Export the validation function for use in tests or other contexts
 export { validateEnvironment, getEnvVar, getOptionalEnvVar, EnvironmentError };

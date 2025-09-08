@@ -52,12 +52,6 @@ export const transformJobListToLegacy = (jobList: JobList, allApplicants: Legacy
     return jobList.applicants?.includes(parseInt(applicant.id)) || false;
   });
   
-  console.log(`📋 Transforming list ${jobList.list_name}:`, {
-    listApplicantIds: jobList.applicants,
-    availableApplicantIds: allApplicants.map(a => a.id),
-    matchedApplicants: listApplicants.length,
-    totalApplicants: allApplicants.length
-  });
   
   return {
     id: jobList.id.toString(),
@@ -120,9 +114,6 @@ export const transformAPIResponseToLegacy = (apiResponse: any) => {
 
 // Helper function to extract data from API response
 export const extractDataFromResponse = <T>(response: any): T[] => {
-
-  console.log('🔍 response keys:', response ? Object.keys(response) : 'null/undefined');
-  
   if (response?.data) {
 
     const result = Array.isArray(response.data) ? response.data : [response.data];

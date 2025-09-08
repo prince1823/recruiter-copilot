@@ -57,7 +57,6 @@ export function ListDetailView({ listId, allApplicants, allJobLists, onDataUpdat
 
       onDataUpdate();
     } catch(err) {
-      console.error(`Failed to perform action: ${action}`, err);
       alert(`Error: Could not perform action.`);
     }
   };
@@ -91,7 +90,6 @@ export function ListDetailView({ listId, allApplicants, allJobLists, onDataUpdat
 
       onDataUpdate();
     } catch (err) {
-      console.error(`Failed to perform bulk action: ${action}`, err);
       alert(`Error: Could not perform bulk action.`);
     }
   };

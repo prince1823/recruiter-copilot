@@ -5,16 +5,20 @@ import { getApiUrl, getHeaders, API_CONFIG } from '../config/api';
 import { getStoredUserId } from '../lib/auth-utils';
 
 // Helper function to create request headers with dynamic recruiter ID
-const createHeaders = (recruiterId?: string) => ({
-  'Content-Type': 'application/json',
-  'X-User-ID': recruiterId || getStoredUserId() || '',
-});
+const createHeaders = (recruiterId?: string) => {
+  const userId = recruiterId || getStoredUserId() || '';
+  return {
+    'Content-Type': 'application/json',
+    'X-User-ID': userId,
+  };
+};
 
 // Helper function to create request body with required fields
-const createRequestBody = (request: any) => ({
+const createRequestBody = (request: any, recruiterId?: string) => ({
   request,
   mid: crypto.randomUUID(),
   ts: Date.now(),
+  user_id: recruiterId || getStoredUserId() || '',
 });
 
 // Helper function to handle API responses
@@ -54,6 +58,11 @@ const handleResponse = async (response: Response) => {
     return { data: [] }; // Return empty data array instead of throwing error
   }
   
+  // Handle the specific case where the API returns 404 with "No applicant found"
+  if (!response.ok && response.status === 404 && data?.detail && data.detail.includes('No applicant found')) {
+    return { data: [] }; // Return empty data array instead of throwing error
+  }
+  
   if (!response.ok) {
     throw new Error(data?.detail || `HTTP error! status: ${response.status}`);
   }
@@ -63,19 +72,12 @@ const handleResponse = async (response: Response) => {
 
 // Helper function to make API requests with redirect handling
 const makeApiRequest = async (url: string, options: RequestInit = {}) => {
-
-  console.log(`📤 Request options:`, {
-    method: options.method,
-    headers: options.headers,
-    body: options.body ? JSON.parse(options.body as string) : undefined
-  });
-  
   const response = await fetch(url, {
     ...options,
     redirect: 'follow', // Follow redirects automatically
+    mode: 'cors', // Explicitly set CORS mode
+    credentials: 'omit', // Don't send credentials
   });
-
-  console.log(`📥 Response headers:`, Object.fromEntries(response.headers.entries()));
   
   return handleResponse(response);
 };
@@ -88,7 +90,7 @@ export const recruiterListsAPI = {
       list_name: listName,
       list_description: listDescription,
       applicants,
-    });
+    }, recruiterId);
 
     return makeApiRequest(getApiUrl('/recruiter-lists/'), {
       method: 'POST',
@@ -273,71 +275,49 @@ export const healthAPI = {
 import { transformApplicantToLegacy, transformJobListToLegacy, extractDataFromResponse, populateApplicantLists, populateJobListApplicants } from './dataTransformers';
 
 export const fetchData = async (recruiterId?: string): Promise<{ applicants: any[], jobLists: any[] }> => {
-
-  console.log('🕐 FetchData called at:', new Date().toISOString());
-  
   let applicants: any[] = [];
   let jobLists: any[] = [];
   
   try {
-
     // Fetch all applicants first (this should work even if no lists exist)
-
     try {
       const applicantsResponse = await applicantsAPI.getAll(recruiterId);
-
-      console.log('👥 Applicants response keys:', applicantsResponse ? Object.keys(applicantsResponse) : 'null/undefined');
-      
       const rawApplicants = extractDataFromResponse(applicantsResponse);
 
       if (rawApplicants.length > 0) {
         applicants = rawApplicants.map((applicant: any) => transformApplicantToLegacy(applicant));
-
       } else {
-
         applicants = [];
       }
     } catch (applicantError) {
-      console.error('❌ Error fetching applicants:', applicantError);
       throw applicantError;
     }
 
     // Fetch active lists
+    try {
+      const listsResponse = await recruiterListsAPI.getByStatus('ACTIVE', recruiterId);
+      const rawLists = extractDataFromResponse(listsResponse);
 
-    const listsResponse = await recruiterListsAPI.getByStatus('ACTIVE', recruiterId);
+      // Transform lists and populate with applicant data
+      // Filter out any lists that might have been archived or have invalid status
+      const activeLists = rawLists.filter((list: any) => 
+        list.status === 'ACTIVE' || list.status === 'active' || !list.status
+      );
 
-    console.log('📋 Lists response keys:', listsResponse ? Object.keys(listsResponse) : 'null/undefined');
-    
-    // Transform lists with applicants populated
-    const rawLists = extractDataFromResponse(listsResponse);
-
-    // Transform lists and populate with applicant data
-    // Filter out any lists that might have been archived or have invalid status
-    const activeLists = rawLists.filter((list: any) => 
-      list.status === 'ACTIVE' || list.status === 'active' || !list.status
-    );
-
-    if (activeLists.length > 0) {
-      jobLists = activeLists.map((list: any) => transformJobListToLegacy(list, applicants));
-
-    } else {
-
-      jobLists = [];
+      if (activeLists.length > 0) {
+        jobLists = activeLists.map((list: any) => transformJobListToLegacy(list, applicants));
+      } else {
+        jobLists = [];
+      }
+    } catch (listError) {
+      throw listError;
     }
     
     // Now populate applicants with their list information
     applicants = populateApplicantLists(applicants, jobLists);
-
-    console.log('📊 Final data being returned:', { 
-      applicantsCount: applicants.length, 
-      jobListsCount: jobLists.length,
-      applicantsWithLists: applicants.filter(a => a.lists.length > 0).length
-    });
     
     return { applicants, jobLists };
   } catch (error) {
-    console.error('❌ Error fetching data from backend API:', error);
-    console.error('🚨 NO FALLBACK - THROWING ERROR TO FORCE REAL API USAGE');
     throw error;
   }
 };
@@ -348,7 +328,6 @@ export const createList = async (listName: string, description?: string): Promis
     const response = await recruiterListsAPI.create(listName, listDescription);
     return response.data?.[0] || response;
   } catch (error) {
-    console.error('Error creating list:', error);
     throw error;
   }
 };
@@ -372,7 +351,6 @@ export const createListFromCSV = async (listName: string, candidates: Record<str
       newList: response.data?.[0] || response,
     };
   } catch (error) {
-    console.error('Error creating list from CSV:', error);
     throw error;
   }
 };
@@ -397,7 +375,6 @@ export const createListFromPhoneNumbers = async (listName: string, phoneNumbers:
           // If it's 10 digits, assume it's Indian number and add 91
           return parseInt(`91${  cleanPhone}`);
         } else {
-          console.warn(`⚠️ Invalid phone number format: ${phone} (length: ${cleanPhone.length})`);
           return null;
         }
       })
@@ -420,8 +397,6 @@ export const createListFromPhoneNumbers = async (listName: string, phoneNumbers:
       totalNumbers: phoneArray.length
     };
   } catch (error) {
-    console.error('❌ Error creating list from phone numbers:', error);
-    
     // Provide more helpful error messages based on the error type
     const errorMessage = error instanceof Error ? error.message : String(error);
     if (errorMessage.includes('Server Internal Error (500)')) {
@@ -455,7 +430,6 @@ export const updateList = async (listId: string, listName: string, description?:
       data: response
     };
   } catch (error) {
-    console.error('Error updating list:', error);
     return {
       success: false,
       message: `Error updating list: ${error}`,
@@ -506,7 +480,6 @@ export const deleteList = async (listId: string): Promise<{ success: boolean; me
       }
     }
   } catch (error) {
-    console.error('Error deleting list:', error);
     return { success: false, message: `Error deleting list: ${error instanceof Error ? error.message : String(error)}` };
   }
 };
@@ -526,7 +499,6 @@ export const manageCandidatesInList = async (listId: string, candidateIds: strin
 
     }
   } catch (error) {
-    console.error(`❌ Error ${action}ing candidates:`, error);
     throw error;
   }
 };
@@ -554,7 +526,6 @@ export const removeApplicantFromAllLists = async (applicantId: string): Promise<
     // Return success response instead of throwing
     return { success: true, message: `Successfully removed applicant ${numericId} from all lists` };
   } catch (error) {
-    console.error('Error removing applicant from all lists:', error);
     // Return error response instead of throwing
     return { success: false, message: `Error removing applicant from all lists: ${error}` };
   }
@@ -574,8 +545,6 @@ export const deleteUnknownApplicants = async (recruiterId?: string): Promise<{ s
       return name.toLowerCase().includes('unknown');
     });
     
-    console.log(`🔍 Found ${unknownApplicants.length} applicants with "Unknown" names:`, unknownApplicants.map((a: any) => ({ id: a.id, name: a.details?.name || a.name })));
-    
     if (unknownApplicants.length === 0) {
       return { success: true, message: 'No applicants with "Unknown" names found', deletedCount: 0 };
     }
@@ -592,7 +561,6 @@ export const deleteUnknownApplicants = async (recruiterId?: string): Promise<{ s
       deletedCount: unknownApplicants.length 
     };
   } catch (error) {
-    console.error('❌ Error deleting unknown applicants:', error);
     return { success: false, message: 'Failed to delete unknown applicants', deletedCount: 0 };
   }
 };
@@ -666,7 +634,6 @@ export const bulkUpdateCandidateStatus = async (candidateIds: string[], status: 
 
         return { success: true, listId, count: applicantIds.length, actionId: result.data?.[0]?.action_id };
       } catch (error) {
-        console.error(`❌ Failed to ${action} applicants in list ${listId}:`, error);
         return { success: false, listId, error };
       }
     });
@@ -680,7 +647,6 @@ export const bulkUpdateCandidateStatus = async (candidateIds: string[], status: 
     }
     
   } catch (error) {
-    console.error('❌ Error in bulk status update:', error);
     throw error;
   }
 };
@@ -706,7 +672,6 @@ export const bulkDeleteCandidates = async (candidateIds: string[]): Promise<{ su
       deletedCount: numericIds.length 
     };
   } catch (error) {
-    console.error('❌ Error bulk deleting candidates:', error);
     return { success: false, message: 'Failed to delete candidates', deletedCount: 0 };
   }
 };
@@ -777,7 +742,6 @@ export const bulkSendAction = async (candidateIds: string[], action: 'nudge' | '
 
         return { success: true, listId, count: applicantIds.length, actionId: result.data?.[0]?.action_id };
       } catch (error) {
-        console.error(`❌ Failed to send ${action} to list ${listId}:`, error);
         return { success: false, listId, error };
       }
     });
@@ -791,7 +755,6 @@ export const bulkSendAction = async (candidateIds: string[], action: 'nudge' | '
     }
     
   } catch (error) {
-    console.error(`❌ Error in bulk ${action}:`, error);
     throw error;
   }
 };
@@ -805,7 +768,6 @@ export const cancelPendingMessagesByList = async (listId: string): Promise<{ mes
 
     return { message: `Successfully cancelled pending messages for list ${listId}` };
   } catch (error) {
-    console.error('Error cancelling messages:', error);
     throw error;
   }
 };

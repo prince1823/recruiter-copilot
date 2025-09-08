@@ -13,7 +13,7 @@ export const addDeletedApplicant = (applicantId: string): void => {
 
     }
   } catch (error) {
-    console.error('Error adding deleted applicant:', error);
+    // Silently handle error
   }
 };
 
@@ -22,7 +22,6 @@ export const getDeletedApplicants = (): string[] => {
     const deleted = localStorage.getItem(DELETED_APPLICANTS_KEY);
     return deleted ? JSON.parse(deleted) : [];
   } catch (error) {
-    console.error('Error getting deleted applicants:', error);
     return [];
   }
 };
@@ -34,7 +33,7 @@ export const removeDeletedApplicant = (applicantId: string): void => {
     localStorage.setItem(DELETED_APPLICANTS_KEY, JSON.stringify(updated));
 
   } catch (error) {
-    console.error('Error removing deleted applicant:', error);
+    // Silently handle error
   }
 };
 
@@ -43,7 +42,7 @@ export const clearDeletedApplicants = (): void => {
     localStorage.removeItem(DELETED_APPLICANTS_KEY);
 
   } catch (error) {
-    console.error('Error clearing deleted applicants:', error);
+    // Silently handle error
   }
 };
 
@@ -57,7 +56,7 @@ export const addDeletedList = (listId: string): void => {
 
     }
   } catch (error) {
-    console.error('Error adding deleted list:', error);
+    // Silently handle error
   }
 };
 
@@ -66,7 +65,6 @@ export const getDeletedLists = (): string[] => {
     const deleted = localStorage.getItem(DELETED_LISTS_KEY);
     return deleted ? JSON.parse(deleted) : [];
   } catch (error) {
-    console.error('Error getting deleted lists:', error);
     return [];
   }
 };
@@ -78,7 +76,7 @@ export const removeDeletedList = (listId: string): void => {
     localStorage.setItem(DELETED_LISTS_KEY, JSON.stringify(updated));
 
   } catch (error) {
-    console.error('Error removing deleted list:', error);
+    // Silently handle error
   }
 };
 
@@ -87,7 +85,7 @@ export const clearDeletedLists = (): void => {
     localStorage.removeItem(DELETED_LISTS_KEY);
 
   } catch (error) {
-    console.error('Error clearing deleted lists:', error);
+    // Silently handle error
   }
 };
 
