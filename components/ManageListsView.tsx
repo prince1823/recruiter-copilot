@@ -299,7 +299,7 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
-                        <span>{list.createdAt ? new Date(list.createdAt).toLocaleDateString() : 'N/A'}</span>
+                        <span>{list.createdAt ? new Date(list.createdAt).toLocaleDateString() : ''}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-gray-400" />

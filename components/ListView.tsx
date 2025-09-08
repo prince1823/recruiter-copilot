@@ -183,7 +183,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                   'Lists',
                   'Created At',
                   'Updated At',
-                  'Response',
                   'Currently Employed',
                   'Last Drawn Salary',
                   'Tags'
@@ -198,36 +197,35 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                     // Create data object with all fields
                     const data = {
                       'Phone No': applicant.phone,
-                      'Location': applicant.location || 'N/A',
-                      'Age': applicant.age || 'N/A',
-                      'Gender': applicant.gender || 'N/A',
-                      'Expected Salary': applicant.expected_salary || 'N/A',
-                      'Education Qualification': applicant.education_qualification || 'N/A',
+                      'Location': applicant.location || '',
+                      'Age': applicant.age || '',
+                      'Gender': applicant.gender || '',
+                      'Expected Salary': applicant.expected_salary || '',
+                      'Education Qualification': applicant.education_qualification || '',
                       'Willing to Relocate': applicant.willing_to_relocate ? 'Yes' : 'No',
-                      'Home Location': applicant.home_location || 'N/A',
-                      'Work Location': applicant.work_location || 'N/A',
+                      'Home Location': applicant.home_location || '',
+                      'Work Location': applicant.work_location || '',
                       'Experience': applicant.experience || 0,
-                      'Industry': applicant.industry || 'N/A',
+                      'Industry': applicant.industry || '',
                       'Currently Employed': applicant.is_currently_employed ? 'Yes' : 'No',
-                      'Last Drawn Salary': applicant.last_drawn_salary || 'N/A',
-                      'Status': applicant.status || 'N/A',
+                      'Last Drawn Salary': applicant.last_drawn_salary || '',
+                      'Status': applicant.status || '',
                       'Conversation Status': formatConversationStatus(applicant.conversationStatus).label,
                       'Lists': lists,
                       'Created At': applicant.created_at,
                       'Updated At': applicant.updated_at,
-                      'Response': `"${(applicant.response || '').replace(/"/g, '""')}"`, // Escape quotes in response
                       'Tags': tags,
                       'ID': applicant.id,
                       'Applicant ID': applicant.id, // Same as ID for backward compatibility
-                      'Recruiter ID': 'N/A', // Not available in current data structure
-                      'Name': applicant.name || 'N/A',
-                      'Pincode': applicant.pincode || 'N/A',
+                      'Recruiter ID': '', // Not available in current data structure
+                      'Name': applicant.name || '',
+                      'Pincode': applicant.pincode || '',
                       'Has Two Wheeler': applicant.hasTwoWheeler ? 'Yes' : 'No',
                       'Has Completed Conversation': applicant.hasCompletedConversation ? 'Yes' : 'No'
                     };
                     
                     // Return data in the specified column order
-                    return columnOrder.map(column => data[column as keyof typeof data] || 'N/A').join(',');
+                    return columnOrder.map(column => data[column as keyof typeof data] || '').join(',');
                   })
                 ].join('\n');
                 const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -301,7 +299,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 <TableHead className="min-w-[80px]">Education</TableHead>
                 <TableHead className="w-16 sm:w-20">Relocate</TableHead>
                 <TableHead className="min-w-[80px]">Home Location</TableHead>
-                <TableHead className="min-w-[80px]">Work Location</TableHead>
                 <TableHead className="w-16 sm:w-20">Status</TableHead>
                 <TableHead className="min-w-[100px]">Conversation</TableHead>
                 <TableHead className="w-16 sm:w-20 text-right">Actions</TableHead>
@@ -312,50 +309,28 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
                   <TableCell className="w-8 sm:w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
                   <TableCell className="font-medium min-w-[120px] text-xs sm:text-sm">{applicant.phone}</TableCell>
-                  <TableCell className="w-12 sm:w-16 text-xs sm:text-sm">{applicant.age || 'N/A'}</TableCell>
-                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.gender || 'N/A'}</TableCell>
-                  <TableCell className="min-w-[100px] text-xs sm:text-sm">₹{applicant.expected_salary || 'N/A'}</TableCell>
-                  <TableCell className="min-w-[80px] text-xs sm:text-sm">{applicant.education_qualification || 'N/A'}</TableCell>
+                  <TableCell className="w-12 sm:w-16 text-xs sm:text-sm">{applicant.age || ''}</TableCell>
+                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.gender || ''}</TableCell>
+                  <TableCell className="min-w-[100px] text-xs sm:text-sm">{applicant.expected_salary ? `₹${applicant.expected_salary}` : ''}</TableCell>
+                  <TableCell className="min-w-[80px] text-xs sm:text-sm">{applicant.education_qualification || ''}</TableCell>
                   <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
                    <TableCell className="min-w-[80px]">
                      <Tooltip>
                        <TooltipTrigger asChild>
                          <div className="text-xs leading-tight cursor-help truncate">
                            {(() => {
-                             const location = applicant.home_location || 'N/A';
-                             if (location === 'N/A') return location;
-                             return location.length > 5 ? location.substring(0, 5) + '...' : location;
+                             const location = applicant.home_location || '';
+                             if (!location) return '';
+                             return location.length > 10 ? location.substring(0, 10) + '...' : location;
                            })()}
                          </div>
                        </TooltipTrigger>
                        <TooltipContent side="top" className="z-50 bg-blue-600 text-white border-blue-600 shadow-lg">
                          <p className="max-w-xs break-words text-xs font-medium">
                            {(() => {
-                             const location = applicant.home_location || 'N/A';
-                             if (location === 'N/A') return location;
-                             return location.length > 10 ? location.substring(0, 10) + '...' : location;
-                           })()}
-                         </p>
-                       </TooltipContent>
-                     </Tooltip>
-                   </TableCell>
-                   <TableCell className="min-w-[80px]">
-                     <Tooltip>
-                       <TooltipTrigger asChild>
-                         <div className="text-xs leading-tight cursor-help truncate">
-                           {(() => {
-                             const location = applicant.work_location || 'N/A';
-                             if (location === 'N/A') return location;
-                             return location.length > 5 ? location.substring(0, 5) + '...' : location;
-                           })()}
-                         </div>
-                       </TooltipTrigger>
-                       <TooltipContent side="top" className="z-50 bg-blue-600 text-white border-blue-600 shadow-lg">
-                         <p className="max-w-xs break-words text-xs font-medium">
-                           {(() => {
-                             const location = applicant.work_location || 'N/A';
-                             if (location === 'N/A') return location;
-                             return location.length > 10 ? location.substring(0, 10) + '...' : location;
+                             const location = applicant.home_location || '';
+                             if (!location) return '';
+                             return location.length > 15 ? location.substring(0, 15) + '...' : location;
                            })()}
                          </p>
                        </TooltipContent>
@@ -366,7 +341,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                       variant="outline" 
                       className={`text-xs ${applicant.status === 'active' ? 'bg-green-100 text-green-700 border-green-300' : 'bg-red-100 text-red-700 border-red-300'}`}
                     >
-                      {applicant.status || 'N/A'}
+                      {applicant.status || ''}
                     </Badge>
                   </TableCell>
                   <TableCell className="min-w-[100px]">

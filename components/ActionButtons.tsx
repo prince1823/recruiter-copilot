@@ -99,18 +99,28 @@ export function ActionButtons({
             <TooltipContent>Tag candidate to list</TooltipContent>
           </Tooltip>
           <DropdownMenuPortal>
-            <DropdownMenuContent align="end" className="z-50">
+            <DropdownMenuContent 
+              align="end" 
+              side="top"
+              className="w-32 p-1 bg-white border border-gray-200 shadow-lg rounded-md z-50"
+              sideOffset={2}
+              avoidCollisions={true}
+              collisionPadding={5}
+            >
               {availableLists.map((list) => (
                 <DropdownMenuItem
                   key={list.id}
                   onClick={() => onTag(list.id)}
-                  className="focus:bg-accent"
+                  className="px-2 py-1.5 text-xs hover:bg-purple-50 cursor-pointer text-purple-600 rounded-sm transition-colors duration-200"
                 >
                   {list.name}
                 </DropdownMenuItem>
               ))}
               {availableLists.length === 0 && (
-                <DropdownMenuItem disabled>
+                <DropdownMenuItem 
+                  disabled
+                  className="px-2 py-1.5 text-xs text-gray-400 rounded-sm"
+                >
                   No lists available
                 </DropdownMenuItem>
               )}

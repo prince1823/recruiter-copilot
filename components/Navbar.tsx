@@ -41,11 +41,11 @@ export function Navbar({ activeChatCount = 0, disabledChatCount = 0 }: NavbarPro
               >
                 <div className="text-right">
                   <p className="text-lg font-bold text-gray-900">
-                    {user?.id || 'N/A'}
+                    {user?.id || ''}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  {/* <p className="text-xs text-gray-500">
                     {activeChatCount + disabledChatCount} total chats
-                  </p>
+                  </p> */}
                 </div>
                 <ChevronDown className="h-4 w-4 text-gray-400" />
               </Button>
