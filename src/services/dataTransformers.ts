@@ -139,57 +139,6 @@ export const extractDataFromResponse = <T>(response: any): T[] => {
   return [];
 };
 
-// Helper function to create a mock applicant for testing
-export const createMockApplicant = (overrides: Partial<LegacyApplicant> = {}): LegacyApplicant => {
-  return {
-    id: '1',
-    name: 'Test Applicant',
-    phone: '+91 9876543210',
-    lastMessage: 'Hello, I am interested in the position',
-    lastMessageTime: new Date().toLocaleDateString(),
-    location: 'Test City',
-    pincode: '123456',
-    experience: 2,
-    hasTwoWheeler: true,
-    status: 'active',
-    tags: ['test'],
-    lists: [],
-    hasCompletedConversation: false,
-    conversationStatus: 'INITIATED',
-    createdAt: new Date().toISOString(),
-    // New fields from backend
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    response: 'Hello, I am interested in the position',
-    age: 25,
-    gender: 'Male',
-    education_qualification: 'Bachelor\'s Degree',
-    home_location: 'Test City',
-    is_currently_employed: true,
-    industry: 'Technology',
-    work_location: 'Test City',
-    last_drawn_salary: 50000,
-    willing_to_relocate: true,
-    expected_salary: 60000,
-    ...overrides
-  };
-};
-
-// Helper function to create a mock job list for testing
-export const createMockJobList = (overrides: Partial<LegacyJobList> = {}): LegacyJobList => {
-  return {
-    id: '1',
-    listName: 'Test List',
-    description: 'A test list for development',
-    creationDate: new Date().toISOString().split('T')[0],
-    candidateCount: 0,
-    completedConversations: 0,
-    applicants: [],
-    status: 'ACTIVE',
-    createdAt: new Date().toISOString(),
-    ...overrides
-  };
-};
 
 // Helper function to populate applicant lists based on job lists
 export const populateApplicantLists = (applicants: LegacyApplicant[], jobLists: LegacyJobList[]): LegacyApplicant[] => {
