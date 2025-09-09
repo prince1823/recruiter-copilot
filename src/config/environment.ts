@@ -108,6 +108,8 @@ function validateEnvironment(): void {
                      `These variables MUST be set for the application to function.\n` +
                      `Please configure them in your .env file or docker-compose.yml`;
     
+    console.error(`🚨 ${errorMsg}`);
+    
     // Display error in the UI if possible
     if (typeof document !== 'undefined') {
       const root = document.getElementById('root');
