@@ -27,10 +27,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
         if (!applicant) return;
 
         switch(action) {
-            case 'toggleStatus':
-                const newStatus = applicant.status === 'active' ? 'disabled' : 'active';
-                await bulkUpdateCandidateStatus([applicantId], newStatus);
-                break;
             case 'nudge':
                 await bulkSendAction([applicantId], 'nudge');
                 break;
@@ -62,9 +58,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
 
     try {
         switch(action) {
-            case 'disable':
-                await bulkUpdateCandidateStatus(selectedIds, 'disabled');
-                break;
             case 'nudge':
                 await bulkSendAction(selectedIds, 'nudge');
                 break;
@@ -266,7 +259,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               <div className="flex items-center gap-2">
                 <BulkActionButtons
                   selectedCount={selectedApplicants.size}
-                  onBulkDisable={() => handleBulkAction('disable')}
                   onBulkNudge={() => handleBulkAction('nudge')}
                   onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)}
                   onBulkTag={(listId) => handleBulkAction('tag', listId)}

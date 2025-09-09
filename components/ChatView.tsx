@@ -147,9 +147,6 @@ export function ChatView({ applicants, jobLists, onDataUpdate, selectedApplicant
 
     try {
         switch(action) {
-            case 'disable':
-                await bulkUpdateCandidateStatus(selectedIds, 'disabled');
-                break;
             case 'nudge':
                 await bulkSendAction(selectedIds, 'nudge');
                 break;
@@ -191,7 +188,7 @@ export function ChatView({ applicants, jobLists, onDataUpdate, selectedApplicant
     <div className="flex h-full bg-secondary-gray-light">
       <div className="w-[450px] flex flex-col border-r border-gray-200 bg-white">
         <div className="p-4 border-b border-gray-200 bg-white"><div className="flex items-center justify-between mb-3"><div className="flex items-center gap-2"><div className="w-1 h-6 bg-primary-blue rounded-full"></div><h2 className="text-gray-900 font-medium">Chats ({sortedApplicants.length})</h2></div></div><div className="flex items-center gap-2"><Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /><Button variant="ghost" size="sm" onClick={handleSelectAll} className="text-sm text-gray-600 hover:text-primary-blue p-0 h-auto">{isAllSelected ? 'Deselect All' : 'Select All'}</Button></div></div>
-        {selectedApplicants.size > 0 && <div className="p-4 border-b border-gray-200"><BulkActionButtons selectedCount={selectedApplicants.size} onBulkDisable={() => handleBulkAction('disable')} onBulkNudge={() => handleBulkAction('nudge')} onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)} onBulkTag={(listId) => handleBulkAction('tag', listId)} availableLists={availableLists}/></div>}
+        {selectedApplicants.size > 0 && <div className="p-4 border-b border-gray-200"><BulkActionButtons selectedCount={selectedApplicants.size} onBulkNudge={() => handleBulkAction('nudge')} onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)} onBulkTag={(listId) => handleBulkAction('tag', listId)} availableLists={availableLists}/></div>}
         <div className="flex-1 overflow-y-auto">
           {sortedApplicants.map((applicant) => (
             <div key={applicant.id} className={`group relative flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors hover:z-20 focus-within:z-20 ${selectedChat === applicant.id ? 'bg-primary-blue-light border-l-4 border-l-primary-blue z-10' : ''}`}>
@@ -223,7 +220,6 @@ export function ChatView({ applicants, jobLists, onDataUpdate, selectedApplicant
                         })()}
                       </p>
                     </div>
-                    <span className="text-xs text-secondary-gray flex-shrink-0 ml-2">{applicant.lastMessageTime}</span>
                   </div>
                   <p className="text-sm text-gray-600 truncate">{applicant.lastMessage}</p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -232,10 +228,7 @@ export function ChatView({ applicants, jobLists, onDataUpdate, selectedApplicant
                 </div>
               </div>
               <div className="ml-3 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                {/* ** UPDATED: Passing status prop and using onToggleStatus ** */}
                 <ActionButtons
-                  status={applicant.status}
-                  onToggleStatus={() => handleAction('toggleStatus', applicant.id)}
                   onNudge={() => handleAction('nudge', applicant.id)}
                   onRemoveFromList={() => handleAction('removeFromList', applicant.id)}
                   onTag={(listId) => handleAction('tag', applicant.id, listId)}
@@ -265,10 +258,7 @@ export function ChatView({ applicants, jobLists, onDataUpdate, selectedApplicant
                 </p></div></div>
                 <div className="flex items-center gap-2">
                   <div onClick={(e) => e.stopPropagation()}>
-                    {/* ** UPDATED: Passing status prop and using onToggleStatus ** */}
                     <ActionButtons
-                      status={selectedApplicant.status}
-                      onToggleStatus={() => handleAction('toggleStatus', selectedApplicant.id)}
                       onNudge={() => handleAction('nudge', selectedApplicant.id)}
                       onRemoveFromList={() => handleAction('removeFromList', selectedApplicant.id)}
                       onTag={(listId) => handleAction('tag', selectedApplicant.id, listId)}
