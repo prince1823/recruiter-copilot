@@ -157,6 +157,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               onClick={() => {
                 // Define only the columns visible in the table view
                 const columnOrder = [
+                  'Status',
                   'Phone No',
                   'Location', 
                   'Age',
@@ -169,7 +170,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                   'Industry',
                   'Conversation Status',
                   'Experience',
-                  'Status',
                   'Lists',
                   'Created At',
                   'Updated At',
@@ -186,6 +186,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                     
                     // Create data object with all fields
                     const data = {
+                      'Status': applicant.status || '',
                       'Phone No': applicant.phone,
                       'Location': applicant.location || '',
                       'Age': applicant.age || '',
@@ -195,15 +196,14 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                       'Willing to Relocate': applicant.willing_to_relocate === null ? '' : (applicant.willing_to_relocate ? 'Yes' : 'No'),
                       'Home Location': applicant.home_location || '',
                       'Work Location': applicant.work_location || '',
-                      'Experience': applicant.experience || 0,
                       'Industry': applicant.industry || '',
-                      'Currently Employed': applicant.is_currently_employed ? 'Yes' : 'No',
-                      'Last Drawn Salary': applicant.last_drawn_salary || '',
-                      'Status': applicant.status || '',
                       'Conversation Status': applicant.conversationStatus || '',
+                      'Experience': applicant.experience || 0,
                       'Lists': lists,
                       'Created At': applicant.created_at,
                       'Updated At': applicant.updated_at,
+                      'Currently Employed': applicant.is_currently_employed ? 'Yes' : 'No',
+                      'Last Drawn Salary': applicant.last_drawn_salary || '',
                       'Tags': tags,
                     
                     };
@@ -275,6 +275,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-8 sm:w-12"></TableHead>
+                <TableHead className="w-16 sm:w-20">Status</TableHead>
                 <TableHead className="min-w-[120px]">Phone No</TableHead>
                 <TableHead className="w-12 sm:w-16">Age</TableHead>
                 <TableHead className="w-16 sm:w-20">Gender</TableHead>
@@ -282,7 +283,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 <TableHead className="min-w-[80px]">Education</TableHead>
                 <TableHead className="w-16 sm:w-20">Relocate</TableHead>
                 <TableHead className="min-w-[80px]">Home Location</TableHead>
-                <TableHead className="w-16 sm:w-20">Status</TableHead>
                 <TableHead className="min-w-[100px]">Conversation</TableHead>
                 <TableHead className="w-16 sm:w-20 text-right">Actions</TableHead>
               </TableRow>
@@ -291,6 +291,9 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               {filteredApplicants.map((applicant) => (
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
                   <TableCell className="w-8 sm:w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
+                  <TableCell className="w-16 sm:w-20">
+                    <div className={`w-3 h-3 rounded-full ${applicant.status === 'active' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  </TableCell>
                   <TableCell className="font-medium min-w-[120px] text-xs sm:text-sm">
                     <button 
                       onClick={() => onNavigateToChat?.(applicant.id)}
@@ -326,14 +329,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                        </TooltipContent>
                      </Tooltip>
                    </TableCell>
-                  <TableCell className="w-16 sm:w-20">
-                    <Badge 
-                      variant="outline" 
-                      className={`text-xs ${applicant.status === 'active' ? 'bg-green-100 text-green-700 border-green-300' : 'bg-red-100 text-red-700 border-red-300'}`}
-                    >
-                      {applicant.status || ''}
-                    </Badge>
-                  </TableCell>
                   <TableCell className="min-w-[100px]">
                     <div className="text-xs leading-tight break-all">
                       <Badge className={`text-xs ${getConversationStatusBadgeClass(applicant.conversationStatus)}`}>
