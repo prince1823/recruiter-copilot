@@ -17,7 +17,8 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     details: details,
     education_level: details.education_level,
     education: (details as any).education,
-    qualification: (details as any).qualification
+    qualification: (details as any).qualification,
+    willing_to_relocate: details.willing_to_relocate
   });
   
   return {
@@ -48,7 +49,7 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     industry: details.industry || '',
     work_location: details.work_location,
     last_drawn_salary: details.last_drawn_salary,
-    willing_to_relocate: details.willing_to_relocate || false,
+    willing_to_relocate: details.willing_to_relocate !== undefined && details.willing_to_relocate !== null ? details.willing_to_relocate : null,
     expected_salary: details.expected_salary || 0,
   };
 };

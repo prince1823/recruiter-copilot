@@ -202,7 +202,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                       'Gender': applicant.gender || '',
                       'Expected Salary': applicant.expected_salary || '',
                       'Education Qualification': applicant.education_qualification || '',
-                      'Willing to Relocate': applicant.willing_to_relocate ? 'Yes' : 'No',
+                      'Willing to Relocate': applicant.willing_to_relocate === null ? '' : (applicant.willing_to_relocate ? 'Yes' : 'No'),
                       'Home Location': applicant.home_location || '',
                       'Work Location': applicant.work_location || '',
                       'Experience': applicant.experience || 0,
@@ -307,7 +307,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                   <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.gender || ''}</TableCell>
                   <TableCell className="min-w-[100px] text-xs sm:text-sm">{applicant.expected_salary ? `₹${applicant.expected_salary}` : ''}</TableCell>
                   <TableCell className="min-w-[80px] text-xs sm:text-sm">{applicant.education_qualification || ''}</TableCell>
-                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
+                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.willing_to_relocate === null ? '' : (applicant.willing_to_relocate ? 'Yes' : 'No')}</TableCell>
                    <TableCell className="min-w-[80px]">
                      <Tooltip>
                        <TooltipTrigger asChild>
