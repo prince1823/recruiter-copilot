@@ -74,6 +74,10 @@ export default function App() {
     setActiveView(prev => ({ ...prev, listId: null }));
   };
 
+  const handleNavigateToChat = (applicantId: string) => {
+    setActiveView({ type: 'chats', listId: applicantId });
+  };
+
   const getViewCount = () => {
     if (activeView.listId) {
         const list = jobLists.find(l => l.id === activeView.listId);
@@ -122,9 +126,9 @@ export default function App() {
     // Otherwise, show the main tab view
     switch (activeView.type) {
       case 'chats':
-        return <ChatView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} />;
+        return <ChatView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} selectedApplicantId={activeView.listId || undefined} />;
       case 'table':
-        return <ListView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} onApplicantsUpdate={updateApplicants} />;
+        return <ListView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} onApplicantsUpdate={updateApplicants} onNavigateToChat={handleNavigateToChat} />;
       case 'manage-lists':
         return <ManageListsView jobLists={jobLists} onListsUpdate={refreshData} onSelectList={handleSelectList} onListsLocalUpdate={updateJobLists} />;
       default:

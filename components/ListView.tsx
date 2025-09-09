@@ -14,9 +14,10 @@ interface ListViewProps {
   jobLists: JobList[];
   onDataUpdate: () => void;
   onApplicantsUpdate?: (updatedApplicants: Applicant[]) => void;
+  onNavigateToChat?: (applicantId: string) => void;
 }
 
-export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdate }: ListViewProps) {
+export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdate, onNavigateToChat }: ListViewProps) {
   const [selectedApplicants, setSelectedApplicants] = useState<Set<string>>(new Set());
   const [selectedListFilters, setSelectedListFilters] = useState<Set<string>>(new Set());
 
@@ -298,7 +299,14 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               {filteredApplicants.map((applicant) => (
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
                   <TableCell className="w-8 sm:w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
-                  <TableCell className="font-medium min-w-[120px] text-xs sm:text-sm">{applicant.phone}</TableCell>
+                  <TableCell className="font-medium min-w-[120px] text-xs sm:text-sm">
+                    <button 
+                      onClick={() => onNavigateToChat?.(applicant.id)}
+                      className="text-primary-blue hover:text-primary-blue-dark hover:underline cursor-pointer transition-colors"
+                    >
+                      {applicant.phone}
+                    </button>
+                  </TableCell>
                   <TableCell className="w-12 sm:w-16 text-xs sm:text-sm">{applicant.age || ''}</TableCell>
                   <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.gender || ''}</TableCell>
                   <TableCell className="min-w-[100px] text-xs sm:text-sm">{applicant.expected_salary ? `₹${applicant.expected_salary}` : ''}</TableCell>

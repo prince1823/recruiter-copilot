@@ -13,6 +13,7 @@ interface ChatViewProps {
   applicants: Applicant[];
   jobLists: JobList[];
   onDataUpdate: () => void;
+  selectedApplicantId?: string;
 }
 
 interface ChatMessage {
@@ -40,11 +41,18 @@ const formatTimestamp = (timestamp: string | number): string => {
   }
 };
 
-export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) {
+export function ChatView({ applicants, jobLists, onDataUpdate, selectedApplicantId }: ChatViewProps) {
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
   const [selectedApplicants, setSelectedApplicants] = useState<Set<string>>(new Set());
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+
+  // Auto-select applicant when selectedApplicantId is provided
+  useEffect(() => {
+    if (selectedApplicantId && applicants.some(a => a.id === selectedApplicantId)) {
+      setSelectedChat(selectedApplicantId);
+    }
+  }, [selectedApplicantId, applicants]);
 
   // Sort applicants by most recent first (using created_at, fallback to updated_at)
   const sortedApplicants = useMemo(() => {
