@@ -134,21 +134,17 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
     return listIds.map(id => jobLists.find(l => l.id === id)?.listName || id);
   };
 
-  const formatConversationStatus = (status: string) => {
-    const statusMap: { [key: string]: { label: string; color: string; bgColor: string } } = {
-      'NOT_INITIATED': { label: 'Not Started', color: 'text-gray-600', bgColor: 'bg-gray-100' },
-      'INITIATED': { label: 'Started', color: 'text-blue-600', bgColor: 'bg-blue-100' },
-      'DETAILS_IN_PROGRESS': { label: 'Collecting Details', color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
-      'DETAILS_COMPLETED': { label: 'Details Complete', color: 'text-green-600', bgColor: 'bg-green-100' },
-      'MANDATE_MATCHING': { label: 'Finding Jobs', color: 'text-purple-600', bgColor: 'bg-purple-100' },
-      'SHORTLISTED': { label: 'Shortlisted', color: 'text-indigo-600', bgColor: 'bg-indigo-100' },
-      'NO_MATCHES': { label: 'No Matches', color: 'text-red-600', bgColor: 'bg-red-100' },
-      'PLACED': { label: 'Placed', color: 'text-green-700', bgColor: 'bg-green-200' },
-      'RETIRED': { label: 'Retired', color: 'text-gray-700', bgColor: 'bg-gray-200' }
-    };
-    
-    const statusInfo = statusMap[status] || { label: status, color: 'text-gray-600', bgColor: 'bg-gray-100' };
-    return statusInfo;
+  const getConversationStatusBadgeClass = (conversationStatus: string) => { 
+    switch (conversationStatus) { 
+      case 'MANDATE_MATCHING': return 'bg-green-500 text-white hover:bg-green-600'; 
+      case 'DETAILS_COMPLETED': return 'bg-blue-500 text-white hover:bg-blue-600'; 
+      case 'DETAILS_IN_PROGRESS': return 'bg-purple-500 text-white hover:bg-purple-600'; 
+      case 'INITIATED': return 'bg-yellow-500 text-white hover:bg-yellow-600'; 
+      case 'NOT_MATCHING': return 'bg-red-300 text-red-800 hover:bg-red-400';
+      case 'NO_MATCHES': return 'bg-red-300 text-red-800 hover:bg-red-400'; 
+      case 'NOT_INITIATED': return 'bg-slate-400 text-white hover:bg-slate-500'; 
+      default: return 'bg-gray-400 text-white hover:bg-gray-500'; 
+    } 
   };
 
   return (
@@ -210,7 +206,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                       'Currently Employed': applicant.is_currently_employed ? 'Yes' : 'No',
                       'Last Drawn Salary': applicant.last_drawn_salary || '',
                       'Status': applicant.status || '',
-                      'Conversation Status': formatConversationStatus(applicant.conversationStatus).label,
+                      'Conversation Status': applicant.conversationStatus || '',
                       'Lists': lists,
                       'Created At': applicant.created_at,
                       'Updated At': applicant.updated_at,
@@ -340,17 +336,9 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                   </TableCell>
                   <TableCell className="min-w-[100px]">
                     <div className="text-xs leading-tight break-all">
-                      {(() => {
-                        const statusInfo = formatConversationStatus(applicant.conversationStatus);
-                        return (
-                          <Badge 
-                            variant="outline" 
-                            className={`text-xs ${statusInfo.color} ${statusInfo.bgColor} border-current`}
-                          >
-                            {statusInfo.label}
-                          </Badge>
-                        );
-                      })()}
+                      <Badge className={`text-xs ${getConversationStatusBadgeClass(applicant.conversationStatus)}`}>
+                        {applicant.conversationStatus}
+                      </Badge>
                     </div>
                   </TableCell>
                   <TableCell className="text-right w-16 sm:w-20">
