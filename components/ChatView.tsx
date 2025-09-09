@@ -163,7 +163,18 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
   const handleSelectApplicant = (applicantId: string, checked: boolean) => { const newSelected = new Set(selectedApplicants); if (checked) { newSelected.add(applicantId); } else { newSelected.delete(applicantId); } setSelectedApplicants(newSelected); };
   const handleSelectAll = () => { if (selectedApplicants.size === sortedApplicants.length) { setSelectedApplicants(new Set()); } else { setSelectedApplicants(new Set(sortedApplicants.map(a => a.id))); } };
   const availableLists = jobLists.map(list => ({ id: list.id, name: list.listName }));
-  const getStatusBadgeClass = (status: string) => { switch (status) { case 'active': return 'bg-primary-blue text-white hover:bg-primary-blue-dark'; case 'disabled': return 'bg-red-500 text-white hover:bg-red-600'; default: return 'bg-gray-400 text-white'; } };
+  const getStatusBadgeClass = (conversationStatus: string) => { 
+    switch (conversationStatus) { 
+      case 'MANDATE_MATCHING': return 'bg-green-500 text-white hover:bg-green-600'; 
+      case 'DETAILS_COMPLETED': return 'bg-blue-500 text-white hover:bg-blue-600'; 
+      case 'DETAILS_IN_PROGRESS': return 'bg-purple-500 text-white hover:bg-purple-600'; 
+      case 'INITIATED': return 'bg-yellow-500 text-white hover:bg-yellow-600'; 
+      case 'NOT_MATCHING': return 'bg-red-300 text-red-800 hover:bg-red-400';
+      case 'NO_MATCHES': return 'bg-red-300 text-red-800 hover:bg-red-400'; 
+      case 'NOT_INITIATED': return 'bg-slate-400 text-white hover:bg-slate-500'; 
+      default: return 'bg-gray-400 text-white hover:bg-gray-500'; 
+    } 
+  };
   const getListNames = (listIds: string[]) => { return listIds.map(id => { const list = jobLists.find(l => l.id === id); return list ? list.listName : id; }); };
   const selectedApplicant = selectedChat ? applicants.find(a => a.id === selectedChat) : null;
   const isAllSelected = selectedApplicants.size === sortedApplicants.length && sortedApplicants.length > 0;
@@ -191,7 +202,9 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                             id: applicant.id,
                             age: applicant.age,
                             gender: applicant.gender,
-                            experience: applicant.experience
+                            experience: applicant.experience,
+                            conversationStatus: applicant.conversationStatus,
+                            status: applicant.status
                           });
                           
                           if (applicant.age && applicant.age > 0) details.push(`Age: ${applicant.age}y`);
@@ -206,8 +219,7 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                   </div>
                   <p className="text-sm text-gray-600 truncate">{applicant.lastMessage}</p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    <Badge className={`text-xs ${getStatusBadgeClass(applicant.status)}`}>{applicant.status}</Badge>
-                    {applicant.hasCompletedConversation && <Badge variant="outline" className="text-xs border-primary-blue text-primary-blue">Complete</Badge>}
+                    <Badge className={`text-xs ${getStatusBadgeClass(applicant.conversationStatus)}`}>{applicant.conversationStatus}</Badge>
                   </div>
                 </div>
               </div>
