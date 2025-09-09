@@ -3,11 +3,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { BulkActionButtons } from './BulkActionButtons';
-import { X, Download, MessageCircle, Trash2 } from 'lucide-react';
-import { Applicant, JobList } from '../types';
+import { X, Download, MessageCircle } from 'lucide-react';
+import { LegacyApplicant as Applicant, LegacyJobList as JobList } from '../src/types';
 import { bulkUpdateCandidateStatus, manageCandidatesInList, bulkSendAction, removeApplicantFromAllLists } from '../src/services/api';
-import { addDeletedApplicant } from '../src/services/deletedItemsManager';
 
 interface ListViewProps {
   applicants: Applicant[];
@@ -51,9 +51,8 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
         }
         onDataUpdate();
     } catch(err) {
-        console.error(`Failed to perform action: ${action}`, err);
-        alert(`Error: Could not perform action. See console for details.`);
-    }
+        alert(`Error: Could not perform action. Please try again.`);
+      }
   };
 
   const handleBulkAction = async (action: string, listId?: string) => {
@@ -78,9 +77,8 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
         setSelectedApplicants(new Set());
         onDataUpdate();
     } catch (err) {
-        console.error(`Failed to perform bulk action: ${action}`, err);
-        alert(`Error: Could not perform bulk action. See console for details.`);
-    }
+        alert(`Error: Could not perform bulk action. Please try again.`);
+      }
   };
 
   const handleSelectApplicant = (applicantId: string, checked: boolean) => {
@@ -153,80 +151,81 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
     return statusInfo;
   };
 
-  const handleDeleteSelected = async () => {
-    const selectedCount = selectedApplicants.size;
-    
-    if (selectedCount === 0) {
-      alert('Please select candidates to delete.');
-      return;
-    }
-    
-    if (window.confirm(`Are you sure you want to delete ${selectedCount} selected candidate(s)? This action cannot be undone.`)) {
-      try {
-
-        // Get the selected candidate IDs
-        const selectedIds = Array.from(selectedApplicants);
-
-        // Add selected candidates to deleted items list for persistence
-        selectedIds.forEach(applicantId => {
-          addDeletedApplicant(applicantId);
-        });
-        
-        // Clear selection
-        setSelectedApplicants(new Set());
-        
-        // Remove deleted candidates from local state for instant UI update
-        if (onApplicantsUpdate) {
-          const updatedApplicants = applicants.filter(applicant => !selectedIds.includes(applicant.id));
-
-          onApplicantsUpdate(updatedApplicants);
-        }
-
-      } catch (error) {
-        console.error('Error deleting selected candidates:', error);
-        alert('❌ Failed to delete selected candidates. Please try again.');
-      }
-    }
-  };
-
   return (
     <div className="flex h-full bg-secondary-gray-light">
       <div className="flex-1 flex flex-col">
-        <div className="p-4 border-b border-gray-200 bg-white">
-          <div className="flex items-center justify-between mb-3">
+        <div className="p-2 sm:p-4 border-b border-gray-200 bg-white">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-3">
             <div className="flex items-center gap-2">
               <div className="w-1 h-6 bg-primary-blue rounded-full"></div>
-              <h2 className="text-gray-900 font-medium">Applicants ({filteredApplicants.length}{selectedListFilters.size > 0 ? ` of ${applicants.length}` : ''})</h2>
+              <h2 className="text-gray-900 font-medium text-sm sm:text-base">Applicants ({filteredApplicants.length}{selectedListFilters.size > 0 ? ` of ${applicants.length}` : ''})</h2>
             </div>
             <Button 
               variant="outline" 
               size="sm" 
+              className="h-8 px-3 text-xs bg-primary-blue hover:bg-primary-blue-dark text-white border-primary-blue w-full sm:w-auto"
               onClick={() => {
+                // Define only the columns visible in the table view
+                const columnOrder = [
+                  'Phone No',
+                  'Location', 
+                  'Age',
+                  'Gender',
+                  'Expected Salary',
+                  'Education Qualification',
+                  'Willing to Relocate',
+                  'Home Location',
+                  'Work Location',
+                  'Industry',
+                  'Conversation Status',
+                  'Experience',
+                  'Status',
+                  'Lists',
+                  'Created At',
+                  'Updated At',
+                  'Currently Employed',
+                  'Last Drawn Salary',
+                  'Tags'
+                ];
+
                 const csvContent = [
-                  "Phone No,Age,Gender,Education,Experience,Industry,Currently Employed,Home Location,Work Location,Expected Salary,Last Drawn Salary,Willing to Relocate,Conversation Status,Lists,Created At,Updated At,Response,Tags",
+                  columnOrder.join(','),
                   ...filteredApplicants.map(applicant => {
                     const lists = getListNames(applicant.lists).join(',');
                     const tags = applicant.tags.join(';');
-                    return [
-                      applicant.phone,
-                      applicant.age || 'N/A',
-                      applicant.gender || 'N/A',
-                      applicant.education_qualification || 'N/A',
-                      applicant.experience || 0,
-                      applicant.industry || 'N/A',
-                      applicant.is_currently_employed ? 'Yes' : 'No',
-                      applicant.home_location || 'N/A',
-                      applicant.work_location || 'N/A',
-                      applicant.expected_salary || 'N/A',
-                      applicant.last_drawn_salary || 'N/A',
-                      applicant.willing_to_relocate ? 'Yes' : 'No',
-                      formatConversationStatus(applicant.conversationStatus).label,
-                      lists,
-                      applicant.created_at,
-                      applicant.updated_at,
-                      `"${applicant.response.replace(/"/g, '""')}"`, // Escape quotes in response
-                      tags
-                    ].join(',');
+                    
+                    // Create data object with all fields
+                    const data = {
+                      'Phone No': applicant.phone,
+                      'Location': applicant.location || '',
+                      'Age': applicant.age || '',
+                      'Gender': applicant.gender || '',
+                      'Expected Salary': applicant.expected_salary || '',
+                      'Education Qualification': applicant.education_qualification || '',
+                      'Willing to Relocate': applicant.willing_to_relocate ? 'Yes' : 'No',
+                      'Home Location': applicant.home_location || '',
+                      'Work Location': applicant.work_location || '',
+                      'Experience': applicant.experience || 0,
+                      'Industry': applicant.industry || '',
+                      'Currently Employed': applicant.is_currently_employed ? 'Yes' : 'No',
+                      'Last Drawn Salary': applicant.last_drawn_salary || '',
+                      'Status': applicant.status || '',
+                      'Conversation Status': formatConversationStatus(applicant.conversationStatus).label,
+                      'Lists': lists,
+                      'Created At': applicant.created_at,
+                      'Updated At': applicant.updated_at,
+                      'Tags': tags,
+                      'ID': applicant.id,
+                      'Applicant ID': applicant.id, // Same as ID for backward compatibility
+                      'Recruiter ID': '', // Not available in current data structure
+                      'Name': applicant.name || '',
+                      'Pincode': applicant.pincode || '',
+                      'Has Two Wheeler': applicant.hasTwoWheeler ? 'Yes' : 'No',
+                      'Has Completed Conversation': applicant.hasCompletedConversation ? 'Yes' : 'No'
+                    };
+                    
+                    // Return data in the specified column order
+                    return columnOrder.map(column => data[column as keyof typeof data] || '').join(',');
                   })
                 ].join('\n');
                 const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -238,27 +237,29 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-              }} 
-              className="h-8 px-3 text-xs bg-primary-blue hover:bg-primary-blue-dark text-white border-primary-blue"
+              }}
             >
               <Download className="h-3 w-3 mr-1" />
               Download CSV
             </Button>
           </div>
           <div className="space-y-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-medium text-gray-700">Filter by Lists:</span>
-              {jobLists.map((list) => (
-                <Button key={list.id} variant={selectedListFilters.has(list.id) ? 'default' : 'outline'} size="sm" onClick={() => handleListFilterToggle(list.id)} className={`h-7 text-xs ${selectedListFilters.has(list.id) ? 'bg-primary-blue hover:bg-primary-blue-dark text-white' : 'border-gray-300 hover:bg-gray-50'}`}>
-                  {list.listName}
-                  <Badge variant="secondary" className="ml-1 text-xs bg-white/20">{applicants.filter(a => a.lists.includes(list.id)).length}</Badge>
-                </Button>
-              ))}
-              {selectedListFilters.size > 0 && <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-7 text-xs text-gray-500 hover:text-gray-700"><X className="h-3 w-3 mr-1" />Clear all</Button>}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2">
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Filter by Lists:</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                {jobLists.map((list) => (
+                  <Button key={list.id} variant={selectedListFilters.has(list.id) ? 'default' : 'outline'} size="sm" onClick={() => handleListFilterToggle(list.id)} className={`h-6 sm:h-7 text-xs ${selectedListFilters.has(list.id) ? 'bg-primary-blue hover:bg-primary-blue-dark text-white' : 'border-gray-300 hover:bg-gray-50'}`}>
+                    <span className="hidden sm:inline">{list.listName}</span>
+                    <span className="sm:hidden">{list.listName.length > 8 ? list.listName.substring(0, 8) + '...' : list.listName}</span>
+                    <Badge variant="secondary" className="ml-1 text-xs bg-white/20">{applicants.filter(a => a.lists.includes(list.id)).length}</Badge>
+                  </Button>
+                ))}
+                {selectedListFilters.size > 0 && <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-6 sm:h-7 text-xs text-gray-500 hover:text-gray-700"><X className="h-3 w-3 mr-1" />Clear all</Button>}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" />
-              <Button variant="ghost" size="sm" onClick={handleSelectAll} className="text-sm text-gray-600 hover:text-primary-blue p-0 h-auto">{isAllSelected ? 'Deselect All' : 'Select All'}</Button>
+              <Button variant="ghost" size="sm" onClick={handleSelectAll} className="text-xs sm:text-sm text-gray-600 hover:text-primary-blue p-0 h-auto">{isAllSelected ? 'Deselect All' : 'Select All'}</Button>
             </div>
           </div>
         </div>
@@ -280,66 +281,70 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                   onBulkTag={(listId) => handleBulkAction('tag', listId)}
                   availableLists={availableLists}
                 />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDeleteSelected}
-                  className="h-8 px-3 text-xs bg-red-500 hover:bg-red-600 text-white border-red-500"
-                >
-                  <Trash2 className="h-3 w-3 mr-1" />
-                  Delete Selected
-                </Button>
               </div>
             </div>
           </div>
         )}
 
         <div className="flex-1 overflow-auto bg-white">
-          <Table className="min-w-full">
+          <div className="overflow-x-auto">
+            <Table className="min-w-full" style={{ minWidth: '800px' }}>
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
-                <TableHead className="w-12"></TableHead>
-                <TableHead>Phone No</TableHead>
-                <TableHead>Age</TableHead>
-                <TableHead>Gender</TableHead>
-                <TableHead>Education</TableHead>
-                <TableHead>Experience</TableHead>
-                <TableHead>Industry</TableHead>
-                <TableHead>Currently Employed</TableHead>
-                <TableHead>Home Location</TableHead>
-                <TableHead>Work Location</TableHead>
-                <TableHead>Expected Salary</TableHead>
-                <TableHead>Last Salary</TableHead>
-                <TableHead>Relocate</TableHead>
-                <TableHead>Conversation</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-8 sm:w-12"></TableHead>
+                <TableHead className="min-w-[120px]">Phone No</TableHead>
+                <TableHead className="w-12 sm:w-16">Age</TableHead>
+                <TableHead className="w-16 sm:w-20">Gender</TableHead>
+                <TableHead className="min-w-[100px]">Expected Salary</TableHead>
+                <TableHead className="min-w-[80px]">Education</TableHead>
+                <TableHead className="w-16 sm:w-20">Relocate</TableHead>
+                <TableHead className="min-w-[80px]">Home Location</TableHead>
+                <TableHead className="w-16 sm:w-20">Status</TableHead>
+                <TableHead className="min-w-[100px]">Conversation</TableHead>
+                <TableHead className="w-16 sm:w-20 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredApplicants.map((applicant) => (
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
-                  <TableCell className="w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
-                  <TableCell className="font-medium w-32">{applicant.phone}</TableCell>
-                  <TableCell className="w-16">{applicant.age || 'N/A'}</TableCell>
-                  <TableCell className="w-20">{applicant.gender || 'N/A'}</TableCell>
-                  <TableCell className="w-20">{applicant.education_qualification || 'N/A'}</TableCell>
-                  <TableCell className="w-20">{applicant.experience || 0} yrs</TableCell>
-                  <TableCell className="w-20">{applicant.industry || 'N/A'}</TableCell>
-                  <TableCell className="w-20">{applicant.is_currently_employed ? 'Yes' : 'No'}</TableCell>
-                  <TableCell className="w-24">
-                    <div className="text-xs leading-tight break-all">
-                      {applicant.home_location || 'N/A'}
-                    </div>
+                  <TableCell className="w-8 sm:w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
+                  <TableCell className="font-medium min-w-[120px] text-xs sm:text-sm">{applicant.phone}</TableCell>
+                  <TableCell className="w-12 sm:w-16 text-xs sm:text-sm">{applicant.age || ''}</TableCell>
+                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.gender || ''}</TableCell>
+                  <TableCell className="min-w-[100px] text-xs sm:text-sm">{applicant.expected_salary ? `₹${applicant.expected_salary}` : ''}</TableCell>
+                  <TableCell className="min-w-[80px] text-xs sm:text-sm">{applicant.education_qualification || ''}</TableCell>
+                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
+                   <TableCell className="min-w-[80px]">
+                     <Tooltip>
+                       <TooltipTrigger asChild>
+                         <div className="text-xs leading-tight cursor-help truncate">
+                           {(() => {
+                             const location = applicant.home_location || '';
+                             if (!location) return '';
+                             return location.length > 10 ? location.substring(0, 10) + '...' : location;
+                           })()}
+                         </div>
+                       </TooltipTrigger>
+                       <TooltipContent side="top" className="z-50 bg-blue-600 text-white border-blue-600 shadow-lg">
+                         <p className="max-w-xs break-words text-xs font-medium">
+                           {(() => {
+                             const location = applicant.home_location || '';
+                             if (!location) return '';
+                             return location.length > 15 ? location.substring(0, 15) + '...' : location;
+                           })()}
+                         </p>
+                       </TooltipContent>
+                     </Tooltip>
+                   </TableCell>
+                  <TableCell className="w-16 sm:w-20">
+                    <Badge 
+                      variant="outline" 
+                      className={`text-xs ${applicant.status === 'active' ? 'bg-green-100 text-green-700 border-green-300' : 'bg-red-100 text-red-700 border-red-300'}`}
+                    >
+                      {applicant.status || ''}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="w-24">
-                    <div className="text-xs leading-tight break-all">
-                      {applicant.work_location || 'N/A'}
-                    </div>
-                  </TableCell>
-                  <TableCell className="w-24">₹{applicant.expected_salary || 'N/A'}</TableCell>
-                  <TableCell className="w-24">₹{applicant.last_drawn_salary || 'N/A'}</TableCell>
-                  <TableCell className="w-16">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
-                  <TableCell className="w-24">
+                  <TableCell className="min-w-[100px]">
                     <div className="text-xs leading-tight break-all">
                       {(() => {
                         const statusInfo = formatConversationStatus(applicant.conversationStatus);
@@ -354,24 +359,23 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                       })()}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right w-20">
-                    <div className="flex gap-1 justify-end">
-                      {/* WhatsApp Web Button */}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleAction('waWeb', applicant.id)}
-                        className="h-8 px-2 text-xs bg-primary-blue hover:bg-primary-blue-dark text-white border-primary-blue"
-                        title="Open WhatsApp Web"
-                      >
-                        <MessageCircle className="h-3 w-3" />
-                      </Button>
-                    </div>
+                  <TableCell className="text-right w-16 sm:w-20">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAction('waWeb', applicant.id)}
+                      className="h-6 sm:h-8 px-2 sm:px-3 text-xs bg-green-500 hover:bg-green-600 text-white border-green-500"
+                      title="Open WhatsApp"
+                    >
+                      <MessageCircle className="h-3 w-3 sm:mr-1" />
+                      <span className="hidden sm:inline"></span>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+            </Table>
+          </div>
         </div>
       </div>
     </div>

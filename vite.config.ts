@@ -3,6 +3,16 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://recruiter-copilot-apis.quesscorp.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
+      }
+    }
+  },
   build: {
     rollupOptions: {
       output: {

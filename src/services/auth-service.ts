@@ -32,7 +32,6 @@ export const authService = {
       setStoredUsername(username);
       setLoginTime();
       
-      console.warn('⚠️ AUTH SKIPPED: Using mock user ID:', mockUserId);
       
       return {
         success: true,
@@ -56,8 +55,6 @@ export const authService = {
         },
       };
       
-      console.log('🔐 Attempting login to:', url);
-      console.log('📤 Request body:', { ...requestBody, request: { ...requestBody.request, password: '[REDACTED]' } });
       
       const response = await fetch(url, {
         method: 'POST',
@@ -75,7 +72,6 @@ export const authService = {
         setStoredUsername(username);
         setLoginTime();
         
-        console.log('✅ Login successful for user:', username);
         
         return {
           success: true,
@@ -89,10 +85,8 @@ export const authService = {
       try {
         const errorData = await response.json();
         errorMessage = errorData.message || errorData.detail || errorData.error || errorMessage;
-        console.error('❌ Login failed:', errorMessage);
       } catch {
         // If response body isn't JSON, use default error message
-        console.error('❌ Login failed with status:', response.status);
       }
       
       return {
@@ -100,7 +94,6 @@ export const authService = {
         message: errorMessage,
       };
     } catch (error) {
-      console.error('Login error:', error);
       return {
         success: false,
         message: error instanceof Error ? error.message : 'An unexpected error occurred',

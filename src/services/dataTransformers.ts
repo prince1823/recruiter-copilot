@@ -6,17 +6,17 @@ import { Applicant, JobList, LegacyApplicant, LegacyJobList } from '../types';
 export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplicant => {
   // Add null checks and fallbacks for missing data
   const details = applicant.details || {};
-  const gender = details.gender || 'Unknown';
+  const gender = details.gender || '';
   const age = details.age || 0;
-  const homeLocation = details.home_location || 'Unknown';
+  const homeLocation = details.home_location || '';
   const experience = details.experience || 0;
   
   return {
-    id: applicant.applicant_id?.toString() || 'unknown',
+    id: applicant.applicant_id?.toString() || '',
     name: `${gender} - ${age} years`, // Generate a name-like identifier
-    phone: applicant.applicant_id ? `+${applicant.applicant_id.toString()}` : 'unknown', // Format as phone number
+    phone: applicant.applicant_id ? `+${applicant.applicant_id.toString()}` : '', // Format as phone number
     lastMessage: applicant.response || '',
-    lastMessageTime: applicant.updated_at ? new Date(applicant.updated_at).toLocaleDateString() : 'Unknown',
+    lastMessageTime: applicant.updated_at ? new Date(applicant.updated_at).toLocaleDateString() : '',
     location: homeLocation,
     pincode: '', // Not available in new format
     experience,
@@ -33,10 +33,10 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     response: applicant.response || '',
     age,
     gender,
-    education_qualification: details.education_level || 'Unknown',
+    education_qualification: details.education_level || '',
     home_location: homeLocation,
     is_currently_employed: details.is_currently_employed || false,
-    industry: details.industry || 'Unknown',
+    industry: details.industry || '',
     work_location: details.work_location,
     last_drawn_salary: details.last_drawn_salary,
     willing_to_relocate: details.willing_to_relocate || false,
@@ -52,12 +52,6 @@ export const transformJobListToLegacy = (jobList: JobList, allApplicants: Legacy
     return jobList.applicants?.includes(parseInt(applicant.id)) || false;
   });
   
-  console.log(`📋 Transforming list ${jobList.list_name}:`, {
-    listApplicantIds: jobList.applicants,
-    availableApplicantIds: allApplicants.map(a => a.id),
-    matchedApplicants: listApplicants.length,
-    totalApplicants: allApplicants.length
-  });
   
   return {
     id: jobList.id.toString(),
@@ -80,12 +74,12 @@ export const transformLegacyApplicantToBackend = (applicant: LegacyApplicant): P
     applicant_id: parseInt(applicant.id),
     details: {
       age: 25, // Default values since legacy format doesn't have these
-      gender: 'Not specified',
-      education_qualification: 'Not specified',
+      gender: '',
+      education_qualification: '',
       home_location: applicant.location,
       is_currently_employed: false,
       experience: applicant.experience,
-      industry: 'Not specified',
+      industry: '',
       work_location: null,
       last_drawn_salary: null,
       willing_to_relocate: false,
@@ -120,9 +114,6 @@ export const transformAPIResponseToLegacy = (apiResponse: any) => {
 
 // Helper function to extract data from API response
 export const extractDataFromResponse = <T>(response: any): T[] => {
-
-  console.log('🔍 response keys:', response ? Object.keys(response) : 'null/undefined');
-  
   if (response?.data) {
 
     const result = Array.isArray(response.data) ? response.data : [response.data];

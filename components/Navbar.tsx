@@ -1,10 +1,15 @@
 import React from 'react';
 import { useAuth } from '../src/contexts/AuthContext';
 import { Button } from './ui/button';
-import { LogOut, User, Building2 } from 'lucide-react';
+import { LogOut, Building2, ChevronDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 
-export function Navbar() {
+interface NavbarProps {
+  activeChatCount?: number;
+  disabledChatCount?: number;
+}
+
+export function Navbar({ activeChatCount = 0, disabledChatCount = 0 }: NavbarProps) {
   const { user, signOut } = useAuth();
 
   const handleSignOut = async () => {
@@ -12,7 +17,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 px-6 py-3">
+    <nav className="bg-white shadow-sm border-b border-gray-200 px-6 py-3 relative overflow-visible">
       <div className="flex items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center space-x-3">
@@ -26,36 +31,40 @@ export function Navbar() {
         </div>
 
         {/* User Menu */}
-        <div className="flex items-center space-x-4">
-          {/* User Info */}
-          <div className="text-right">
-            <p className="text-sm font-medium text-gray-900">
-              {user?.username || 'User'}
-            </p>
-            <p className="text-xs text-gray-500">
-              ID: {user?.id || 'N/A'}
-            </p>
-          </div>
-
+        <div className="flex items-center space-x-4 relative">
           {/* User Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-10 w-10 rounded-full">
-                <User className="h-5 w-5" />
+              <Button 
+                variant="ghost" 
+                className="flex items-center space-x-2 h-12 px-4 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="text-right">
+                  <p className="text-lg font-bold text-gray-900">
+                    {user?.id || ''}
+                  </p>
+                  {/* <p className="text-xs text-gray-500">
+                    {activeChatCount + disabledChatCount} total chats
+                  </p> */}
+                </div>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <div className="px-3 py-2 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-900">
-                  {user?.username || 'User'}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  ID: {user?.id || 'N/A'}
-                </p>
-              </div>
-              <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+            <DropdownMenuContent 
+              align="end" 
+              side="top"
+              className="w-40 p-2 bg-white border border-gray-200 shadow-xl rounded-lg"
+              sideOffset={2}
+              avoidCollisions={true}
+              collisionPadding={10}
+            >
+              {/* Sign Out Button Only */}
+              <DropdownMenuItem 
+                onClick={handleSignOut} 
+                className="flex items-center justify-center space-x-2 px-4 py-3 rounded-md hover:bg-red-50 cursor-pointer text-red-600 w-full transition-colors duration-200"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="text-sm font-medium">Sign Out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
