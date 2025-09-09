@@ -11,6 +11,15 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
   const homeLocation = details.home_location || '';
   const experience = details.experience || 0;
   
+  // Debug: Log the raw backend data to see what's available
+  console.log('Raw backend applicant data:', {
+    applicant_id: applicant.applicant_id,
+    details: details,
+    education_level: details.education_level,
+    education: (details as any).education,
+    qualification: (details as any).qualification
+  });
+  
   return {
     id: applicant.applicant_id?.toString() || '',
     name: `${gender} - ${age} years`, // Generate a name-like identifier
@@ -33,7 +42,7 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     response: applicant.response || '',
     age,
     gender,
-    education_qualification: details.education_level || '',
+    education_qualification: details.education_level || (details as any).education || (details as any).qualification || '',
     home_location: homeLocation,
     is_currently_employed: details.is_currently_employed || false,
     industry: details.industry || '',
@@ -75,7 +84,7 @@ export const transformLegacyApplicantToBackend = (applicant: LegacyApplicant): P
     details: {
       age: 25, // Default values since legacy format doesn't have these
       gender: '',
-      education_qualification: '',
+      education_level: '',
       home_location: applicant.location,
       is_currently_employed: false,
       experience: applicant.experience,

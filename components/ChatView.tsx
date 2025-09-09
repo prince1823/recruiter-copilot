@@ -183,10 +183,25 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                     <div>
                       <p className="font-medium truncate text-gray-900">{applicant.phone}</p>
                       <p className="text-xs text-gray-500">
-                        {applicant.name.includes('years') 
-                            ? applicant.name.split(' - ')[1] || applicant.name
-                            : applicant.name
-                        }
+                        {(() => {
+                          const details = [];
+                          
+                          // Debug: Log applicant data to see what's available
+                          console.log('Applicant data for basic info:', {
+                            id: applicant.id,
+                            age: applicant.age,
+                            gender: applicant.gender,
+                            experience: applicant.experience,
+                            education_qualification: applicant.education_qualification
+                          });
+                          
+                          if (applicant.age && applicant.age > 0) details.push(`Age: ${applicant.age}y`);
+                          if (applicant.gender) details.push(`Gender: ${applicant.gender}`);
+                          if (applicant.experience && applicant.experience > 0) details.push(`Exp: ${applicant.experience}y`);
+                          if (applicant.education_qualification) details.push(`Education: ${applicant.education_qualification}`);
+                          
+                          return details.length > 0 ? details.join(', ') : 'Details not available';
+                        })()}
                       </p>
                     </div>
                     <span className="text-xs text-secondary-gray flex-shrink-0 ml-2">{applicant.lastMessageTime}</span>
@@ -222,11 +237,17 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
           <>
             <div className="flex-1 flex flex-col">
               <div className="p-4 border-b border-gray-200 bg-primary-blue text-white flex items-center justify-between">
-                <div className="flex items-center gap-3"><div><h3 className="font-medium text-white">{selectedApplicant.phone}</h3><p className="text-sm text-white/80">
-                  {selectedApplicant.name.includes('years') 
-                      ? selectedApplicant.name.split(' - ')[1] || selectedApplicant.name
-                      : selectedApplicant.name
-                  }
+                <div className="flex items-center gap-3"><div><h3 className="font-medium text-white">{selectedApplicant.phone}</h3>                <p className="text-sm text-white/80">
+                  {(() => {
+                    const details = [];
+                    
+                    if (selectedApplicant.age && selectedApplicant.age > 0) details.push(`Age: ${selectedApplicant.age}y`);
+                    if (selectedApplicant.gender) details.push(`Gender: ${selectedApplicant.gender}`);
+                    if (selectedApplicant.experience && selectedApplicant.experience > 0) details.push(`Exp: ${selectedApplicant.experience}y`);
+                    if (selectedApplicant.education_qualification) details.push(`Education: ${selectedApplicant.education_qualification}`);
+                    
+                    return details.length > 0 ? details.join(', ') : 'Details not available';
+                  })()}
                 </p></div></div>
                 <div className="flex items-center gap-2">
                   <div onClick={(e) => e.stopPropagation()}>

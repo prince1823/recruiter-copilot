@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback } from './ui/avatar';
@@ -6,7 +6,9 @@ import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ActionButtons } from './ActionButtons';
 import { ArrowLeft, Send, Phone, MapPin, Clock, User, Briefcase, Settings } from 'lucide-react';
-import { LegacyApplicant as Applicant, LegacyJobList as JobList } from '../src/types';
+import { LegacyApplicant as Applicant, LegacyJobList as JobList, ConversationData } from '../src/types';
+import { conversationsAPI } from '../src/services/api';
+import { Loader2 } from 'lucide-react';
 
 interface ChatDetailProps {
   applicant: Applicant;
@@ -21,46 +23,68 @@ interface ChatMessage {
   timestamp: string;
 }
 
+// Helper function to format timestamp
+const formatTimestamp = (timestamp: string | number): string => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+  
+  if (diffInHours < 1) {
+    return 'Just now';
+  } else if (diffInHours < 24) {
+    return `${Math.floor(diffInHours)}h ago`;
+  } else if (diffInHours < 48) {
+    return 'Yesterday';
+  } else {
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays}d ago`;
+  }
+};
+
 export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
   const [newMessage, setNewMessage] = useState('');
-  const [messages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      sender: 'bot',
-      message: 'Hello! I am the Recruiter Bot. I see you are interested in delivery positions. Can you tell me about your experience?',
-      timestamp: '2 days ago'
-    },
-    {
-      id: '2',
-      sender: 'user',
-      message: 'Hi! I have been working as a delivery person for 2 years. I have my own two-wheeler and know the city very well.',
-      timestamp: '2 days ago'
-    },
-    {
-      id: '3',
-      sender: 'bot',
-      message: 'That\'s great! Are you available for full-time work? What are your preferred working hours?',
-      timestamp: '2 days ago'
-    },
-    {
-      id: '4',
-      sender: 'user',
-      message: 'Yes, I am looking for full-time work. I prefer morning to evening shifts, but can be flexible.',
-      timestamp: '1 day ago'
-    },
-    {
-      id: '5',
-      sender: 'bot',
-      message: 'Perfect! We have several delivery positions available in your area. Would you like me to share more details about the job requirements and compensation?',
-      timestamp: '1 day ago'
-    },
-    {
-      id: '6',
-      sender: 'user',
-      message: applicant.lastMessage || 'Yes, please share the details',
-      timestamp: applicant.lastMessageTime || '1 day ago'
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+
+  // Fetch conversation data when component mounts
+  useEffect(() => {
+    const fetchConversation = async () => {
+      setIsLoadingMessages(true);
+      try {
+        const conversationData = await conversationsAPI.getByApplicantId(parseInt(applicant.id));
+        
+        if (conversationData?.data && conversationData.data.length > 0) {
+          const conversation = conversationData.data[0] as ConversationData;
+          
+          // Transform backend conversation data to ChatMessage format
+          const transformedMessages: ChatMessage[] = conversation.conversations
+            .sort((a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime()) // Sort by timestamp
+            .map((conv, index) => {
+              // Create unique ID to prevent duplicate key warnings
+              const uniqueId = conv.mid ? `${conv.mid}-${index}` : `msg-${applicant.id}-${index}`;
+              
+              return {
+                id: uniqueId,
+                sender: conv.role === 'APPLICANT' ? 'user' : 'bot',
+                message: conv.content,
+                timestamp: formatTimestamp(conv.ts)
+              };
+            });
+          
+          setMessages(transformedMessages);
+        } else {
+          // If no conversation data, show empty state
+          setMessages([]);
+        }
+      } catch (error) {
+        setMessages([]);
+      } finally {
+        setIsLoadingMessages(false);
+      }
+    };
+
+    fetchConversation();
+  }, [applicant.id]);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -118,9 +142,10 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
               <Phone className="h-4 w-4" />
             </Button>
             <ActionButtons
-              onDisable={() => handleAction('disable', applicant.id)}
+              status={applicant.status}
+              onToggleStatus={() => handleAction('toggleStatus', applicant.id)}
               onNudge={() => handleAction('nudge', applicant.id)}
-              onShortlist={() => handleAction('shortlist', applicant.id)}
+              onRemoveFromList={() => handleAction('removeFromList', applicant.id)}
               onTag={(listId) => handleAction('tag', applicant.id, listId)}
               availableLists={availableLists}
               showLabels={false}
@@ -130,27 +155,41 @@ export function ChatDetail({ applicant, jobLists, onBack }: ChatDetailProps) {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 bg-whatsapp-gray-light space-y-4">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[70%] p-3 rounded-lg ${
-                  msg.sender === 'user'
-                    ? 'bg-primary-blue text-white'
-                    : 'bg-white border border-gray-200 shadow-sm'
-                }`}
-              >
-                <p className="text-sm">{msg.message}</p>
-                <p className={`text-xs mt-1 ${
-                  msg.sender === 'user' ? 'text-white/70' : 'text-gray-500'
-                }`}>
-                  {msg.timestamp}
-                </p>
+          {isLoadingMessages ? (
+            <div className="flex items-center justify-center h-32">
+              <Loader2 className="h-6 w-6 animate-spin text-primary-blue" />
+              <span className="ml-2 text-gray-600">Loading conversation...</span>
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="flex items-center justify-center h-32">
+              <div className="text-center text-gray-500">
+                <p className="text-sm">No messages yet</p>
+                <p className="text-xs mt-1">Start a conversation with this candidate</p>
               </div>
             </div>
-          ))}
+          ) : (
+            messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-[70%] p-3 rounded-lg ${
+                    msg.sender === 'user'
+                      ? 'bg-primary-blue text-white'
+                      : 'bg-white border border-gray-200 shadow-sm'
+                  }`}
+                >
+                  <p className="text-sm">{msg.message}</p>
+                  <p className={`text-xs mt-1 ${
+                    msg.sender === 'user' ? 'text-white/70' : 'text-gray-500'
+                  }`}>
+                    {msg.timestamp}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Message Input */}

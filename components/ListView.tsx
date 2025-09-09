@@ -215,13 +215,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                       'Created At': applicant.created_at,
                       'Updated At': applicant.updated_at,
                       'Tags': tags,
-                      'ID': applicant.id,
-                      'Applicant ID': applicant.id, // Same as ID for backward compatibility
-                      'Recruiter ID': '', // Not available in current data structure
-                      'Name': applicant.name || '',
-                      'Pincode': applicant.pincode || '',
-                      'Has Two Wheeler': applicant.hasTwoWheeler ? 'Yes' : 'No',
-                      'Has Completed Conversation': applicant.hasCompletedConversation ? 'Yes' : 'No'
+                    
                     };
                     
                     // Return data in the specified column order
