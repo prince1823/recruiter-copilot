@@ -191,14 +191,12 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                             id: applicant.id,
                             age: applicant.age,
                             gender: applicant.gender,
-                            experience: applicant.experience,
-                            education_qualification: applicant.education_qualification
+                            experience: applicant.experience
                           });
                           
                           if (applicant.age && applicant.age > 0) details.push(`Age: ${applicant.age}y`);
                           if (applicant.gender) details.push(`Gender: ${applicant.gender}`);
                           if (applicant.experience && applicant.experience > 0) details.push(`Exp: ${applicant.experience}y`);
-                          if (applicant.education_qualification) details.push(`Education: ${applicant.education_qualification}`);
                           
                           return details.length > 0 ? details.join(', ') : 'Details not available';
                         })()}
@@ -209,9 +207,6 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                   <p className="text-sm text-gray-600 truncate">{applicant.lastMessage}</p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
                     <Badge className={`text-xs ${getStatusBadgeClass(applicant.status)}`}>{applicant.status}</Badge>
-                    <span className="text-xs text-secondary-gray">{applicant.location}</span>
-                    <span className="text-xs text-secondary-gray">{applicant.experience}y exp</span>
-                    {applicant.hasTwoWheeler && <Badge variant="outline" className="text-xs border-primary-blue text-primary-blue">2W</Badge>}
                     {applicant.hasCompletedConversation && <Badge variant="outline" className="text-xs border-primary-blue text-primary-blue">Complete</Badge>}
                   </div>
                 </div>
@@ -244,7 +239,6 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                     if (selectedApplicant.age && selectedApplicant.age > 0) details.push(`Age: ${selectedApplicant.age}y`);
                     if (selectedApplicant.gender) details.push(`Gender: ${selectedApplicant.gender}`);
                     if (selectedApplicant.experience && selectedApplicant.experience > 0) details.push(`Exp: ${selectedApplicant.experience}y`);
-                    if (selectedApplicant.education_qualification) details.push(`Education: ${selectedApplicant.education_qualification}`);
                     
                     return details.length > 0 ? details.join(', ') : 'Details not available';
                   })()}
