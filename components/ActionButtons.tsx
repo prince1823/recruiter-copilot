@@ -2,27 +2,21 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuPortal } from './ui/dropdown-menu';
 // ** NEW: Imported UserCheck icon **
-import { UserX, MessageSquare, Tag, ChevronDown, UserMinus, UserCheck } from 'lucide-react';
+import { MessageSquare, Tag, ChevronDown, UserMinus } from 'lucide-react';
 
 interface ActionButtonsProps {
-  // ** UPDATED: Renamed for clarity **
-  onToggleStatus: () => void;
   onNudge: () => void;
   onRemoveFromList: () => void;
   onTag: (listId: string) => void;
-  // ** NEW: Added status prop **
-  status: 'active' | 'disabled';
   size?: 'sm' | 'default';
   showLabels?: boolean;
   availableLists?: { id: string; name: string; }[];
 }
 
 export function ActionButtons({ 
-  onToggleStatus,
   onNudge, 
   onRemoveFromList,
   onTag,
-  status,
   size = 'sm',
   showLabels = true,
   availableLists = []
@@ -33,38 +27,6 @@ export function ActionButtons({
     <TooltipProvider>
       <div className="flex gap-1.5">
 
-        {/* ** UPDATED: This button is now a conditional toggle ** */}
-        {status === 'active' ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="outline" 
-                size={size} 
-                onClick={onToggleStatus}
-                className={`${buttonClass} border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 hover:text-red-700`}
-              >
-                <UserX className="h-3 w-3" />
-                {showLabels && <span className="text-xs">Disable</span>}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Disable candidate</TooltipContent>
-          </Tooltip>
-        ) : (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="outline" 
-                size={size} 
-                onClick={onToggleStatus}
-                className={`${buttonClass} border-primary-blue text-primary-blue hover:bg-primary-blue-light hover:border-primary-blue hover:text-primary-blue-dark`}
-              >
-                <UserCheck className="h-3 w-3" />
-                {showLabels && <span className="text-xs">Enable</span>}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Enable candidate</TooltipContent>
-          </Tooltip>
-        )}
 
         <Tooltip>
           <TooltipTrigger asChild>

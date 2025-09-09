@@ -102,7 +102,7 @@ export interface LegacyApplicant {
   industry: string;
   work_location: string | null;
   last_drawn_salary: number | null;
-  willing_to_relocate: boolean;
+  willing_to_relocate: boolean | null;
   expected_salary: number;
 }
 

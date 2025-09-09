@@ -13,6 +13,7 @@ interface ChatViewProps {
   applicants: Applicant[];
   jobLists: JobList[];
   onDataUpdate: () => void;
+  selectedApplicantId?: string;
 }
 
 interface ChatMessage {
@@ -40,11 +41,18 @@ const formatTimestamp = (timestamp: string | number): string => {
   }
 };
 
-export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) {
+export function ChatView({ applicants, jobLists, onDataUpdate, selectedApplicantId }: ChatViewProps) {
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
   const [selectedApplicants, setSelectedApplicants] = useState<Set<string>>(new Set());
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+
+  // Auto-select applicant when selectedApplicantId is provided
+  useEffect(() => {
+    if (selectedApplicantId && applicants.some(a => a.id === selectedApplicantId)) {
+      setSelectedChat(selectedApplicantId);
+    }
+  }, [selectedApplicantId, applicants]);
 
   // Sort applicants by most recent first (using created_at, fallback to updated_at)
   const sortedApplicants = useMemo(() => {
@@ -139,9 +147,6 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
 
     try {
         switch(action) {
-            case 'disable':
-                await bulkUpdateCandidateStatus(selectedIds, 'disabled');
-                break;
             case 'nudge':
                 await bulkSendAction(selectedIds, 'nudge');
                 break;
@@ -163,7 +168,18 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
   const handleSelectApplicant = (applicantId: string, checked: boolean) => { const newSelected = new Set(selectedApplicants); if (checked) { newSelected.add(applicantId); } else { newSelected.delete(applicantId); } setSelectedApplicants(newSelected); };
   const handleSelectAll = () => { if (selectedApplicants.size === sortedApplicants.length) { setSelectedApplicants(new Set()); } else { setSelectedApplicants(new Set(sortedApplicants.map(a => a.id))); } };
   const availableLists = jobLists.map(list => ({ id: list.id, name: list.listName }));
-  const getStatusBadgeClass = (status: string) => { switch (status) { case 'active': return 'bg-primary-blue text-white hover:bg-primary-blue-dark'; case 'disabled': return 'bg-red-500 text-white hover:bg-red-600'; default: return 'bg-gray-400 text-white'; } };
+  const getStatusBadgeClass = (conversationStatus: string) => { 
+    switch (conversationStatus) { 
+      case 'MANDATE_MATCHING': return 'bg-green-500 text-white hover:bg-green-600'; 
+      case 'DETAILS_COMPLETED': return 'bg-blue-500 text-white hover:bg-blue-600'; 
+      case 'DETAILS_IN_PROGRESS': return 'bg-purple-500 text-white hover:bg-purple-600'; 
+      case 'INITIATED': return 'bg-yellow-500 text-white hover:bg-yellow-600'; 
+      case 'NOT_MATCHING': return 'bg-red-300 text-red-800 hover:bg-red-400';
+      case 'NO_MATCHES': return 'bg-red-300 text-red-800 hover:bg-red-400'; 
+      case 'NOT_INITIATED': return 'bg-slate-400 text-white hover:bg-slate-500'; 
+      default: return 'bg-gray-400 text-white hover:bg-gray-500'; 
+    } 
+  };
   const getListNames = (listIds: string[]) => { return listIds.map(id => { const list = jobLists.find(l => l.id === id); return list ? list.listName : id; }); };
   const selectedApplicant = selectedChat ? applicants.find(a => a.id === selectedChat) : null;
   const isAllSelected = selectedApplicants.size === sortedApplicants.length && sortedApplicants.length > 0;
@@ -172,7 +188,7 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
     <div className="flex h-full bg-secondary-gray-light">
       <div className="w-[450px] flex flex-col border-r border-gray-200 bg-white">
         <div className="p-4 border-b border-gray-200 bg-white"><div className="flex items-center justify-between mb-3"><div className="flex items-center gap-2"><div className="w-1 h-6 bg-primary-blue rounded-full"></div><h2 className="text-gray-900 font-medium">Chats ({sortedApplicants.length})</h2></div></div><div className="flex items-center gap-2"><Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /><Button variant="ghost" size="sm" onClick={handleSelectAll} className="text-sm text-gray-600 hover:text-primary-blue p-0 h-auto">{isAllSelected ? 'Deselect All' : 'Select All'}</Button></div></div>
-        {selectedApplicants.size > 0 && <div className="p-4 border-b border-gray-200"><BulkActionButtons selectedCount={selectedApplicants.size} onBulkDisable={() => handleBulkAction('disable')} onBulkNudge={() => handleBulkAction('nudge')} onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)} onBulkTag={(listId) => handleBulkAction('tag', listId)} availableLists={availableLists}/></div>}
+        {selectedApplicants.size > 0 && <div className="p-4 border-b border-gray-200"><BulkActionButtons selectedCount={selectedApplicants.size} onBulkNudge={() => handleBulkAction('nudge')} onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)} onBulkTag={(listId) => handleBulkAction('tag', listId)} availableLists={availableLists}/></div>}
         <div className="flex-1 overflow-y-auto">
           {sortedApplicants.map((applicant) => (
             <div key={applicant.id} className={`group relative flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors hover:z-20 focus-within:z-20 ${selectedChat === applicant.id ? 'bg-primary-blue-light border-l-4 border-l-primary-blue z-10' : ''}`}>
@@ -183,29 +199,36 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
                     <div>
                       <p className="font-medium truncate text-gray-900">{applicant.phone}</p>
                       <p className="text-xs text-gray-500">
-                        {applicant.name.includes('years') 
-                            ? applicant.name.split(' - ')[1] || applicant.name
-                            : applicant.name
-                        }
+                        {(() => {
+                          const details = [];
+                          
+                          // Debug: Log applicant data to see what's available
+                          console.log('Applicant data for basic info:', {
+                            id: applicant.id,
+                            age: applicant.age,
+                            gender: applicant.gender,
+                            experience: applicant.experience,
+                            conversationStatus: applicant.conversationStatus,
+                            status: applicant.status
+                          });
+                          
+                          if (applicant.age && applicant.age > 0) details.push(`Age: ${applicant.age}y`);
+                          if (applicant.gender) details.push(`Gender: ${applicant.gender}`);
+                          if (applicant.experience && applicant.experience > 0) details.push(`Exp: ${applicant.experience}y`);
+                          
+                          return details.length > 0 ? details.join(', ') : 'Details not available';
+                        })()}
                       </p>
                     </div>
-                    <span className="text-xs text-secondary-gray flex-shrink-0 ml-2">{applicant.lastMessageTime}</span>
                   </div>
                   <p className="text-sm text-gray-600 truncate">{applicant.lastMessage}</p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    <Badge className={`text-xs ${getStatusBadgeClass(applicant.status)}`}>{applicant.status}</Badge>
-                    <span className="text-xs text-secondary-gray">{applicant.location}</span>
-                    <span className="text-xs text-secondary-gray">{applicant.experience}y exp</span>
-                    {applicant.hasTwoWheeler && <Badge variant="outline" className="text-xs border-primary-blue text-primary-blue">2W</Badge>}
-                    {applicant.hasCompletedConversation && <Badge variant="outline" className="text-xs border-primary-blue text-primary-blue">Complete</Badge>}
+                    <Badge className={`text-xs ${getStatusBadgeClass(applicant.conversationStatus)}`}>{applicant.conversationStatus}</Badge>
                   </div>
                 </div>
               </div>
               <div className="ml-3 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                {/* ** UPDATED: Passing status prop and using onToggleStatus ** */}
                 <ActionButtons
-                  status={applicant.status}
-                  onToggleStatus={() => handleAction('toggleStatus', applicant.id)}
                   onNudge={() => handleAction('nudge', applicant.id)}
                   onRemoveFromList={() => handleAction('removeFromList', applicant.id)}
                   onTag={(listId) => handleAction('tag', applicant.id, listId)}
@@ -222,18 +245,20 @@ export function ChatView({ applicants, jobLists, onDataUpdate }: ChatViewProps) 
           <>
             <div className="flex-1 flex flex-col">
               <div className="p-4 border-b border-gray-200 bg-primary-blue text-white flex items-center justify-between">
-                <div className="flex items-center gap-3"><div><h3 className="font-medium text-white">{selectedApplicant.phone}</h3><p className="text-sm text-white/80">
-                  {selectedApplicant.name.includes('years') 
-                      ? selectedApplicant.name.split(' - ')[1] || selectedApplicant.name
-                      : selectedApplicant.name
-                  }
+                <div className="flex items-center gap-3"><div><h3 className="font-medium text-white">{selectedApplicant.phone}</h3>                <p className="text-sm text-white/80">
+                  {(() => {
+                    const details = [];
+                    
+                    if (selectedApplicant.age && selectedApplicant.age > 0) details.push(`Age: ${selectedApplicant.age}y`);
+                    if (selectedApplicant.gender) details.push(`Gender: ${selectedApplicant.gender}`);
+                    if (selectedApplicant.experience && selectedApplicant.experience > 0) details.push(`Exp: ${selectedApplicant.experience}y`);
+                    
+                    return details.length > 0 ? details.join(', ') : 'Details not available';
+                  })()}
                 </p></div></div>
                 <div className="flex items-center gap-2">
                   <div onClick={(e) => e.stopPropagation()}>
-                    {/* ** UPDATED: Passing status prop and using onToggleStatus ** */}
                     <ActionButtons
-                      status={selectedApplicant.status}
-                      onToggleStatus={() => handleAction('toggleStatus', selectedApplicant.id)}
                       onNudge={() => handleAction('nudge', selectedApplicant.id)}
                       onRemoveFromList={() => handleAction('removeFromList', selectedApplicant.id)}
                       onTag={(listId) => handleAction('tag', selectedApplicant.id, listId)}

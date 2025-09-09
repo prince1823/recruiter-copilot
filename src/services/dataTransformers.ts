@@ -11,6 +11,16 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
   const homeLocation = details.home_location || '';
   const experience = details.experience || 0;
   
+  // Debug: Log the raw backend data to see what's available
+  console.log('Raw backend applicant data:', {
+    applicant_id: applicant.applicant_id,
+    details: details,
+    education_level: details.education_level,
+    education: (details as any).education,
+    qualification: (details as any).qualification,
+    willing_to_relocate: details.willing_to_relocate
+  });
+  
   return {
     id: applicant.applicant_id?.toString() || '',
     name: `${gender} - ${age} years`, // Generate a name-like identifier
@@ -33,13 +43,13 @@ export const transformApplicantToLegacy = (applicant: Applicant): LegacyApplican
     response: applicant.response || '',
     age,
     gender,
-    education_qualification: details.education_level || '',
+    education_qualification: details.education_level || (details as any).education || (details as any).qualification || '',
     home_location: homeLocation,
     is_currently_employed: details.is_currently_employed || false,
     industry: details.industry || '',
     work_location: details.work_location,
     last_drawn_salary: details.last_drawn_salary,
-    willing_to_relocate: details.willing_to_relocate || false,
+    willing_to_relocate: details.willing_to_relocate !== undefined && details.willing_to_relocate !== null ? details.willing_to_relocate : null,
     expected_salary: details.expected_salary || 0,
   };
 };
@@ -75,7 +85,7 @@ export const transformLegacyApplicantToBackend = (applicant: LegacyApplicant): P
     details: {
       age: 25, // Default values since legacy format doesn't have these
       gender: '',
-      education_qualification: '',
+      education_level: '',
       home_location: applicant.location,
       is_currently_employed: false,
       experience: applicant.experience,
@@ -129,57 +139,6 @@ export const extractDataFromResponse = <T>(response: any): T[] => {
   return [];
 };
 
-// Helper function to create a mock applicant for testing
-export const createMockApplicant = (overrides: Partial<LegacyApplicant> = {}): LegacyApplicant => {
-  return {
-    id: '1',
-    name: 'Test Applicant',
-    phone: '+91 9876543210',
-    lastMessage: 'Hello, I am interested in the position',
-    lastMessageTime: new Date().toLocaleDateString(),
-    location: 'Test City',
-    pincode: '123456',
-    experience: 2,
-    hasTwoWheeler: true,
-    status: 'active',
-    tags: ['test'],
-    lists: [],
-    hasCompletedConversation: false,
-    conversationStatus: 'INITIATED',
-    createdAt: new Date().toISOString(),
-    // New fields from backend
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    response: 'Hello, I am interested in the position',
-    age: 25,
-    gender: 'Male',
-    education_qualification: 'Bachelor\'s Degree',
-    home_location: 'Test City',
-    is_currently_employed: true,
-    industry: 'Technology',
-    work_location: 'Test City',
-    last_drawn_salary: 50000,
-    willing_to_relocate: true,
-    expected_salary: 60000,
-    ...overrides
-  };
-};
-
-// Helper function to create a mock job list for testing
-export const createMockJobList = (overrides: Partial<LegacyJobList> = {}): LegacyJobList => {
-  return {
-    id: '1',
-    listName: 'Test List',
-    description: 'A test list for development',
-    creationDate: new Date().toISOString().split('T')[0],
-    candidateCount: 0,
-    completedConversations: 0,
-    applicants: [],
-    status: 'ACTIVE',
-    createdAt: new Date().toISOString(),
-    ...overrides
-  };
-};
 
 // Helper function to populate applicant lists based on job lists
 export const populateApplicantLists = (applicants: LegacyApplicant[], jobLists: LegacyJobList[]): LegacyApplicant[] => {

@@ -10,7 +10,6 @@ import { Plus, Calendar, Users, CheckCircle, ShieldX, Phone, AlertCircle, Trash2
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { JobList } from '../types';
 import { createListFromPhoneNumbers, cancelPendingMessagesByList, deleteList } from '../src/services/api';
-import { addDeletedList } from '../src/services/deletedItemsManager';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 
@@ -111,9 +110,6 @@ export function ManageListsView({ jobLists, onListsUpdate, onSelectList, onLists
     if (window.confirm(`Are you sure you want to delete the list "${listName}"? This action cannot be undone.`)) {
       try {
 
-        // Add list to deleted items list for persistence
-        addDeletedList(listId);
-        
         // Remove the list from local state immediately for instant UI feedback
         if (onListsLocalUpdate) {
           const updatedLists = jobLists.filter(list => list.id !== listId);

@@ -657,14 +657,8 @@ export const bulkDeleteCandidates = async (candidateIds: string[]): Promise<{ su
 
     const numericIds = candidateIds.map(id => parseInt(id)).filter(id => !isNaN(id));
 
-    // Since the backend doesn't have a bulk delete endpoint, we'll use localStorage-based deletion
-    // This ensures candidates are permanently removed from the UI
-    const { addDeletedApplicant } = await import('./deletedItemsManager');
-    
-    // Add each candidate to the deleted items list
-    numericIds.forEach(applicantId => {
-      addDeletedApplicant(applicantId.toString());
-    });
+    // Note: Backend doesn't have a bulk delete endpoint
+    // This function currently doesn't perform actual deletion
 
     return { 
       success: true, 

@@ -14,9 +14,10 @@ interface ListViewProps {
   jobLists: JobList[];
   onDataUpdate: () => void;
   onApplicantsUpdate?: (updatedApplicants: Applicant[]) => void;
+  onNavigateToChat?: (applicantId: string) => void;
 }
 
-export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdate }: ListViewProps) {
+export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdate, onNavigateToChat }: ListViewProps) {
   const [selectedApplicants, setSelectedApplicants] = useState<Set<string>>(new Set());
   const [selectedListFilters, setSelectedListFilters] = useState<Set<string>>(new Set());
 
@@ -26,10 +27,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
         if (!applicant) return;
 
         switch(action) {
-            case 'toggleStatus':
-                const newStatus = applicant.status === 'active' ? 'disabled' : 'active';
-                await bulkUpdateCandidateStatus([applicantId], newStatus);
-                break;
             case 'nudge':
                 await bulkSendAction([applicantId], 'nudge');
                 break;
@@ -61,9 +58,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
 
     try {
         switch(action) {
-            case 'disable':
-                await bulkUpdateCandidateStatus(selectedIds, 'disabled');
-                break;
             case 'nudge':
                 await bulkSendAction(selectedIds, 'nudge');
                 break;
@@ -134,21 +128,17 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
     return listIds.map(id => jobLists.find(l => l.id === id)?.listName || id);
   };
 
-  const formatConversationStatus = (status: string) => {
-    const statusMap: { [key: string]: { label: string; color: string; bgColor: string } } = {
-      'NOT_INITIATED': { label: 'Not Started', color: 'text-gray-600', bgColor: 'bg-gray-100' },
-      'INITIATED': { label: 'Started', color: 'text-blue-600', bgColor: 'bg-blue-100' },
-      'DETAILS_IN_PROGRESS': { label: 'Collecting Details', color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
-      'DETAILS_COMPLETED': { label: 'Details Complete', color: 'text-green-600', bgColor: 'bg-green-100' },
-      'MANDATE_MATCHING': { label: 'Finding Jobs', color: 'text-purple-600', bgColor: 'bg-purple-100' },
-      'SHORTLISTED': { label: 'Shortlisted', color: 'text-indigo-600', bgColor: 'bg-indigo-100' },
-      'NO_MATCHES': { label: 'No Matches', color: 'text-red-600', bgColor: 'bg-red-100' },
-      'PLACED': { label: 'Placed', color: 'text-green-700', bgColor: 'bg-green-200' },
-      'RETIRED': { label: 'Retired', color: 'text-gray-700', bgColor: 'bg-gray-200' }
-    };
-    
-    const statusInfo = statusMap[status] || { label: status, color: 'text-gray-600', bgColor: 'bg-gray-100' };
-    return statusInfo;
+  const getConversationStatusBadgeClass = (conversationStatus: string) => { 
+    switch (conversationStatus) { 
+      case 'MANDATE_MATCHING': return 'bg-green-500 text-white hover:bg-green-600'; 
+      case 'DETAILS_COMPLETED': return 'bg-blue-500 text-white hover:bg-blue-600'; 
+      case 'DETAILS_IN_PROGRESS': return 'bg-purple-500 text-white hover:bg-purple-600'; 
+      case 'INITIATED': return 'bg-yellow-500 text-white hover:bg-yellow-600'; 
+      case 'NOT_MATCHING': return 'bg-red-300 text-red-800 hover:bg-red-400';
+      case 'NO_MATCHES': return 'bg-red-300 text-red-800 hover:bg-red-400'; 
+      case 'NOT_INITIATED': return 'bg-slate-400 text-white hover:bg-slate-500'; 
+      default: return 'bg-gray-400 text-white hover:bg-gray-500'; 
+    } 
   };
 
   return (
@@ -167,6 +157,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               onClick={() => {
                 // Define only the columns visible in the table view
                 const columnOrder = [
+                  'Status',
                   'Phone No',
                   'Location', 
                   'Age',
@@ -179,7 +170,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                   'Industry',
                   'Conversation Status',
                   'Experience',
-                  'Status',
                   'Lists',
                   'Created At',
                   'Updated At',
@@ -196,32 +186,26 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                     
                     // Create data object with all fields
                     const data = {
+                      'Status': applicant.status || '',
                       'Phone No': applicant.phone,
                       'Location': applicant.location || '',
                       'Age': applicant.age || '',
                       'Gender': applicant.gender || '',
                       'Expected Salary': applicant.expected_salary || '',
                       'Education Qualification': applicant.education_qualification || '',
-                      'Willing to Relocate': applicant.willing_to_relocate ? 'Yes' : 'No',
+                      'Willing to Relocate': applicant.willing_to_relocate === null ? '' : (applicant.willing_to_relocate ? 'Yes' : 'No'),
                       'Home Location': applicant.home_location || '',
                       'Work Location': applicant.work_location || '',
-                      'Experience': applicant.experience || 0,
                       'Industry': applicant.industry || '',
-                      'Currently Employed': applicant.is_currently_employed ? 'Yes' : 'No',
-                      'Last Drawn Salary': applicant.last_drawn_salary || '',
-                      'Status': applicant.status || '',
-                      'Conversation Status': formatConversationStatus(applicant.conversationStatus).label,
+                      'Conversation Status': applicant.conversationStatus || '',
+                      'Experience': applicant.experience || 0,
                       'Lists': lists,
                       'Created At': applicant.created_at,
                       'Updated At': applicant.updated_at,
+                      'Currently Employed': applicant.is_currently_employed ? 'Yes' : 'No',
+                      'Last Drawn Salary': applicant.last_drawn_salary || '',
                       'Tags': tags,
-                      'ID': applicant.id,
-                      'Applicant ID': applicant.id, // Same as ID for backward compatibility
-                      'Recruiter ID': '', // Not available in current data structure
-                      'Name': applicant.name || '',
-                      'Pincode': applicant.pincode || '',
-                      'Has Two Wheeler': applicant.hasTwoWheeler ? 'Yes' : 'No',
-                      'Has Completed Conversation': applicant.hasCompletedConversation ? 'Yes' : 'No'
+                    
                     };
                     
                     // Return data in the specified column order
@@ -275,7 +259,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               <div className="flex items-center gap-2">
                 <BulkActionButtons
                   selectedCount={selectedApplicants.size}
-                  onBulkDisable={() => handleBulkAction('disable')}
                   onBulkNudge={() => handleBulkAction('nudge')}
                   onBulkRemoveFromList={(listId) => handleBulkAction('removeFromList', listId)}
                   onBulkTag={(listId) => handleBulkAction('tag', listId)}
@@ -292,6 +275,7 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
             <TableHeader>
               <TableRow className="bg-gray-50 hover:bg-gray-50">
                 <TableHead className="w-8 sm:w-12"></TableHead>
+                <TableHead className="w-16 sm:w-20">Status</TableHead>
                 <TableHead className="min-w-[120px]">Phone No</TableHead>
                 <TableHead className="w-12 sm:w-16">Age</TableHead>
                 <TableHead className="w-16 sm:w-20">Gender</TableHead>
@@ -299,7 +283,6 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                 <TableHead className="min-w-[80px]">Education</TableHead>
                 <TableHead className="w-16 sm:w-20">Relocate</TableHead>
                 <TableHead className="min-w-[80px]">Home Location</TableHead>
-                <TableHead className="w-16 sm:w-20">Status</TableHead>
                 <TableHead className="min-w-[100px]">Conversation</TableHead>
                 <TableHead className="w-16 sm:w-20 text-right">Actions</TableHead>
               </TableRow>
@@ -308,12 +291,22 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
               {filteredApplicants.map((applicant) => (
                 <TableRow key={applicant.id} className="hover:bg-gray-50">
                   <TableCell className="w-8 sm:w-12"><Checkbox checked={selectedApplicants.has(applicant.id)} onCheckedChange={(checked) => handleSelectApplicant(applicant.id, checked as boolean)} className="data-[state=checked]:bg-primary-blue data-[state=checked]:border-primary-blue" /></TableCell>
-                  <TableCell className="font-medium min-w-[120px] text-xs sm:text-sm">{applicant.phone}</TableCell>
+                  <TableCell className="w-16 sm:w-20">
+                    <div className={`w-3 h-3 rounded-full ${applicant.status === 'active' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  </TableCell>
+                  <TableCell className="font-medium min-w-[120px] text-xs sm:text-sm">
+                    <button 
+                      onClick={() => onNavigateToChat?.(applicant.id)}
+                      className="text-primary-blue hover:text-primary-blue-dark hover:underline cursor-pointer transition-colors"
+                    >
+                      {applicant.phone}
+                    </button>
+                  </TableCell>
                   <TableCell className="w-12 sm:w-16 text-xs sm:text-sm">{applicant.age || ''}</TableCell>
                   <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.gender || ''}</TableCell>
                   <TableCell className="min-w-[100px] text-xs sm:text-sm">{applicant.expected_salary ? `₹${applicant.expected_salary}` : ''}</TableCell>
                   <TableCell className="min-w-[80px] text-xs sm:text-sm">{applicant.education_qualification || ''}</TableCell>
-                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.willing_to_relocate ? 'Yes' : 'No'}</TableCell>
+                  <TableCell className="w-16 sm:w-20 text-xs sm:text-sm">{applicant.willing_to_relocate === null ? '' : (applicant.willing_to_relocate ? 'Yes' : 'No')}</TableCell>
                    <TableCell className="min-w-[80px]">
                      <Tooltip>
                        <TooltipTrigger asChild>
@@ -336,27 +329,11 @@ export function ListView({ applicants, jobLists, onDataUpdate, onApplicantsUpdat
                        </TooltipContent>
                      </Tooltip>
                    </TableCell>
-                  <TableCell className="w-16 sm:w-20">
-                    <Badge 
-                      variant="outline" 
-                      className={`text-xs ${applicant.status === 'active' ? 'bg-green-100 text-green-700 border-green-300' : 'bg-red-100 text-red-700 border-red-300'}`}
-                    >
-                      {applicant.status || ''}
-                    </Badge>
-                  </TableCell>
                   <TableCell className="min-w-[100px]">
                     <div className="text-xs leading-tight break-all">
-                      {(() => {
-                        const statusInfo = formatConversationStatus(applicant.conversationStatus);
-                        return (
-                          <Badge 
-                            variant="outline" 
-                            className={`text-xs ${statusInfo.color} ${statusInfo.bgColor} border-current`}
-                          >
-                            {statusInfo.label}
-                          </Badge>
-                        );
-                      })()}
+                      <Badge className={`text-xs ${getConversationStatusBadgeClass(applicant.conversationStatus)}`}>
+                        {applicant.conversationStatus}
+                      </Badge>
                     </div>
                   </TableCell>
                   <TableCell className="text-right w-16 sm:w-20">

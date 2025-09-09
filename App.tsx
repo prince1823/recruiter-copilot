@@ -8,7 +8,6 @@ import { MessageSquare, Table, Settings, Loader2 } from 'lucide-react';
 import { fetchData } from './src/services/api';
 import { LegacyApplicant as Applicant, LegacyJobList as JobList } from './src/types';
 import { useAuth } from './src/contexts/AuthContext';
-import { filterDeletedApplicants, filterDeletedLists } from './src/services/deletedItemsManager';
 import { Navbar } from './components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -33,12 +32,8 @@ export default function App() {
       setError(null);
       const { applicants, jobLists } = await fetchData(user?.id);
       
-      // Filter out deleted items before setting state
-      const filteredApplicants = filterDeletedApplicants(applicants);
-      const filteredJobLists = filterDeletedLists(jobLists);
-      
-      setApplicants(filteredApplicants);
-      setJobLists(filteredJobLists);
+      setApplicants(applicants);
+      setJobLists(jobLists);
     } catch (err) {
       setError('Failed to load data. Please ensure the backend server is running.');
     } finally {
@@ -47,15 +42,11 @@ export default function App() {
   }, [user?.id]);
 
   const updateApplicants = useCallback((updatedApplicants: Applicant[]) => {
-    // Filter out deleted applicants before setting state
-    const filteredApplicants = filterDeletedApplicants(updatedApplicants);
-    setApplicants(filteredApplicants);
+    setApplicants(updatedApplicants);
   }, []);
 
   const updateJobLists = useCallback((updatedJobLists: JobList[]) => {
-    // Filter out deleted lists before setting state
-    const filteredLists = filterDeletedLists(updatedJobLists);
-    setJobLists(filteredLists);
+    setJobLists(updatedJobLists);
   }, []);
 
   useEffect(() => {
@@ -72,6 +63,10 @@ export default function App() {
 
   const handleGoBack = () => {
     setActiveView(prev => ({ ...prev, listId: null }));
+  };
+
+  const handleNavigateToChat = (applicantId: string) => {
+    setActiveView({ type: 'chats', listId: applicantId });
   };
 
   const getViewCount = () => {
@@ -122,9 +117,9 @@ export default function App() {
     // Otherwise, show the main tab view
     switch (activeView.type) {
       case 'chats':
-        return <ChatView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} />;
+        return <ChatView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} selectedApplicantId={activeView.listId || undefined} />;
       case 'table':
-        return <ListView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} onApplicantsUpdate={updateApplicants} />;
+        return <ListView applicants={applicants} jobLists={jobLists} onDataUpdate={refreshData} onApplicantsUpdate={updateApplicants} onNavigateToChat={handleNavigateToChat} />;
       case 'manage-lists':
         return <ManageListsView jobLists={jobLists} onListsUpdate={refreshData} onSelectList={handleSelectList} onListsLocalUpdate={updateJobLists} />;
       default:

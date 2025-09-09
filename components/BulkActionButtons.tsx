@@ -1,11 +1,10 @@
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { UserX, MessageSquare, Tag, ChevronDown, UserMinus } from 'lucide-react';
+import { MessageSquare, Tag, ChevronDown, UserMinus } from 'lucide-react';
 
 interface BulkActionButtonsProps {
   selectedCount: number;
-  onBulkDisable: () => void;
   onBulkNudge: () => void;
   onBulkRemoveFromList: (listId: string) => void;
   onBulkTag: (listId: string) => void;
@@ -15,7 +14,6 @@ interface BulkActionButtonsProps {
 
 export function BulkActionButtons({ 
   selectedCount,
-  onBulkDisable, 
   onBulkNudge, 
   onBulkRemoveFromList,
   onBulkTag, 
@@ -32,21 +30,6 @@ export function BulkActionButtons({
         </span>
         
         <div className="flex gap-1.5">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={onBulkDisable}
-                disabled={isDisabled}
-                className="h-8 px-3 gap-1.5 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 hover:text-red-700 disabled:opacity-50"
-              >
-                <UserX className="h-3 w-3" />
-                <span className="text-xs">Disable</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Disable selected candidates</TooltipContent>
-          </Tooltip>
 
           <Tooltip>
             <TooltipTrigger asChild>
