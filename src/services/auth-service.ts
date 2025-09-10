@@ -9,7 +9,11 @@ import {
   isAuthenticated as checkAuth,
   getStoredUserId,
   generateRequestId,
-  generateTimestamp
+  generateTimestamp,
+  setStoredToken,
+  setTokenExpiry,
+  getStoredToken,
+  isTokenExpired
 } from '../lib/auth-utils';
 
 interface LoginResponse {
@@ -68,11 +72,33 @@ export const authService = {
       });
 
       if (response.ok) {
-        // Successfully authenticated (2xx status code)
+        // Parse the response to get the JWT token
+        const responseData = await response.json();
+        
+        // Extract token from the response data structure
+        const userData = responseData.data?.[0];
+        if (!userData || !userData.token) {
+          throw new Error('No token received from server');
+        }
+        
+        const token = userData.token;
+        const role = userData.role;
+        
+        // Store user data and JWT token
         setStoredUserId(username);
         setStoredUsername(username);
         setLoginTime();
+        setStoredToken(token);
         
+        // Parse JWT token to get expiry (exp claim is in seconds)
+        try {
+          const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+          if (tokenPayload.exp) {
+            setTokenExpiry(tokenPayload.exp);
+          }
+        } catch (error) {
+          console.warn('Could not parse JWT token expiry, token will be treated as expired');
+        }
         
         return {
           success: true,
@@ -115,5 +141,114 @@ export const authService = {
 
   getUserId(): string | null {
     return getStoredUserId();
+  },
+
+  async refreshToken(): Promise<{ success: boolean; message: string }> {
+    const currentToken = getStoredToken();
+    const userId = getStoredUserId();
+    
+    if (!currentToken || !userId) {
+      return {
+        success: false,
+        message: 'No token to refresh'
+      };
+    }
+
+    try {
+      const requestId = generateRequestId();
+      const timestamp = generateTimestamp();
+      
+      const url = `${API_CONFIG.BASE_URL}/user-logins/refresh`;
+      const requestBody = {
+        mid: requestId,
+        ts: timestamp,
+        request: {
+          token: currentToken,
+        },
+      };
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-User-ID': userId,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        
+        // Extract new token from the response
+        const userData = responseData.data?.[0];
+        if (!userData || !userData.token) {
+          throw new Error('No new token received from server');
+        }
+        
+        const newToken = userData.token;
+        
+        // Store new token
+        setStoredToken(newToken);
+        
+        // Parse new JWT token to get expiry
+        try {
+          const tokenPayload = JSON.parse(atob(newToken.split('.')[1]));
+          if (tokenPayload.exp) {
+            setTokenExpiry(tokenPayload.exp);
+          }
+        } catch (error) {
+          console.warn('Could not parse new JWT token expiry');
+        }
+        
+        return {
+          success: true,
+          message: 'Token refreshed successfully',
+        };
+      }
+      
+      // Token refresh failed
+      let errorMessage = 'Token refresh failed';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorData.detail || errorData.error || errorMessage;
+      } catch {
+        console.error('❌ Token refresh failed with status:', response.status);
+      }
+      
+      return {
+        success: false,
+        message: errorMessage,
+      };
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'An unexpected error occurred during token refresh',
+      };
+    }
+  },
+
+  async getValidToken(): Promise<string | null> {
+    const token = getStoredToken();
+    
+    if (!token) {
+      return null;
+    }
+    
+    // Check if token is expired or will expire soon
+    if (isTokenExpired()) {
+      // Try to refresh the token
+      const refreshResult = await this.refreshToken();
+      if (refreshResult.success) {
+        return getStoredToken();
+      } else {
+        // Refresh failed, clear session
+        clearSession();
+        return null;
+      }
+    }
+    
+    return token;
   }
 };

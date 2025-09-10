@@ -3,14 +3,23 @@
 
 import { getApiUrl, getHeaders, API_CONFIG } from '../config/api';
 import { getStoredUserId } from '../lib/auth-utils';
+import { authService } from './auth-service';
 
-// Helper function to create request headers with dynamic recruiter ID
-const createHeaders = (recruiterId?: string) => {
+// Helper function to create request headers with dynamic recruiter ID and JWT token
+const createHeaders = async (recruiterId?: string) => {
   const userId = recruiterId || getStoredUserId() || '';
-  return {
+  const token = await authService.getValidToken();
+  
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'X-User-ID': userId,
   };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
 };
 
 // Helper function to create request body with required fields
@@ -64,6 +73,20 @@ const handleResponse = async (response: Response) => {
   }
   
   if (!response.ok) {
+    // Handle 401 Unauthorized - token might be expired
+    if (response.status === 401) {
+      // Try to refresh token and retry the request
+      const refreshResult = await authService.refreshToken();
+      if (refreshResult.success) {
+        // Token refreshed successfully, but we can't retry the request here
+        // The calling function should handle retry logic
+        throw new Error('Token expired. Please try again.');
+      } else {
+        // Refresh failed, user needs to login again
+        authService.logout();
+        throw new Error('Session expired. Please login again.');
+      }
+    }
     throw new Error(data?.detail || `HTTP error! status: ${response.status}`);
   }
   
@@ -94,7 +117,7 @@ export const recruiterListsAPI = {
 
     return makeApiRequest(getApiUrl('/recruiter-lists/'), {
       method: 'POST',
-      headers: createHeaders(recruiterId),
+      headers: await createHeaders(recruiterId),
       body: JSON.stringify(requestBody),
     });
   },
@@ -103,7 +126,7 @@ export const recruiterListsAPI = {
   getByName: async (listName: string) => {
     return makeApiRequest(getApiUrl('/recruiter-lists/get'), {
       method: 'POST',
-      headers: createHeaders(),
+      headers: await createHeaders(),
       body: JSON.stringify(createRequestBody({
         list_name: listName,
       })),
@@ -114,7 +137,7 @@ export const recruiterListsAPI = {
   getById: async (listId: string) => {
     return makeApiRequest(getApiUrl(`/recruiter-lists/${listId}`), {
       method: 'GET',
-      headers: createHeaders(),
+      headers: await createHeaders(),
     });
   },
 
@@ -122,7 +145,7 @@ export const recruiterListsAPI = {
   getByStatus: async (status: 'ACTIVE' | 'ARCHIVED', recruiterId?: string) => {
     return makeApiRequest(getApiUrl(`/recruiter-lists/?status=${status}`), {
       method: 'GET',
-      headers: createHeaders(recruiterId),
+      headers: await createHeaders(recruiterId),
     });
   },
 
@@ -130,7 +153,7 @@ export const recruiterListsAPI = {
   update: async (listId: string, updates: { list_name?: string; list_description?: string; status?: string }) => {
     return makeApiRequest(getApiUrl(`/recruiter-lists/${listId}`), {
       method: 'PUT',
-      headers: createHeaders(),
+      headers: await createHeaders(),
       body: JSON.stringify(createRequestBody(updates)),
     });
   },
@@ -142,7 +165,7 @@ export const listActionsAPI = {
   addApplicants: async (listId: string, applicants: number[]) => {
     const response = await fetch(getApiUrl(`/list-actions/${listId}/add`), {
       method: 'POST',
-      headers: createHeaders(),
+      headers: await createHeaders(),
       body: JSON.stringify(createRequestBody({
         applicants,
       })),
@@ -159,7 +182,7 @@ export const listActionsAPI = {
 
     const response = await fetch(getApiUrl(`/list-actions/${listId}/remove`), {
       method: 'POST',
-      headers: createHeaders(),
+      headers: await createHeaders(),
       body: JSON.stringify(requestBody),
     });
 
@@ -172,7 +195,7 @@ export const listActionsAPI = {
   disableApplicants: async (listId: string, applicants: number[]) => {
     const response = await fetch(getApiUrl(`/list-actions/${listId}/disable`), {
       method: 'POST',
-      headers: createHeaders(),
+      headers: await createHeaders(),
       body: JSON.stringify(createRequestBody({
         applicants,
       })),
@@ -184,7 +207,7 @@ export const listActionsAPI = {
   sendToApplicants: async (listId: string, applicants: number[], templateMessage?: string) => {
     const response = await fetch(getApiUrl(`/list-actions/${listId}/send`), {
       method: 'POST',
-      headers: createHeaders(),
+      headers: await createHeaders(),
       body: JSON.stringify(createRequestBody({
         applicants,
         additional_config: templateMessage ? {
@@ -199,7 +222,7 @@ export const listActionsAPI = {
   nudgeApplicants: async (listId: string, applicants: number[]) => {
     const response = await fetch(getApiUrl(`/list-actions/${listId}/nudge`), {
       method: 'POST',
-      headers: createHeaders(),
+      headers: await createHeaders(),
       body: JSON.stringify(createRequestBody({
         applicants,
       })),
@@ -211,7 +234,7 @@ export const listActionsAPI = {
   cancelAction: async (listId: string, actionId: string) => {
     const response = await fetch(getApiUrl(`/list-actions/${listId}/${actionId}/cancel`), {
       method: 'GET',
-      headers: createHeaders(),
+      headers: await createHeaders(),
     });
     return handleResponse(response);
   },
@@ -223,7 +246,7 @@ export const applicantsAPI = {
   getAll: async (recruiterId?: string) => {
     return makeApiRequest(getApiUrl('/applicants/'), {
       method: 'GET',
-      headers: createHeaders(recruiterId),
+      headers: await createHeaders(recruiterId),
     });
   },
 
@@ -231,7 +254,7 @@ export const applicantsAPI = {
   getByStatus: async (status: string, recruiterId?: string) => {
     return makeApiRequest(getApiUrl(`/applicants/?status=${status}`), {
       method: 'GET',
-      headers: createHeaders(recruiterId),
+      headers: await createHeaders(recruiterId),
     });
   },
 };
@@ -242,7 +265,7 @@ export const conversationsAPI = {
   getByApplicantId: async (applicantId: number) => {
     const response = await fetch(getApiUrl(`/conversations/${applicantId}`), {
       method: 'GET',
-      headers: createHeaders(),
+      headers: await createHeaders(),
     });
     return handleResponse(response);
   },
@@ -254,7 +277,7 @@ export const documentsAPI = {
   getByApplicantId: async (applicantId: number) => {
     const response = await fetch(getApiUrl(`/documents/${applicantId}`), {
       method: 'GET',
-      headers: createHeaders(),
+      headers: await createHeaders(),
     });
     return handleResponse(response);
   },
@@ -444,10 +467,10 @@ export const deleteList = async (listId: string): Promise<{ success: boolean; me
     // First try to delete the list
     try {
 
-      const response = await makeApiRequest(getApiUrl(`/recruiter-lists/${listId}`), {
-        method: 'DELETE',
-        headers: createHeaders(),
-      });
+        const response = await makeApiRequest(getApiUrl(`/recruiter-lists/${listId}`), {
+          method: 'DELETE',
+          headers: await createHeaders(),
+        });
 
       return { success: true, message: 'List deleted successfully' };
     } catch (deleteError) {
@@ -458,7 +481,7 @@ export const deleteList = async (listId: string): Promise<{ success: boolean; me
 
         const archiveResponse = await makeApiRequest(getApiUrl(`/recruiter-lists/${listId}`), {
           method: 'PUT',
-          headers: createHeaders(),
+          headers: await createHeaders(),
           body: JSON.stringify(createRequestBody({
             status: 'ARCHIVED'
           })),
@@ -574,11 +597,11 @@ export const bulkUpdateCandidateStatus = async (candidateIds: string[], status: 
     const [applicantsResponse, listsResponse] = await Promise.all([
       fetch(getApiUrl('/applicants/'), {
         method: 'GET',
-        headers: createHeaders(),
+        headers: await createHeaders(),
       }),
       fetch(getApiUrl('/recruiter-lists/'), {
         method: 'GET',
-        headers: createHeaders(),
+        headers: await createHeaders(),
       })
     ]);
     
@@ -620,7 +643,7 @@ export const bulkUpdateCandidateStatus = async (candidateIds: string[], status: 
       try {
         const response = await fetch(getApiUrl(`/list-actions/${listId}/${action}`), {
           method: 'POST',
-          headers: createHeaders(),
+          headers: await createHeaders(),
           body: JSON.stringify(createRequestBody({
             applicants: applicantIds
           })),
@@ -679,11 +702,11 @@ export const bulkSendAction = async (candidateIds: string[], action: 'nudge' | '
     const [applicantsResponse, listsResponse] = await Promise.all([
       fetch(getApiUrl('/applicants/'), {
         method: 'GET',
-        headers: createHeaders(),
+        headers: await createHeaders(),
       }),
       fetch(getApiUrl('/recruiter-lists/'), {
         method: 'GET',
-        headers: createHeaders(),
+        headers: await createHeaders(),
       })
     ]);
     
@@ -722,7 +745,7 @@ export const bulkSendAction = async (candidateIds: string[], action: 'nudge' | '
       try {
         const response = await fetch(getApiUrl(`/list-actions/${listId}/${action}`), {
         method: 'POST',
-          headers: createHeaders(),
+          headers: await createHeaders(),
           body: JSON.stringify(createRequestBody({
             applicants: applicantIds
           })),
